@@ -61,6 +61,7 @@ namespace Webshop.Context
                 entity.Property(x => x.Name).IsRequired();
 
             });
+            // test
         }
 
     }
