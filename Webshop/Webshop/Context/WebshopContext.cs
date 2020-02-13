@@ -29,37 +29,53 @@ namespace Webshop.Context
             {
                 entity.Property(x => x.Discount).HasDefaultValue(0);
             });
+
             builder.Entity<User>(entity =>
             {
-                entity.Property(x => x.FirstName).IsRequired();
-                entity.Property(x => x.LastName).IsRequired();
-                entity.Property(x => x.Email).IsRequired();
-                entity.Property(x => x.PhoneNumber).IsRequired();
-                entity.Property(x => x.StreetAddress).IsRequired();
-                entity.Property(x => x.ZipCode).IsRequired();
-                entity.Property(x => x.City).IsRequired();
+                entity.Property(x => x.FirstName).IsRequired().HasMaxLength(30);
+                entity.Property(x => x.LastName).IsRequired().HasMaxLength(30);
+                entity.Property(x => x.Email).IsRequired().HasMaxLength(50);
+                entity.Property(x => x.PhoneNumber).IsRequired().HasMaxLength(20);
+                entity.Property(x => x.StreetAddress).IsRequired().HasMaxLength(50);
+                entity.Property(x => x.ZipCode).IsRequired().HasMaxLength(5);
+                entity.Property(x => x.City).IsRequired().HasMaxLength(50);
                 entity.Property(x => x.Password).IsRequired().HasMaxLength(64);
             });
+
+            // Make users email unique for each user!
+            builder.Entity<User>().HasIndex(x => x.Email).IsUnique();
+
             builder.Entity<Product>(entity =>
             {
-                entity.Property(x => x.Name).IsRequired();
+                entity.Property(x => x.Name).IsRequired().HasMaxLength(50);
                 entity.Property(x => x.Price).IsRequired();
                 entity.Property(x => x.Quantity).IsRequired();
             });
+
             builder.Entity<Category>(entity =>
             {
-                entity.Property(x => x.Name).IsRequired();
-
+                entity.Property(x => x.Name).IsRequired().HasMaxLength(30);
             });
+
             builder.Entity<Brand>(entity =>
             {
-                entity.Property(x => x.Name).IsRequired();
-
+                entity.Property(x => x.Name).IsRequired().HasMaxLength(30);
             });
+
             builder.Entity<PaymentMethod>(entity =>
             {
-                entity.Property(x => x.Name).IsRequired();
+                entity.Property(x => x.Name).IsRequired().HasMaxLength(20);
+            });
 
+            builder.Entity<Status>(entity =>
+            {
+                entity.Property(x => x.Name).IsRequired().HasMaxLength(30);
+            });
+
+            builder.Entity<Admin>(entity =>
+            {
+                entity.Property(x => x.UserName).IsRequired().HasMaxLength(30);
+                entity.Property(x => x.Password).IsRequired();
             });
         }
 

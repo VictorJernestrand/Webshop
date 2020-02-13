@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Webshop.Context;
 
 namespace Webshop.Migrations
 {
     [DbContext(typeof(WebshopContext))]
-    partial class WebshopContextModelSnapshot : ModelSnapshot
+    [Migration("20200213085001_UserModelUpdate_AddedProductPhoto")]
+    partial class UserModelUpdate_AddedProductPhoto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -247,9 +249,6 @@ namespace Webshop.Migrations
                         .HasMaxLength(5);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.ToTable("Users");
                 });

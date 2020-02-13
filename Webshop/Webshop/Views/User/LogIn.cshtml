@@ -1,0 +1,31 @@
+﻿@model Webshop.Models.User
+
+@{
+    ViewData["Title"] = "Logga In";
+}
+
+<h1>Logga In</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Login">
+            <div class="form-group">
+                <label asp-for="Email" class="control-label">E-post</label>
+                <input asp-for="Email" type="email" class="form-control" placeholder="exempel@epostadress.se" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label">Lösenord</label>
+                <input asp-for="Password" type="password" class="form-control" placeholder="gulleplutt" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Logga in som fan" class="btn btn-success" />
+            </div>
+            <p><a asp-action="Register">Inte medlem? Bli medlem nu!</a></p>
+        </form>
+    </div>
+</div>
+<div>
+    <a asp-action="../Home">Back to List</a>
+</div>
