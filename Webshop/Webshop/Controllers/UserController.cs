@@ -40,6 +40,7 @@ namespace Webshop.Controllers
             return View(User);
         }
 
+        [Authorize]
         public async Task<ActionResult> Edit()
         {
             int userId = 2; // For testing purposes
