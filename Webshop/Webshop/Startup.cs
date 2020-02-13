@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Webshop.Context;
 
 namespace Webshop
 {
@@ -23,8 +25,15 @@ namespace Webshop
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSession();
+            /*services.AddIdentity<IdentityUser, IdentityRole>()
+                    .AddEntityFrameworkStores<WebshopContext>();*/
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                    .AddEntityFrameworkStores<WebshopContext>();
+
+            //services.AddSession();
             services.AddControllersWithViews();
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,10 +55,12 @@ namespace Webshop
 
             app.UseRouting();
 
+            //app.UseAuthentication(); // For Identity features
             app.UseAuthorization();
+            app.UseAuthentication(); // For Identity features
 
             // use this before .UseEndpoints
-            app.UseSession();
+            //app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

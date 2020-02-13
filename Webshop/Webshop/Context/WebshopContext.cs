@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,9 @@ using Webshop.Models;
 
 namespace Webshop.Context
 {
-    public class WebshopContext : DbContext
+    public class WebshopContext : IdentityDbContext<User>
     {
-        public DbSet<User> Users { get; set; }
+        //public new DbSet<User> Users { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Category> Categories { get; set; }
@@ -25,6 +26,8 @@ namespace Webshop.Context
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
+
             builder.Entity<ProductOrder>(entity =>
             {
                 entity.Property(x => x.Discount).HasDefaultValue(0);
@@ -39,11 +42,11 @@ namespace Webshop.Context
                 entity.Property(x => x.StreetAddress).IsRequired().HasMaxLength(50);
                 entity.Property(x => x.ZipCode).IsRequired().HasMaxLength(5);
                 entity.Property(x => x.City).IsRequired().HasMaxLength(50);
-                entity.Property(x => x.Password).IsRequired().HasMaxLength(64);
+                //entity.Property(x => x.Password).IsRequired().HasMaxLength(64);
             });
 
             // Make users email unique for each user!
-            builder.Entity<User>().HasIndex(x => x.Email).IsUnique();
+            // builder.Entity<User>().HasIndex(x => x.Email).IsUnique();
 
             builder.Entity<Product>(entity =>
             {

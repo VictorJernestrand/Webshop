@@ -29,16 +29,6 @@
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Password" class="control-label">Lösenord</label>
-                <input asp-for="Password" type="password" class="form-control" placeholder="lösenord" required />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label">Bekräfta lösenord</label>
-                <input asp-for="Password" type="password" class="form-control" placeholder="bekräfta lösenord" required />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <input type="submit" value="Bli Kund" class="btn btn-success" />
                 <p>Redan medlem? <a asp-action="LogIn">Klicka här för att logga in</a></p>
             </div>

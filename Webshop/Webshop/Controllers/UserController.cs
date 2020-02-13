@@ -44,7 +44,7 @@ namespace Webshop.Controllers
         public async Task<ActionResult> Edit()
         {
             int userId = 2; // For testing purposes
-            User = await db.Get<User>(userId);
+            User = await db.GetAsync<User>(userId);
 
             return View(User);
         }
@@ -59,10 +59,10 @@ namespace Webshop.Controllers
             try
             {
                 if (ModelState.IsValid)
-                {
+                {/*
                     // Generate a hashed string out of the users password using the
                     // extension method GenerateHash() in the PasswordHandler class
-                    string hashedUserPass = User.Password.GenerateHash();
+                    //string hashedUserPass = User.Password.GenerateHash();
 
                     // Check the users cridentials for a match in the database
                     var userExist = db.GetUserByUserCredentials(User.Email, hashedUserPass);
@@ -76,7 +76,7 @@ namespace Webshop.Controllers
 
                         // Redirect the user to some page here...
                     }
-
+                    */
                     return RedirectToAction(nameof(Register));
                 }
                 else
@@ -104,8 +104,8 @@ namespace Webshop.Controllers
                 if (collection["Password"][0].ToString() == collection["Password"][1].ToString())
                 {
                     // Generate a hashed string out of the password and store the new customer in database
-                    User.Password = User.Password.GenerateHash();
-                    int rowsEffected = await db.Insert(User);
+                    //User.Password = User.Password.GenerateHash();
+                    int rowsEffected = await db.InsertAsync(User);
 
                     // Let the user know the registration was successful and ask the user to log in using email and password
                     
@@ -128,7 +128,7 @@ namespace Webshop.Controllers
             try
             {
                 // TODO: Add insert logic here
-                int rowsEffected = await db.Update(User);
+                int rowsEffected = await db.UpdateAsync(User);
                 return RedirectToAction(nameof(Edit));
             }
             catch

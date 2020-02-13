@@ -22,7 +22,7 @@ namespace Webshop.Context
         /// <typeparam name="T"></typeparam>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<T> Get<T>(int id) where T : class
+        public async Task<T> GetAsync<T>(int id) where T : class
         {
             return await context.FindAsync<T>(id);
         }
@@ -35,7 +35,8 @@ namespace Webshop.Context
         /// <returns></returns>
         public User GetUserByUserCredentials(string email, string password)
         {
-            return context.Users.Where(x => x.Email == email && x.Password == password).FirstOrDefault();
+            //return context.Users.Where(x => x.Email == email && x.Password == password).FirstOrDefault();
+            return null;
         }
 
         /// <summary>
@@ -44,7 +45,7 @@ namespace Webshop.Context
         /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public async Task<int> Insert<T>(T obj)
+        public async Task<int> InsertAsync<T>(T obj)
         {
             context.Add(obj);
             return await CommitChanges();
@@ -56,7 +57,7 @@ namespace Webshop.Context
         /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public Task<int> Update<T>(T obj)
+        public Task<int> UpdateAsync<T>(T obj)
         {
             context.Update(obj);
             return CommitChanges();
@@ -68,7 +69,7 @@ namespace Webshop.Context
         /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public async Task<int> Delete<T>(T obj)
+        public async Task<int> DeleteAsync<T>(T obj)
         {
             context.Remove(obj);
             return await CommitChanges();
