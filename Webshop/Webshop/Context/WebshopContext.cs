@@ -35,13 +35,13 @@ namespace Webshop.Context
 
             builder.Entity<User>(entity =>
             {
-                entity.Property(x => x.FirstName).IsRequired().HasMaxLength(30);
-                entity.Property(x => x.LastName).IsRequired().HasMaxLength(30);
-                entity.Property(x => x.Email).IsRequired().HasMaxLength(50);
-                entity.Property(x => x.PhoneNumber).IsRequired().HasMaxLength(20);
-                entity.Property(x => x.StreetAddress).IsRequired().HasMaxLength(50);
-                entity.Property(x => x.ZipCode).IsRequired().HasMaxLength(5);
-                entity.Property(x => x.City).IsRequired().HasMaxLength(50);
+                entity.Property(x => x.FirstName).HasMaxLength(30);
+                entity.Property(x => x.LastName).HasMaxLength(30);
+                //entity.Property(x => x.Email).HasMaxLength(50);
+                //entity.Property(x => x.PhoneNumber).HasMaxLength(20);
+                entity.Property(x => x.StreetAddress).HasMaxLength(50);
+                entity.Property(x => x.ZipCode).HasMaxLength(5);
+                entity.Property(x => x.City).HasMaxLength(50);
                 //entity.Property(x => x.Password).IsRequired().HasMaxLength(64);
             });
 
