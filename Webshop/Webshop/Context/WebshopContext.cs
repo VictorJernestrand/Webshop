@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using Webshop.Models;
 
 namespace Webshop.Context
 {
-    public class WebshopContext : IdentityDbContext<User>
+    public class WebshopContext : IdentityDbContext<User, AppRole, int>
     {
         //public new DbSet<User> Users { get; set; }
         public DbSet<Admin> Admins { get; set; }
@@ -20,10 +21,21 @@ namespace Webshop.Context
         public DbSet<ProductOrder> ProductOrders { get; set; }
         public DbSet<Status> Statuses { get; set; }
 
+        public WebshopContext()
+        {
 
+        }
+
+        public WebshopContext(DbContextOptions<WebshopContext> options) : base(options)
+        {
+            // ...
+        }
+
+        /*
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=Webshop;Trusted_Connection=True;");
-
+            => options.UseSqlServer(configuration.GetConnectionString("SqlDatabase"));//"Server=(localdb)\\MSSQLLocalDB;Database=Webshop;Trusted_Connection=True;");
+            */
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

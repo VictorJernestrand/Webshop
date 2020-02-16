@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Webshop.Context;
 using Webshop.Models;
 
 namespace Webshop.Controllers
@@ -13,14 +15,37 @@ namespace Webshop.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly DatabaseCRUD db;
+        private readonly WebshopContext context;
+
+        public new User User { get; set; }
+
+        private UserManager<User> UserMgr { get; }
+
+        public HomeController(WebshopContext context, UserManager<User> userManager, ILogger<HomeController> logger)
         {
+            this.context = context;
+            db = new DatabaseCRUD(context);
+            UserMgr = userManager;
             _logger = logger;
         }
 
+        private void GetLoggedInUserAsync()
+        {
+            
+            //User = db.GetByIdAsync<User>(UserMgr.GetUserId(HttpContext.User));
+        }
+
+        /*public HomeController(ILogger<HomeController> logger)
+        {
+            _logger = logger;
+        }*/
+
         public IActionResult Index()
         {
-            return View();
+            //User = await UserMgr.GetUserAsync(HttpContext.User);
+            //ViewData["UserName"] = User.FirstName;// HttpContext.Session.GetString(SessionCookies.USER_NAME);
+            return View(User);
         }
 
         public IActionResult Privacy()

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Webshop.Context;
 using Webshop.Data;
@@ -13,11 +15,29 @@ namespace Webshop.Controllers
 {
     public class UserController : Controller
     {
-        //WebshopContext webshopContext = new WebshopContext();
-        DatabaseCRUD db = new DatabaseCRUD();
+        private readonly WebshopContext context;
+        private readonly DatabaseCRUD db;
 
-        [BindProperty]
-        public new User User { get; set; } = new User();
+        public RegisterUserModel RegisterUserModel { get; set; }
+        public LoginModel LoginModel { get; set; }
+
+
+        private UserManager<User> UserMgr { get; }
+        private SignInManager<User> SignMgr { get; }
+
+        public UserController(WebshopContext context, UserManager<User> userManager, SignInManager<User> signInManager)
+        {
+            // Get database context and connection
+            this.context = context;
+
+            // Instantiate a new CRUD-object
+            db = new DatabaseCRUD(context);
+
+            // Instantiate Auth-services for managing User authorization
+            UserMgr = userManager;
+            SignMgr = signInManager;
+        }
+
 
         // GET: User
         public ActionResult Index()
@@ -25,66 +45,51 @@ namespace Webshop.Controllers
             return View();
         }
 
-
+        
         // Register new customer
         public ActionResult Register()
         {
-            int? userId = HttpContext.Session.GetInt32(SessionCookies.USER_ID);
-
-            return View(User);
+            return View(RegisterUserModel);
         }
+        
 
         // Login view
         public ActionResult Login()
         {
-            return View(User);
-        }
-
-        [Authorize]
-        public async Task<ActionResult> Edit()
-        {
-            int userId = 2; // For testing purposes
-            User = await db.GetAsync<User>(userId);
-
-            return View(User);
+            return View(LoginModel);
         }
 
 
         // POST: User/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //public ActionResult LoginUser(IFormCollection collection)
-        public ActionResult Login(User model)
+        public async Task<ActionResult> Login([Bind]LoginModel model)
         {
             try
             {
+                // First, validate the form. Did the user provide expected data such as email and password?
                 if (ModelState.IsValid)
-                {/*
-                    // Generate a hashed string out of the users password using the
-                    // extension method GenerateHash() in the PasswordHandler class
-                    //string hashedUserPass = User.Password.GenerateHash();
-
-                    // Check the users cridentials for a match in the database
-                    var userExist = db.GetUserByUserCredentials(User.Email, hashedUserPass);
-
-                    // If user exist, set the initialize the session cookies so we know
-                    // that the user is logged in!
-                    if (userExist != null)
-                    {
-                        // Bake a session cookie with the users Id
-                        HttpContext.Session.SetInt32(SessionCookies.USER_ID, userExist.Id);
-
-                        // Redirect the user to some page here...
-                    }
-                    */
-                    return RedirectToAction(nameof(Register));
-                }
-                else
                 {
-                    //return BadRequest(ModelState);
-                    return View(model);
-                    //return RedirectToAction(nameof(Login));
+                    // Make a sign-in request!
+                    var signInResult = await SignMgr.PasswordSignInAsync(model.UserEmail, model.UserPassword, model.RememberUser, false);
+
+                    // Did the user submit correct email and password?
+                    if (signInResult.Succeeded)
+                    {
+                        // Get user information from database
+                        User User = await db.GetUserByUserEmail(model.UserEmail);
+
+                        // Bake a new session-cookie with the User's name as the main ingredient ;)
+                        HttpContext.Session.SetString(SessionCookies.USER_NAME, User.FirstName + " " + User.LastName);
+
+                        // Login succesfull! Redirect to main page :)
+                        return RedirectToAction("Index", "Home");
+                    }
+
+                    ViewBag.LoginResult = "Felaktiga inloggningsuppgifter! Försök igen!";
                 }
+
+                return View(model);
             }
             catch
             {
@@ -96,22 +101,45 @@ namespace Webshop.Controllers
         // POST: User/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(IFormCollection collection)
+        public async Task<ActionResult> Register([Bind]RegisterUserModel model)
         {
             try
             {
-                // Make a comparisson between password1 and password2 to make sure the passwords match.
-                if (collection["Password"][0].ToString() == collection["Password"][1].ToString())
+                // Was the registration form filled out correctly?
+                if (ModelState.IsValid)
                 {
-                    // Generate a hashed string out of the password and store the new customer in database
-                    //User.Password = User.Password.GenerateHash();
-                    int rowsEffected = await db.InsertAsync(User);
+                    // Initialize a new User-object and populate it with the provided user data
+                    User newUser = new User()
+                    {
+                        UserName = model.Email, // Must be filled due to the autogenerated fields in the AspNetUsers table in the database
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        Email = model.Email,
+                        Password = model.Password
+                    };
 
-                    // Let the user know the registration was successful and ask the user to log in using email and password
-                    
-                    // Do some redirect here...
+                    // Store the new user in the database
+                    IdentityResult result = await UserMgr.CreateAsync(newUser, newUser.Password);
+
+                    // Redirect the user to the login page
+                    if (result.Succeeded)
+                        return RedirectToAction(nameof(Login));
+
+                    // Loop through the errors and customize errormessages
+                    foreach (var error in result.Errors)
+                    {
+                        if (error.Code == "DuplicateEmail")
+                        {
+                            ModelState.AddModelError("UserEmail", "Epostadressen är redan registrerad");
+                            break;
+                        }
+                    }
+
                 }
-                return RedirectToAction(nameof(Register));
+
+                // The registration form contains errors, display the view again along with the error information
+                return View(model);
+
             }
             catch
             {
@@ -138,56 +166,11 @@ namespace Webshop.Controllers
         }
 
 
-
-
-
-
-
-        /*
-        // GET: User/Edit/5
-        public ActionResult Edit(int id)
+        public IActionResult LogOut()
         {
-            return View();
+            SignMgr.SignOutAsync();
+            return RedirectToAction(nameof(Login));
         }
 
-        // POST: User/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: User/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: User/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }*/
     }
 }

@@ -2,14 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Webshop.Context;
+using Webshop.Models;
 
 namespace Webshop
 {
@@ -25,15 +28,33 @@ namespace Webshop
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            /*services.AddIdentity<IdentityUser, IdentityRole>()
-                    .AddEntityFrameworkStores<WebshopContext>();*/
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                    .AddEntityFrameworkStores<WebshopContext>();
-
-            //services.AddSession();
-            services.AddControllersWithViews();
-
+            // Set the SqlServer to use the connection string form appsettings.json
+            services.AddDbContext<WebshopContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("SqlDatabase"));
+            });
             
+            // Set email to be unique for each user
+            services.AddIdentity<User, AppRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            }).AddRoles<AppRole>()
+              .AddEntityFrameworkStores<WebshopContext>();
+
+            // Configure the application cookie and set expiration date
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromDays(365);
+                options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+                options.SlidingExpiration = true;
+            });
+
+            services.AddSession(); // Enable session cookies
+            services.AddControllersWithViews();
+            services.AddSingleton(_ => Configuration);
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,12 +76,12 @@ namespace Webshop
 
             app.UseRouting();
 
-            //app.UseAuthentication(); // For Identity features
+
             app.UseAuthorization();
             app.UseAuthentication(); // For Identity features
 
-            // use this before .UseEndpoints
-            //app.UseSession();
+
+            app.UseSession(); // Enable session cookies. Must be used before .UseEndpoints
 
             app.UseEndpoints(endpoints =>
             {

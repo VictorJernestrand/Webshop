@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,10 @@ namespace Webshop.Context
     public class DatabaseCRUD
     {
         private readonly WebshopContext context;
-
-        public DatabaseCRUD()
+        
+        public DatabaseCRUD(WebshopContext context)
         {
-            context = new WebshopContext();
+            this.context = context;
         }
 
         /// <summary>
@@ -22,7 +23,7 @@ namespace Webshop.Context
         /// <typeparam name="T"></typeparam>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<T> GetAsync<T>(int id) where T : class
+        public async Task<T> GetByIdAsync<T>(int id) where T : class
         {
             return await context.FindAsync<T>(id);
         }
@@ -35,8 +36,12 @@ namespace Webshop.Context
         /// <returns></returns>
         public User GetUserByUserCredentials(string email, string password)
         {
-            //return context.Users.Where(x => x.Email == email && x.Password == password).FirstOrDefault();
-            return null;
+            return context.Users.Where(x => x.Email == email && x.Password == password).FirstOrDefault();
+        }
+
+        public async Task<User> GetUserByUserEmail(string email)
+        {
+            return await context.Users.Where(x => x.Email == email).FirstOrDefaultAsync();
         }
 
         /// <summary>
