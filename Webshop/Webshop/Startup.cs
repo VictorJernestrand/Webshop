@@ -50,6 +50,7 @@ namespace Webshop
                 options.SlidingExpiration = true;
             });
 
+
             services.AddSession(); // Enable session cookies
             services.AddControllersWithViews();
             services.AddSingleton(_ => Configuration);
