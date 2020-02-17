@@ -20,13 +20,16 @@
                     <partial name="_LoginPartial" />
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Hem</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="QandA" asp-action="Index">Vanliga frågor</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="About" asp-action="Index">Om oss</a>
+                        </li>
+                        <li>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Produkter</a>
                         </li>
                     </ul>
                 </div>
@@ -39,9 +42,10 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-white">
         <div class="container">
             &copy; 2020 - Webshop - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                                    <a>Adress: Liljeholmskajen 2, 123 21 Stockohlm Tel: 08-12 34 52 Email: info@orkester.se</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
