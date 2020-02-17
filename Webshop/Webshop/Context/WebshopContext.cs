@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -9,7 +10,7 @@ using Webshop.Models;
 
 namespace Webshop.Context
 {
-    public class WebshopContext : IdentityDbContext<User, AppRole, int>
+    public class WebshopContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
         //public new DbSet<User> Users { get; set; }
         public DbSet<Admin> Admins { get; set; }

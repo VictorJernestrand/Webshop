@@ -24,10 +24,10 @@ namespace Webshop.Controllers
 
         private UserManager<User> UserMgr { get; }
         private SignInManager<User> SignMgr { get; }
-        private RoleManager<AppRole> RoleMgr { get; }
+        private RoleManager<IdentityRole<int>> RoleMgr { get; }
 
 
-        public UserController(WebshopContext context, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<AppRole> roleManager)
+        public UserController(WebshopContext context, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole<int>> roleManager)
         {
             // Get database context and connection
             this.context = context;
@@ -73,8 +73,6 @@ namespace Webshop.Controllers
                 // First, validate the form. Did the user provide expected data such as email and password?
                 if (ModelState.IsValid)
                 {
-
-
                     // Make a sign-in request!
                     var signInResult = await SignMgr.PasswordSignInAsync(model.UserEmail, model.UserPassword, model.RememberUser, false);
 
@@ -123,7 +121,7 @@ namespace Webshop.Controllers
                         Password = model.Password
                     };
 
-                    // Testing to sett Admin roles to users...
+                    // Testing to set Admin roles to users...
                     // var GetUserRole = await UserMgr.AddToRoleAsync(newUser, "Admin");
 
                     // Store the new user in the database

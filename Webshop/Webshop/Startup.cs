@@ -35,10 +35,10 @@ namespace Webshop
             });
             
             // Set email to be unique for each user
-            services.AddIdentity<User, AppRole>(options =>
+            services.AddIdentity<User, IdentityRole<int>>(options =>
             {
                 options.User.RequireUniqueEmail = true;
-            }).AddRoles<AppRole>()
+            }).AddRoles<IdentityRole<int>>()
               .AddEntityFrameworkStores<WebshopContext>();
 
             // Configure the application cookie and set expiration date
