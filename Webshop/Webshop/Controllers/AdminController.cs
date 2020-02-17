@@ -39,7 +39,7 @@ namespace Webshop.Controllers
                     //var result = await RoleMgr.CreateAsync(new IdentityRole<int>("Arne"));
                     //var user = await UserMgr.
                     var result = UserMgr.Users.Where(x => x.Id == 1).FirstOrDefault();
-                    var test = await UserMgr.AddToRoleAsync(result, "Admin");
+                    var test = await UserMgr.AddToRoleAsync(result, "Admin"); 
                 }
                 catch
                 {
