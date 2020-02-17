@@ -31,11 +31,11 @@ namespace Webshop.Context
             // ...
         }
 
-        /*
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlServer(configuration.GetConnectionString("SqlDatabase"));//"Server=(localdb)\\MSSQLLocalDB;Database=Webshop;Trusted_Connection=True;");
-            */
-        
+
+        //protected override void OnConfiguring(DbContextOptionsBuilder options)
+        //    => options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=Webshop;Trusted_Connection=True;");
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
