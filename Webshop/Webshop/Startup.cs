@@ -50,16 +50,16 @@ namespace Webshop
                 options.SlidingExpiration = true;
             });
 
+            services.AddMvcCore().AddAuthorization(); // Note - this is on the IMvcBuilder, not the service collection
 
             services.AddSession(); // Enable session cookies
             services.AddControllersWithViews();
             services.AddSingleton(_ => Configuration);
-
-
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, WebshopContext context, UserManager<User> userManager, RoleManager<AppRole> roleManager)
         {
             if (env.IsDevelopment())
             {
@@ -77,12 +77,12 @@ namespace Webshop
 
             app.UseRouting();
 
-
+            app.UseSession();           // Enable session cookies. Must be added BEFORE .UseEndpoints!!!
+            app.UseAuthentication();    // For Identity features. Must be added BEFORE Authorization!!!
             app.UseAuthorization();
-            app.UseAuthentication(); // For Identity features
 
 
-            app.UseSession(); // Enable session cookies. Must be used before .UseEndpoints
+            //app.UseSession(); // Enable session cookies. Must be used before .UseEndpoints
 
             app.UseEndpoints(endpoints =>
             {
@@ -90,6 +90,9 @@ namespace Webshop
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            // Add a default Admin account and Roles!
+            AdminAccountAndRoles.Initialize(context, userManager, roleManager).Wait();
         }
     }
 }

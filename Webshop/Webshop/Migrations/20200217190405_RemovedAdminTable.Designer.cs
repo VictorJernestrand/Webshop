@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Webshop.Context;
 
 namespace Webshop.Migrations
 {
     [DbContext(typeof(WebshopContext))]
-    partial class WebshopContextModelSnapshot : ModelSnapshot
+    [Migration("20200217190405_RemovedAdminTable")]
+    partial class RemovedAdminTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,33 +166,6 @@ namespace Webshop.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Brands");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Gibson"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Fender"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Yamaha"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Korg"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Millenium"
-                        });
                 });
 
             modelBuilder.Entity("Webshop.Models.Category", b =>
@@ -208,28 +183,6 @@ namespace Webshop.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Drum set"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Bas"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Piano"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Keyboard"
-                        });
                 });
 
             modelBuilder.Entity("Webshop.Models.Order", b =>
@@ -315,128 +268,6 @@ namespace Webshop.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            BrandId = 2,
-                            CategoryId = 1,
-                            Description = "Black and white",
-                            Name = "Stratocaster",
-                            Price = 4000m,
-                            Quantity = 4
-                        },
-                        new
-                        {
-                            Id = 2,
-                            BrandId = 2,
-                            CategoryId = 3,
-                            Description = "Smooth",
-                            Name = "Precision",
-                            Price = 3000m,
-                            Quantity = 5
-                        },
-                        new
-                        {
-                            Id = 3,
-                            BrandId = 2,
-                            CategoryId = 3,
-                            Description = "Blue bas",
-                            Name = "Vintera",
-                            Price = 4000m,
-                            Quantity = 2
-                        },
-                        new
-                        {
-                            Id = 4,
-                            BrandId = 1,
-                            CategoryId = 3,
-                            Description = "Advanced",
-                            Name = "Epiphone",
-                            Price = 4000m,
-                            Quantity = 2
-                        },
-                        new
-                        {
-                            Id = 5,
-                            BrandId = 5,
-                            CategoryId = 2,
-                            Description = "For kids",
-                            Name = "Youngster",
-                            Price = 1100m,
-                            Quantity = 8
-                        },
-                        new
-                        {
-                            Id = 6,
-                            BrandId = 5,
-                            CategoryId = 2,
-                            Description = "For good players",
-                            Name = "MPS-150X",
-                            Price = 3200m,
-                            Quantity = 4
-                        },
-                        new
-                        {
-                            Id = 7,
-                            BrandId = 3,
-                            CategoryId = 2,
-                            Description = "Nice set of drums",
-                            Name = "DTX­432K",
-                            Price = 5600m,
-                            Quantity = 2
-                        },
-                        new
-                        {
-                            Id = 8,
-                            BrandId = 3,
-                            CategoryId = 4,
-                            Description = "Black and black",
-                            Name = "P116M",
-                            Price = 8000m,
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            Id = 9,
-                            BrandId = 3,
-                            CategoryId = 4,
-                            Description = "Old model",
-                            Name = "Calvinova",
-                            Price = 8900m,
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            Id = 10,
-                            BrandId = 4,
-                            CategoryId = 4,
-                            Description = "Digitalpiano",
-                            Name = "B2SP",
-                            Price = 2300m,
-                            Quantity = 6
-                        },
-                        new
-                        {
-                            Id = 11,
-                            BrandId = 4,
-                            CategoryId = 3,
-                            Description = "Traveling model",
-                            Name = "SP-280",
-                            Price = 5300m,
-                            Quantity = 3
-                        },
-                        new
-                        {
-                            Id = 12,
-                            BrandId = 3,
-                            CategoryId = 4,
-                            Description = "Our best keyboard",
-                            Name = "P-45",
-                            Price = 4900m,
-                            Quantity = 3
-                        });
                 });
 
             modelBuilder.Entity("Webshop.Models.ProductOrder", b =>
