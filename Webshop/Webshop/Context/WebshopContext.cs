@@ -10,10 +10,8 @@ using Webshop.Models;
 
 namespace Webshop.Context
 {
-    public class WebshopContext : IdentityDbContext<User, IdentityRole<int>, int>
+    public class WebshopContext : IdentityDbContext<User, AppRole, int>
     {
-        //public new DbSet<User> Users { get; set; }
-        public DbSet<Admin> Admins { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }
@@ -24,18 +22,13 @@ namespace Webshop.Context
 
         public WebshopContext()
         {
-
+            // ...
         }
 
         public WebshopContext(DbContextOptions<WebshopContext> options) : base(options)
         {
             // ...
         }
-
-        /*
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlServer(configuration.GetConnectionString("SqlDatabase"));//"Server=(localdb)\\MSSQLLocalDB;Database=Webshop;Trusted_Connection=True;");
-            */
         
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -50,16 +43,10 @@ namespace Webshop.Context
             {
                 entity.Property(x => x.FirstName).HasMaxLength(30);
                 entity.Property(x => x.LastName).HasMaxLength(30);
-                //entity.Property(x => x.Email).HasMaxLength(50);
-                //entity.Property(x => x.PhoneNumber).HasMaxLength(20);
                 entity.Property(x => x.StreetAddress).HasMaxLength(50);
                 entity.Property(x => x.ZipCode).HasMaxLength(5);
                 entity.Property(x => x.City).HasMaxLength(50);
-                //entity.Property(x => x.Password).IsRequired().HasMaxLength(64);
             });
-
-            // Make users email unique for each user!
-            // builder.Entity<User>().HasIndex(x => x.Email).IsUnique();
 
             builder.Entity<Product>(entity =>
             {
@@ -86,12 +73,6 @@ namespace Webshop.Context
             builder.Entity<Status>(entity =>
             {
                 entity.Property(x => x.Name).IsRequired().HasMaxLength(30);
-            });
-
-            builder.Entity<Admin>(entity =>
-            {
-                entity.Property(x => x.UserName).IsRequired().HasMaxLength(30);
-                entity.Property(x => x.Password).IsRequired();
             });
         }
 

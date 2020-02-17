@@ -1,0 +1,54 @@
+﻿using Microsoft.AspNetCore.Identity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Webshop.Models;
+
+namespace Webshop.Context
+{
+    // User-roles
+    enum role { Admin, Manager }
+
+    public class AdminAccountAndRoles
+    {
+        public static async Task Initialize(WebshopContext context, UserManager<User> userManager, RoleManager<AppRole> roleManager)
+        {
+            context.Database.EnsureCreated();
+
+            string adminEmail = "admin@webshop.se";
+            string password = "Test123!";
+
+            // Admin
+
+            string adminRole = Enum.GetName(typeof(role), role.Admin);
+            if (await roleManager.FindByNameAsync(adminRole) == null)
+                await roleManager.CreateAsync(new AppRole(adminRole));
+
+            // Manager
+            string managerRole = Enum.GetName(typeof(role), role.Manager);
+            if (await roleManager.FindByNameAsync(managerRole) == null)
+                await roleManager.CreateAsync(new AppRole(managerRole));
+
+
+            // Create Admin!
+            if (await userManager.FindByEmailAsync(adminEmail) == null)
+            {
+                // Create User with admin-email and password
+                User adminUser = new User()
+                {
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    Password = password,
+                };
+
+                var result = await userManager.CreateAsync(adminUser, adminUser.Password);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(adminUser, adminRole);
+                }
+            }
+
+        }
+    }
+}

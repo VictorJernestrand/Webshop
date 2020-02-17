@@ -24,10 +24,10 @@ namespace Webshop.Controllers
 
         private UserManager<User> UserMgr { get; }
         private SignInManager<User> SignMgr { get; }
-        private RoleManager<IdentityRole<int>> RoleMgr { get; }
+        private RoleManager<AppRole> RoleMgr { get; }
 
 
-        public UserController(WebshopContext context, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole<int>> roleManager)
+        public UserController(WebshopContext context, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<AppRole> roleManager)
         {
             // Get database context and connection
             this.context = context;
@@ -65,6 +65,7 @@ namespace Webshop.Controllers
 
         // POST: User/Create
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login([Bind]LoginModel model)
         {
@@ -74,7 +75,7 @@ namespace Webshop.Controllers
                 if (ModelState.IsValid)
                 {
                     // Make a sign-in request!
-                    var signInResult = await SignMgr.PasswordSignInAsync(model.UserEmail, model.UserPassword, model.RememberUser, false);
+                    Microsoft.AspNetCore.Identity.SignInResult signInResult = await SignMgr.PasswordSignInAsync(model.UserEmail, model.UserPassword, model.RememberUser, false);
 
                     // Did the user submit correct email and password?
                     if (signInResult.Succeeded)

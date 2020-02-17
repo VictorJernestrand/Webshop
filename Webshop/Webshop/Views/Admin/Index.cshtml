@@ -1,19 +1,5 @@
-﻿@model  UserRoleModel
-@{
+﻿@{
     ViewData["Title"] = "Admin";
 }
 
-<h3>Admin sida</h3>
-
-<form asp-action="CreateRole">
-    <div class="form-group">
-        <label asp-for="RoleName" class="control-label">Skapa rollnamn</label>
-        <input asp-for="RoleName" class="form-control" />
-        <span asp-validation-for="RoleName" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <input type="submit" value="Spara" class="btn btn-success" />
-    </div>
-    <p><a asp-action="Register">Skapa</a></p>
-</form>
+<h3>Välkommen Till Admin sidan</h3>
