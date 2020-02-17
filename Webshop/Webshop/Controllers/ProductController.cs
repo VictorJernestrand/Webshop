@@ -9,11 +9,12 @@ namespace Webshop.Controllers
 {
     public class ProductController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Index(int catid)
         {
             using (var db=new WebshopContext())
             {
                 var query = (from product in db.Products
+                             where product.CategoryId==catid
                              select product).ToList();
                 return View(query);
             }
