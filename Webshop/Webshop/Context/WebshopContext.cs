@@ -61,6 +61,24 @@ namespace Webshop.Context
                 entity.Property(x => x.Name).IsRequired();
 
             });
+            builder.Entity<Brand>().HasData(
+           new Brand() {Id=1, Name = "Gibson" },
+           new Brand() { Id = 2, Name = "Fender" },
+           new Brand() { Id = 3, Name = "Yamaha" },
+           new Brand() { Id = 4, Name = "Korg" },
+           new Brand() { Id = 5, Name = "Millenium" }
+          );
+            builder.Entity<Category>().HasData(
+                new Category() { Id=1,Name = "Drum set" },
+                 new Category() { Id = 2, Name = "Bas" },
+                  new Category() { Id = 3, Name = "Piano" },
+                   new Category() { Id = 4, Name = "Keyboard" }
+
+                );
+            
+
+
+
         }
 
     }
