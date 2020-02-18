@@ -65,6 +65,7 @@ namespace Webshop.Controllers
 
         // POST: User/Create
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login([Bind]LoginModel model)
         {
@@ -73,10 +74,8 @@ namespace Webshop.Controllers
                 // First, validate the form. Did the user provide expected data such as email and password?
                 if (ModelState.IsValid)
                 {
-
-
                     // Make a sign-in request!
-                    var signInResult = await SignMgr.PasswordSignInAsync(model.UserEmail, model.UserPassword, model.RememberUser, false);
+                    Microsoft.AspNetCore.Identity.SignInResult signInResult = await SignMgr.PasswordSignInAsync(model.UserEmail, model.UserPassword, model.RememberUser, false);
 
                     // Did the user submit correct email and password?
                     if (signInResult.Succeeded)
@@ -123,7 +122,7 @@ namespace Webshop.Controllers
                         Password = model.Password
                     };
 
-                    // Testing to sett Admin roles to users...
+                    // Testing to set Admin roles to users...
                     // var GetUserRole = await UserMgr.AddToRoleAsync(newUser, "Admin");
 
                     // Store the new user in the database

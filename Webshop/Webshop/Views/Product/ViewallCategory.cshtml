@@ -1,0 +1,17 @@
+﻿@model ProductCategoryViewModel
+@{
+    ViewData["Title"] = "ViewallCategory";
+}
+
+<h3>ViewallCategory</h3>
+<form method="post">
+    @* @Html.DropDownList("ddcategory", Model.catlist.Select(m => new SelectListItem() { Text = m.Name, Value = m.Id.ToString() }).ToList(), "Select")*@
+    <select id="selectedCategory" asp-for="selectedcategory" asp-items="Model.catlist">
+        <option value="">Select</option>
+
+    </select>
+    <button type="submit">Search</button>
+</form>
+
+
+
