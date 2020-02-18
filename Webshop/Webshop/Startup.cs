@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -78,11 +79,16 @@ namespace Webshop
             app.UseRouting();
 
             app.UseSession();           // Enable session cookies. Must be added BEFORE .UseEndpoints!!!
-            app.UseAuthentication();    // For Identity features. Must be added BEFORE Authorization!!!
-            app.UseAuthorization();
+            app.UseAuthentication();    // Identifies who is who. For Identity features. Must be added BEFORE Authorization!!!
+            app.UseAuthorization();     // Give different users access to different areas in the application.
 
 
-            //app.UseSession(); // Enable session cookies. Must be used before .UseEndpoints
+            /*app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "test",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });*/
 
             app.UseEndpoints(endpoints =>
             {
@@ -90,6 +96,9 @@ namespace Webshop
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            // Activate SSL
+            app.UseRewriter(new RewriteOptions().AddRedirectToHttpsPermanent());
 
             // Add a default Admin account and Roles!
             AdminAccountAndRoles.Initialize(context, userManager, roleManager).Wait();

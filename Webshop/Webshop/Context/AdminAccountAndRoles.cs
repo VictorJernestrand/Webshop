@@ -42,7 +42,10 @@ namespace Webshop.Context
                     Password = password,
                 };
 
+                // Store user in database
                 var result = await userManager.CreateAsync(adminUser, adminUser.Password);
+
+                // If storage was successful, add a role to the user.
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(adminUser, adminRole);
