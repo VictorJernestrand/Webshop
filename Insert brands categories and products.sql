@@ -357,27 +357,6 @@ VALUES
 	'Digitalpiano',
 	4
 	)
-
-INSERT INTO	
-	Products
-	(
-	[Name],
-	Price,
-	Quantity,
-	CategoryId,
-	[Description],
-	BrandId
-	)
-VALUES
-	(
-	'SP-280',
-	5200,
-	3,
-	5,
-	'Traveling model',
-	4
-	)
-
 INSERT INTO	
 	Products
 	(
