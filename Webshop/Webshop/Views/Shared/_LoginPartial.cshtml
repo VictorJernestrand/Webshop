@@ -6,10 +6,15 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-            <span>@User.Identity.Name!</span>
-        </li>
-        <li class="nav-item">
-            <a asp-controller="User" asp-action="LogOut">Logga ut</a>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Välkommen @User.Identity.Name!
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" asp-controller="User" asp-action="UpdateLogin">Ändra Lösenord</a>
+                    <a class="dropdown-item" asp-controller="User" asp-action="LogOut">Logga ut</a>
+                </div>
+            </div>
         </li>
     }
     else

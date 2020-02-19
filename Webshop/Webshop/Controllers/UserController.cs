@@ -20,7 +20,7 @@ namespace Webshop.Controllers
 
         public RegisterUserModel RegisterUserModel { get; set; }
         public LoginModel LoginModel { get; set; }
-
+        public UpdateUserPassword UpdateUserPassword { get; set; }
 
         private UserManager<User> UserMgr { get; }
         private SignInManager<User> SignMgr { get; }
@@ -62,6 +62,13 @@ namespace Webshop.Controllers
             return View(LoginModel);
         }
 
+        
+        // Login view
+        [Authorize]
+        public ActionResult UpdateLogin()
+        {
+            return View(UpdateUserPassword);
+        }
 
         // POST: User/Create
         [HttpPost]
@@ -170,6 +177,44 @@ namespace Webshop.Controllers
             {
                 return View();
             }
+        }
+
+
+        // Login view
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> UpdateLogin([Bind]UpdateUserPassword model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Get current user from database
+                User user = await UserMgr.GetUserAsync(HttpContext.User);
+
+                // Replace current password with new password
+                IdentityResult result = await UserMgr.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+                // Was passwordreplacement successful?
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        /*if (error.Code == "DuplicateEmail")
+                        {
+                            ModelState.AddModelError("UserEmail", "Epostadressen är redan registrerad");
+                            break;
+                        }*/
+
+                        ModelState.AddModelError("", error.Description);
+                    }
+
+                    // Return model with errors
+                    return View(model);
+                }
+            }
+
+            // All good, redirect to home page
+            return RedirectToAction("Index", "Home");
         }
 
 
