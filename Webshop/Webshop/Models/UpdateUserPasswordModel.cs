@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Webshop.Models
 {
-    public class UpdateUserPassword
+    public class UpdateUserPasswordModel
     {
         [Required(ErrorMessage = "Nuvarande Lösenord")]
         [DataType(DataType.Password)]

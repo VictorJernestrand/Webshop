@@ -20,7 +20,7 @@ namespace Webshop.Controllers
 
         public RegisterUserModel RegisterUserModel { get; set; }
         public LoginModel LoginModel { get; set; }
-        public UpdateUserPassword UpdateUserPassword { get; set; }
+        public UpdateUserPasswordModel UpdateUserPassword { get; set; }
 
         private UserManager<User> UserMgr { get; }
         private SignInManager<User> SignMgr { get; }
@@ -184,7 +184,7 @@ namespace Webshop.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateLogin([Bind]UpdateUserPassword model)
+        public async Task<ActionResult> UpdateLogin([Bind]UpdateUserPasswordModel model)
         {
             if (ModelState.IsValid)
             {
@@ -195,26 +195,26 @@ namespace Webshop.Controllers
                 IdentityResult result = await UserMgr.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
 
                 // Was passwordreplacement successful?
-                if (!result.Succeeded)
+                if (result.Succeeded)
+                {
+                    TempData["PasswordSuccess"] = "Lösenordet har uppdaterats!";
+                    return RedirectToAction(nameof(UpdateLogin));
+                }
+                else
                 {
                     foreach (var error in result.Errors)
                     {
-                        /*if (error.Code == "DuplicateEmail")
+                        if (error.Code == "PasswordMismatch")
                         {
-                            ModelState.AddModelError("UserEmail", "Epostadressen är redan registrerad");
+                            ModelState.AddModelError("CurrentPassword", "Nuvarande lösenord är felaktigt!");
                             break;
-                        }*/
-
-                        ModelState.AddModelError("", error.Description);
+                        }
                     }
-
-                    // Return model with errors
-                    return View(model);
                 }
             }
 
-            // All good, redirect to home page
-            return RedirectToAction("Index", "Home");
+            // Return model
+            return View(model);
         }
 
 

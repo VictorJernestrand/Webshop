@@ -1,12 +1,19 @@
-﻿@model UpdateUserPassword
+﻿@model UpdateUserPasswordModel
 @{
     ViewData["Title"] = "Redigera Inloggningsuppgifter";
+    var passUpdateMessage = TempData["PasswordSuccess"];
 }
 
+@if (passUpdateMessage != null)
+{
+    <div class="alert alert-success" role="alert">
+        <strong>Vid Odens skägg!</strong> @passUpdateMessage.
+    </div>
+}
 
 <h3>Uppdatera Inloggningsuppgifter</h3>
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4 mx-auto">
         <form asp-action="UpdateLogin">
             <div class="form-group">
                 <label asp-for="CurrentPassword" class="control-label">Lösenord</label>
@@ -24,8 +31,7 @@
                 <span asp-validation-for="NewPasswordConfirm" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Bli Kund" class="btn btn-success" />
-                <p>Redan medlem? <a asp-action="LogIn">Ändra skiten!</a></p>
+                <input type="submit" value="Byt som fan" class="btn btn-success" />
             </div>
         </form>
     </div>
