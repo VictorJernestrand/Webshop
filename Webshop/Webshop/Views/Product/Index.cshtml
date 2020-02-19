@@ -1,30 +1,28 @@
 ﻿@model List<Product>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Produkter";
 }
+    
+<h1></h1>
+<table class="bg-text">
 
-<h1>Products</h1>
-<table class="table">
     <thead>
         <tr>
-            <th>ProductName</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Description</th>
+            <th><h3>Produkt namn</h3></th>
+            <th><h3>Pris</h3></th>
+            <th><h3>Lagersaldo</h3></th>
+            <th><h3>Beskrivning</h3></th>
         </tr>
         @foreach (var product in Model)
         {
             <tr>
-                <td>@product.Name </td>
-                <td>@product.Price</td>
-                <td>@product.Quantity</td>
-                <td>@product.Description</td>
+                <td><h5>@product.Name</h5></td>
+                <td><h5>@product.Price</h5></td>
+                <td><h5>@product.Quantity</h5></td>
+                <td><h5>@product.Description</h5></td>  
+                <td><a> </a></td>
             </tr>
-
-
-
         }
-
     </thead>
 </table>
 
