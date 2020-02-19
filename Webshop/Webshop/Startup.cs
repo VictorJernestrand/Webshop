@@ -78,7 +78,10 @@ namespace Webshop
 
             app.UseRouting();
 
+
             app.UseSession();           // Enable session cookies. Must be added BEFORE .UseEndpoints!!!
+            app.UseCookiePolicy();
+
             app.UseAuthentication();    // Identifies who is who. For Identity features. Must be added BEFORE Authorization!!!
             app.UseAuthorization();     // Give different users access to different areas in the application.
 
