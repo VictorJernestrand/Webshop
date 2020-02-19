@@ -27,6 +27,14 @@ namespace Webshop.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
+        [Produces("Application/json")]
+        public object AdminTest()
+        {
+            var test = new { Name = "test", Nr = 3 };
+            return test;
+        }
+
         /*
         [HttpPost]
         [ValidateAntiForgeryToken]
