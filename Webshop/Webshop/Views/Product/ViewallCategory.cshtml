@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Kategorier";
 }
-
+        
     <h3>Sök på den kategori ni vill se produkter ifrån</h3>
 <form method="post">
     @* @Html.DropDownList("ddcategory", Model.catlist.Select(m => new SelectListItem() { Text = m.Name, Value = m.Id.ToString() }).ToList(), "Select")*@
