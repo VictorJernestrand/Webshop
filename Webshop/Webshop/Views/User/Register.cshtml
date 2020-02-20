@@ -7,19 +7,21 @@
 <h1>Registera</h1>
 
 <h4>Ny kund</h4>
+
 <hr />
+
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4 mx-auto">
         <form asp-action="Register">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label">Förnamn</label>
-                <input asp-for="FirstName" class="form-control" pattern="^[\p{L}]{1,}[-\s]?[\p{L}]{1,}$" />
+                <input asp-for="FirstName" class="form-control" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LastName" class="control-label">Efternamn</label>
-                <input asp-for="LastName" class="form-control" pattern="^[\p{L}]{1,}[-\s]?[\p{L}]{1,}$" />
+                <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -38,7 +40,7 @@
                 <span asp-validation-for="PasswordConfirm" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Bli Kund" class="btn btn-success" />
+                <input type="submit" value="Bli kund som fan!" class="btn btn-success" />
                 <p>Redan medlem? <a asp-action="LogIn">Klicka här för att logga in</a></p>
             </div>
         </form>
