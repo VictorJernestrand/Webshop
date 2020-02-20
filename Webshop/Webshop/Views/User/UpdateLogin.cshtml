@@ -11,23 +11,23 @@
     </div>
 }
 
-<h3>Uppdatera Inloggningsuppgifter</h3>
-<div class="row">
-    <div class="col-md-4 mx-auto">
+<div class="card text-white bg-dark mb-3 mx-auto" style="margin-top: 60px; max-width: 400px; background-color: rgba(0,0,0, 0.5) !important">
+    <div class="card-header">Ändra Lösenord</div>
+    <div class="card-body">
         <form asp-action="UpdateLogin">
             <div class="form-group">
                 <label asp-for="CurrentPassword" class="control-label">Lösenord</label>
-                <input asp-for="CurrentPassword" type="password" class="form-control" />
+                <input asp-for="CurrentPassword" type="password" class="form-control" placeholder="Dit nuvarande lösenord" />
                 <span asp-validation-for="CurrentPassword" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="NewPassword" class="control-label">Lösenord</label>
-                <input asp-for="NewPassword" type="password" class="form-control" />
+                <input asp-for="NewPassword" type="password" class="form-control" placeholder="Nytt lösenord" />
                 <span asp-validation-for="NewPassword" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="NewPasswordConfirm" class="control-label">Bekräfta lösenord</label>
-                <input asp-for="NewPasswordConfirm" type="password" class="form-control" />
+                <input asp-for="NewPasswordConfirm" type="password" class="form-control" placeholder="Bekräfta lösenordet" />
                 <span asp-validation-for="NewPasswordConfirm" class="text-danger"></span>
             </div>
             <div class="form-group">

@@ -4,14 +4,10 @@
     ViewData["Title"] = "Ny Kund";
 }
 
-<h1>Registera</h1>
+<div class="card text-white bg-dark mb-3 mx-auto" style="margin-top: 60px; max-width: 400px; background-color: rgba(0,0,0, 0.5) !important">
 
-<h4>Ny kund</h4>
-
-<hr />
-
-<div class="row">
-    <div class="col-md-4 mx-auto">
+    <div class="card-header">Registrera ny Kund</div>
+    <div class="card-body">
         <form asp-action="Register">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -45,9 +41,5 @@
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 

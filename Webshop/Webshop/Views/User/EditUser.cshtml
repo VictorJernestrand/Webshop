@@ -1,0 +1,58 @@
+﻿@model EditUserInfoModel
+@{
+    ViewData["Title"] = "Uppdatera Adressinformation";
+    var updateSuccess = TempData["UpdateSuccess"];
+}
+
+@if (updateSuccess != null)
+{
+    <div class="alert alert-success" role="alert">
+        <strong>Hårdrock!</strong> @updateSuccess.
+    </div>
+}
+<div class="card text-white bg-dark mb-3 mx-auto" style="margin-top: 60px; max-width: 400px; background-color: rgba(0,0,0, 0.5) !important">
+    <div class="card-header">Uppdatera din kundinformation</div>
+    <div class="card-body">
+        <form asp-action="EditUser">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label">Förnamn</label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label">Efternamn</label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StreetAddress" class="control-label">Gatuadress</label>
+                <input asp-for="StreetAddress" class="form-control" placeholder="Din gatuaddress här..." />
+                <span asp-validation-for="StreetAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ZipCode" class="control-label">PostNr</label>
+                <input asp-for="ZipCode" class="form-control" placeholder="Ditt postnr..." />
+                <span asp-validation-for="ZipCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="City" class="control-label">Ort</label>
+                <input asp-for="City" class="form-control" placeholder="Din ort" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label">Telefon/Mobil</label>
+                <input asp-for="PhoneNumber" class="form-control" placeholder="Telefonnummer" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label">E-post</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Uppdatera" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>

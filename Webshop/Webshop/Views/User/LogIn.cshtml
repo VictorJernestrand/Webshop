@@ -4,7 +4,6 @@
     ViewData["Title"] = "Logga In";
 }
 
-<h1>Logga In</h1>
 @if (!String.IsNullOrEmpty(@ViewBag.LoginResult))
 {
     <div class="alert alert-warning" role="alert">
@@ -12,8 +11,9 @@
     </div>
 }
 
-<div class="row">
-    <div class="col-md-4 mx-auto">
+<div class="card text-white bg-dark mb-3 mx-auto" style="margin-top: 60px; max-width: 400px; background-color: rgba(0,0,0, 0.5) !important">
+    <div class="card-header">Logga In</div>
+    <div class="card-body">
         <form asp-action="Login">
             <div class="form-group">
                 <label asp-for="UserEmail" class="control-label">E-post</label>

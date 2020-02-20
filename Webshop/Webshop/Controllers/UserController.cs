@@ -21,6 +21,9 @@ namespace Webshop.Controllers
         public RegisterUserModel RegisterUserModel { get; set; }
         public LoginModel LoginModel { get; set; }
         public UpdateUserPasswordModel UpdateUserPassword { get; set; }
+        public EditUserInfoModel EditUserInfoModel { get; set; }
+
+
 
         private UserManager<User> UserMgr { get; }
         private SignInManager<User> SignMgr { get; }
@@ -77,6 +80,29 @@ namespace Webshop.Controllers
         public ActionResult UpdateLogin()
         {
             return View(UpdateUserPassword);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult> EditUser()
+        {
+            // Get user information
+            User user = new User();
+
+            user = await UserMgr.GetUserAsync(HttpContext.User); //context.Users.Where(x => x.UserName == HttpContext.User.Identity.Name).FirstOrDefault();
+
+            EditUserInfoModel = new EditUserInfoModel()
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                StreetAddress = user.StreetAddress,
+                ZipCode = user.ZipCode,
+                City = user.City
+            };
+
+            return View(EditUserInfoModel);
         }
 
 
@@ -139,9 +165,6 @@ namespace Webshop.Controllers
                         Password = model.Password
                     };
 
-                    // Testing to set Admin roles to users...
-                    // var GetUserRole = await UserMgr.AddToRoleAsync(newUser, "Admin");
-
                     // Store the new user in the database
                     IdentityResult result = await UserMgr.CreateAsync(newUser, newUser.Password);
 
@@ -154,7 +177,7 @@ namespace Webshop.Controllers
                     {
                         if (error.Code == "DuplicateEmail")
                         {
-                            ModelState.AddModelError("UserEmail", "Epostadressen är redan registrerad");
+                            ModelState.AddModelError("Email", "Epostadressen används redan");
                             break;
                         }
                     }
@@ -224,6 +247,44 @@ namespace Webshop.Controllers
             }
 
             // Return model
+            return View(model);
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        [AutoValidateAntiforgeryToken]
+        public async Task<ActionResult> EditUser([Bind]EditUserInfoModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Fetch user from database
+                User user = await UserMgr.GetUserAsync(HttpContext.User);
+
+                // Update user with the new information
+                user.UserName       = model.Email;
+                user.Email          = model.Email;
+                user.FirstName      = model.FirstName;
+                user.LastName       = model.LastName;
+                user.PhoneNumber    = model.PhoneNumber;
+                user.StreetAddress  = model.StreetAddress;
+                user.ZipCode        = model.ZipCode;
+                user.City           = model.City;
+
+                // Save changes
+                var result = await UserMgr.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    TempData["UpdateSuccess"] = "Din information har uppdaterats!";
+                    return RedirectToAction(nameof(EditUser));
+                }
+                else
+                {
+                    foreach(var error in result.Errors)
+                        ModelState.AddModelError(error.Code, error.Description);
+                }
+            }
+
             return View(model);
         }
 
