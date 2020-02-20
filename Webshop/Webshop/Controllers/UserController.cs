@@ -124,10 +124,18 @@ namespace Webshop.Controllers
                     if (signInResult.Succeeded)
                     {
                         // Get user information from database
-                        User User = await db.GetUserByUserEmail(model.UserEmail);
+                        User user = await db.GetUserByUserEmail(model.UserEmail);
+
+                        // Is user admin?
+                        bool isAdmin = await UserMgr.IsInRoleAsync(user, "Admin");
+                        if (isAdmin)
+                        {
+                            // Login succesfull! Redirect to main page :)
+                            return RedirectToAction("Index", "Admin");
+                        }
 
                         // Bake a new session-cookie with the User's name as the main ingredient ;)
-                        HttpContext.Session.SetString(SessionCookies.USER_NAME, User.FirstName + " " + User.LastName);
+                        HttpContext.Session.SetString(SessionCookies.USER_NAME, user.FirstName + " " + user.LastName);
 
                         // Login succesfull! Redirect to main page :)
                         return RedirectToAction("Index", "Home");
@@ -292,7 +300,7 @@ namespace Webshop.Controllers
         public IActionResult LogOut()
         {
             SignMgr.SignOutAsync();
-            return RedirectToAction(nameof(Login));
+            return RedirectToAction("Index", "Home");
         }
 
     }
