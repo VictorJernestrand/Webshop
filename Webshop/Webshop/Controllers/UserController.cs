@@ -62,13 +62,23 @@ namespace Webshop.Controllers
             return View(LoginModel);
         }
 
-        
+
+        // View Orders
+        [Authorize]
+        [HttpGet]
+        public ActionResult Orders()
+        {
+            return View();
+        }
+
+
         // Login view
         [Authorize]
         public ActionResult UpdateLogin()
         {
             return View(UpdateUserPassword);
         }
+
 
         // POST: User/Create
         [HttpPost]
