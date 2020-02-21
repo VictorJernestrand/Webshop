@@ -27,26 +27,7 @@ namespace Webshop.Controllers
            
                 
         }
-        [HttpGet]
-        public IActionResult ViewallCategory()
-        {
-            ProductCategoryViewModel VM = new ProductCategoryViewModel();
-            var catlist = (from category in context.Categories
-                           select category).ToList();
-            VM.catlist = new SelectList(catlist, "Id", "Name");
-            return View(VM);
-
-        }
-
-        [HttpPost]       
-        public IActionResult ViewallCategory(IFormCollection form)
-        {
-            
-            var selectedvalue = form["selectedCategory"];
-            
-           
-            return RedirectToAction("Index","Product",new { catid = selectedvalue});
-        }
+      
 
     }
 }
