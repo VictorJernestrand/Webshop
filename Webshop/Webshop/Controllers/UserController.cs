@@ -145,7 +145,10 @@ namespace Webshop.Controllers
 
                     // Redirect the user to the login page
                     if (result.Succeeded)
+                    {
+                        TempData["RegisterSuccess"] = "Ditt konto har skapats!";
                         return RedirectToAction(nameof(Login));
+                    }
 
                     // Loop through the errors and customize errormessages
                     foreach (var error in result.Errors)

@@ -2,6 +2,14 @@
 
 @{
     ViewData["Title"] = "Logga In";
+    var newRegistrationSuccessfull = TempData["RegisterSuccess"];
+}
+
+@if (newRegistrationSuccessfull != null)
+{
+    <div class="alert alert-success" role="alert">
+        <strong>Hårdrock!</strong> @newRegistrationSuccessfull.
+    </div>
 }
 
 <h1>Logga In</h1>
