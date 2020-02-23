@@ -1,0 +1,13 @@
+﻿@model List<Category>
+@{
+    ViewData["Title"] = "Kategorier";
+}
+
+    <h4>Sök på den kategori ni vill se produkter ifrån</h4>
+<form id="categoryid" method="post">
+     @Html.DropDownList("ddcategory", Model.Select(m => new SelectListItem() { Text = m.Name, Value = m.Id.ToString() }).ToList(), "Select")
+
+    <button type="submit">Sök</button>
+</form>
+
+

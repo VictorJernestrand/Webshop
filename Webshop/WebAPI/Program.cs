@@ -6,11 +6,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
-using Webshop.Models;
-using Webshop.Context;
 
-namespace Webshop
+namespace WebAPI
 {
     public class Program
     {
@@ -24,6 +21,6 @@ namespace Webshop
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });    
+                });
     }
 }
