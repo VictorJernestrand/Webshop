@@ -112,6 +112,8 @@ namespace Webshop.Context
 
 
         }
+        
+        public DbSet<Webshop.Models.CreateProductModel> CreateProductModel { get; set; }
 
     }
 
