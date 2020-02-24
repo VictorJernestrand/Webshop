@@ -17,12 +17,12 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label">Förnamn</label>
-                <input asp-for="FirstName" class="form-control" />
+                <input asp-for="FirstName" class="form-control" placeholder="Förnamn" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LastName" class="control-label">Efternamn</label>
-                <input asp-for="LastName" class="form-control" />
+                <input asp-for="LastName" class="form-control" placeholder="Efternamn" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -42,7 +42,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="PhoneNumber" class="control-label">Telefon/Mobil</label>
-                <input asp-for="PhoneNumber" class="form-control" placeholder="Telefonnummer" />
+                <input asp-for="PhoneNumber" class="form-control" placeholder="070-123 45 67" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">

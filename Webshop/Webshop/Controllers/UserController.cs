@@ -187,10 +187,18 @@ namespace Webshop.Controllers
                     foreach (var error in result.Errors)
                     {
                         if (error.Code == "DuplicateEmail")
-                        {
                             ModelState.AddModelError("Email", "Epostadressen används redan");
-                            break;
-                        }
+
+                        if (error.Code == "PasswordTooShort" ||
+                            error.Code == "PasswordRequiresNonAlphanumeric" ||
+                            error.Code == "PasswordRequiresLower" ||
+                            error.Code == "PasswordRequiresUpper")
+                            {
+                                ModelState.AddModelError("Password", "Lösenordet måste bestå av minst 6 tecken och innehålla en stor och liten bokstav, en siffra + specialtecken.");
+                            }
+
+                        if (error.Code == "PasswordMismatch")
+                            ModelState.AddModelError("Password", "Lösenorden stämmer inte överrens");
                     }
 
                 }
@@ -205,7 +213,7 @@ namespace Webshop.Controllers
             }
         }
 
-
+        /*
         // POST: User/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -222,7 +230,7 @@ namespace Webshop.Controllers
                 return View();
             }
         }
-
+        */
 
         // Login view
         [Authorize]
@@ -250,8 +258,15 @@ namespace Webshop.Controllers
                     {
                         if (error.Code == "PasswordMismatch")
                         {
-                            ModelState.AddModelError("CurrentPassword", "Nuvarande lösenord är felaktigt!");
-                            break;
+                            ModelState.AddModelError("CurrentPassword", "Felaktigt lösenord");
+                        }
+
+                        if (error.Code == "PasswordTooShort" ||
+                        error.Code == "PasswordRequiresNonAlphanumeric" ||
+                        error.Code == "PasswordRequiresLower" ||
+                        error.Code == "PasswordRequiresUpper")
+                        {
+                            ModelState.AddModelError("NewPassword", "Lösenordet måste bestå av minst 6 tecken och innehålla en stor och liten bokstav, en siffra + specialtecken.");
                         }
                     }
                 }
@@ -292,7 +307,13 @@ namespace Webshop.Controllers
                 else
                 {
                     foreach(var error in result.Errors)
-                        ModelState.AddModelError(error.Code, error.Description);
+                    {
+                        if (error.Code == "DuplicateUserName" || error.Code == "DuplicateEmail")
+                        {
+                            ModelState.AddModelError("Email", "Epostadressen används redan");
+                            break;
+                        }
+                    }
                 }
             }
 
