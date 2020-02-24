@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Webshop.Context;
 
 namespace Webshop.Migrations
 {
     [DbContext(typeof(WebshopContext))]
-    partial class WebshopContextModelSnapshot : ModelSnapshot
+    [Migration("20200221103923_Added_Category_Guitar")]
+    partial class Added_Category_Guitar
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -326,7 +328,7 @@ namespace Webshop.Migrations
                         {
                             Id = 1,
                             BrandId = 2,
-                            CategoryId = 5,
+                            CategoryId = 1,
                             Description = "Black and white",
                             Name = "Stratocaster",
                             Price = 4000m,
@@ -386,7 +388,7 @@ namespace Webshop.Migrations
                         {
                             Id = 7,
                             BrandId = 3,
-                            CategoryId = 1,
+                            CategoryId = 2,
                             Description = "Nice set of drums",
                             Name = "DTX­432K",
                             Price = 5600m,
@@ -416,7 +418,7 @@ namespace Webshop.Migrations
                         {
                             Id = 10,
                             BrandId = 4,
-                            CategoryId = 3,
+                            CategoryId = 4,
                             Description = "Digitalpiano",
                             Name = "B2SP",
                             Price = 2300m,
@@ -426,7 +428,7 @@ namespace Webshop.Migrations
                         {
                             Id = 11,
                             BrandId = 4,
-                            CategoryId = 5,
+                            CategoryId = 3,
                             Description = "Traveling model",
                             Name = "SP-280",
                             Price = 5300m,

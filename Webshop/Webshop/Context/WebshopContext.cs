@@ -22,7 +22,7 @@ namespace Webshop.Context
 
         public WebshopContext()
         {
-            // ...
+            // ....
         }
 
         public WebshopContext(DbContextOptions<WebshopContext> options) : base(options)
@@ -87,21 +87,22 @@ namespace Webshop.Context
                 new Category() { Id = 1,Name = "Drum set" },
                 new Category() { Id = 2, Name = "Bas" },
                 new Category() { Id = 3, Name = "Piano" },
-                new Category() { Id = 4, Name = "Keyboard" }
+                new Category() { Id = 4, Name = "Keyboard" },
+                new Category() { Id = 5, Name = "Guitar" }
             );
 
             builder.Entity<Product>().HasData(
-                new Product() {Id=1,Name= "Stratocaster", Price= 4000, Quantity=4,CategoryId=1,Description= "Black and white", BrandId=2},
+                new Product() {Id=1,Name= "Stratocaster", Price= 4000, Quantity=4,CategoryId=5,Description= "Black and white", BrandId=2},
                 new Product() { Id = 2, Name = "Precision", Price = 3000, Quantity =5, CategoryId =3, Description = "Smooth", BrandId = 2},
                 new Product() { Id = 3, Name = "Vintera", Price = 4000, Quantity =2, CategoryId =3, Description = "Blue bas", BrandId =2},
                 new Product() { Id = 4, Name = "Epiphone", Price = 4000, Quantity =2, CategoryId =3, Description = "Advanced", BrandId =1},
                 new Product() { Id = 5, Name = "Youngster", Price = 1100, Quantity =8, CategoryId =2, Description = "For kids", BrandId =5},
                 new Product() { Id = 6, Name = "MPS-150X", Price = 3200, Quantity =4, CategoryId =2, Description = "For good players", BrandId =5},
-                new Product() { Id = 7, Name = "DTX­432K", Price = 5600, Quantity =2, CategoryId =2, Description = "Nice set of drums", BrandId =3},
+                new Product() { Id = 7, Name = "DTX­432K", Price = 5600, Quantity =2, CategoryId =1, Description = "Nice set of drums", BrandId =3},
                 new Product() { Id = 8, Name = "P116M", Price = 8000, Quantity =1, CategoryId =4, Description = "Black and black", BrandId =3},
                 new Product() { Id = 9, Name = "Calvinova", Price =8900 , Quantity =1, CategoryId =4, Description = "Old model", BrandId =3},
-                new Product() { Id = 10, Name = "B2SP", Price = 2300, Quantity =6, CategoryId =4, Description = "Digitalpiano", BrandId =4},
-                new Product() { Id = 11, Name = "SP-280", Price = 5300, Quantity =3, CategoryId =3, Description = "Traveling model", BrandId =4},
+                new Product() { Id = 10, Name = "B2SP", Price = 2300, Quantity =6, CategoryId =3, Description = "Digitalpiano", BrandId =4},
+                new Product() { Id = 11, Name = "SP-280", Price = 5300, Quantity =3, CategoryId =5, Description = "Traveling model", BrandId =4},
                 new Product() { Id = 12, Name = "P-45", Price =4900 , Quantity =3, CategoryId =4, Description = "Our best keyboard", BrandId =3}
                  
 
@@ -111,6 +112,8 @@ namespace Webshop.Context
 
 
         }
+        
+        public DbSet<Webshop.Models.CreateProductModel> CreateProductModel { get; set; }
 
     }
 

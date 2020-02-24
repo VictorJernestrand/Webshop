@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Webshop.Context;
 using Webshop.Models;
@@ -15,13 +16,21 @@ namespace Webshop.Controllers
         {
             this.context = context;
         }
-        //[BindProperty]
-        //public Category category { get; set; }
+        
         public IActionResult Index()
         {
+            var catlist = (from category in context.Categories
+                           select category).ToList();
 
-        
-        return View(context.Categories);
-    }
+            return View(catlist);
+        }
+        [HttpPost]
+        public IActionResult Index(IFormCollection form)
+        {
+            var selectedvalue = form["ddcategory"];
+
+            return RedirectToAction("Index", "Product", new { catid = selectedvalue });
+            
+        }
     }
 }

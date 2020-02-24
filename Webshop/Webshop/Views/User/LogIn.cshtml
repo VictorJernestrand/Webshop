@@ -2,6 +2,14 @@
 
 @{
     ViewData["Title"] = "Logga In";
+    var newRegistrationSuccessfull = TempData["RegisterSuccess"];
+}
+
+@if (newRegistrationSuccessfull != null)
+{
+    <div class="alert alert-success" role="alert">
+        <strong>Hårdrock!</strong> @newRegistrationSuccessfull.
+    </div>
 }
 
 @if (!String.IsNullOrEmpty(@ViewBag.LoginResult))
@@ -11,9 +19,8 @@
     </div>
 }
 
-<div class="card text-white bg-dark mb-3 mx-auto" style="margin-top: 60px; max-width: 400px; background-color: rgba(0,0,0, 0.5) !important">
-    <div class="card-header">Logga In</div>
-    <div class="card-body">
+<div class="bg-text2">
+    <div class="col-md-4 mx-auto">
         <form asp-action="Login">
             <div class="form-group">
                 <label asp-for="UserEmail" class="control-label">E-post</label>
