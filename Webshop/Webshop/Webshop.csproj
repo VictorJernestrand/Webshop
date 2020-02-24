@@ -1,8 +1,39 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20200213173950_InitialCreate.cs" />
+    <Compile Remove="Migrations\20200213173950_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20200213174206_InitialCreate.cs" />
+    <Compile Remove="Migrations\20200213174206_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20200214183013_InitialCreate.cs" />
+    <Compile Remove="Migrations\20200214183013_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20200214185053_InitialCreate.cs" />
+    <Compile Remove="Migrations\20200214185053_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20200214185606_InitialCreate.cs" />
+    <Compile Remove="Migrations\20200214185606_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20200216174406_InitialCreate.cs" />
+    <Compile Remove="Migrations\20200216174406_InitialCreate.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.1" />
+    <Compile Remove="Migrations\20200217084017_Product_Data.cs" />
+    <Compile Remove="Migrations\20200217084017_Product_Data.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
+  </ItemGroup>
 
 
 

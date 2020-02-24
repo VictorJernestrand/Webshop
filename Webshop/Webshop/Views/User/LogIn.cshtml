@@ -1,0 +1,50 @@
+﻿@model LoginModel
+
+@{
+    ViewData["Title"] = "Logga In";
+    var newRegistrationSuccessfull = TempData["RegisterSuccess"];
+}
+
+@if (newRegistrationSuccessfull != null)
+{
+    <div class="alert alert-success" role="alert">
+        <strong>Hårdrock!</strong> @newRegistrationSuccessfull.
+    </div>
+}
+
+<h1>Logga In</h1>
+@if (!String.IsNullOrEmpty(@ViewBag.LoginResult))
+{
+    <div class="alert alert-warning" role="alert">
+        @ViewBag.LoginResult
+    </div>
+}
+
+<div class="bg-text2">
+    <div class="col-md-4 mx-auto">
+        <form asp-action="Login">
+            <div class="form-group">
+                <label asp-for="UserEmail" class="control-label">E-post</label>
+                <input asp-for="UserEmail" type="email" class="form-control" placeholder="exempel@epostadress.se" />
+                <span asp-validation-for="UserEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserPassword" class="control-label">Lösenord</label>
+                <input asp-for="UserPassword" type="password" class="form-control" placeholder="ditt lösenord" />
+                <span asp-validation-for="UserPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label asp-for="RememberUser">
+                        <input asp-for="RememberUser" type="checkbox" data-val="true" data-val-required="The Remember me? field is required." value="true" />
+                        Kom ihåg mig?
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Logga in som fan" class="btn btn-success" />
+            </div>
+            <p>Inte medlem? Komsi, komsi <a asp-action="Register">Bli medlem nu!</a></p>
+        </form>
+    </div>
+</div>
