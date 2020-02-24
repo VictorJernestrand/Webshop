@@ -196,9 +196,6 @@ namespace Webshop.Controllers
                             {
                                 ModelState.AddModelError("Password", "Lösenordet måste bestå av minst 6 tecken och innehålla en stor och liten bokstav, en siffra + specialtecken.");
                             }
-
-                        if (error.Code == "PasswordMismatch")
-                            ModelState.AddModelError("Password", "Lösenorden stämmer inte överrens");
                     }
 
                 }
@@ -212,25 +209,6 @@ namespace Webshop.Controllers
                 return View();
             }
         }
-
-        /*
-        // POST: User/Edit
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-                int rowsEffected = await db.UpdateAsync(User);
-                return RedirectToAction(nameof(Edit));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-        */
 
         // Login view
         [Authorize]
@@ -258,7 +236,7 @@ namespace Webshop.Controllers
                     {
                         if (error.Code == "PasswordMismatch")
                         {
-                            ModelState.AddModelError("CurrentPassword", "Felaktigt lösenord");
+                            ModelState.AddModelError("CurrentPassword", "Lösenordet stämmer inte med ditt nuvarande");
                         }
 
                         if (error.Code == "PasswordTooShort" ||
