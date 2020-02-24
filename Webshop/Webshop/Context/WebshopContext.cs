@@ -22,7 +22,7 @@ namespace Webshop.Context
 
         public WebshopContext()
         {
-            // ...
+            // ....
         }
 
         public WebshopContext(DbContextOptions<WebshopContext> options) : base(options)
