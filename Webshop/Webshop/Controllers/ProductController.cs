@@ -109,7 +109,7 @@ namespace Webshop.Controllers
         }
         public IActionResult DeleteProduct(int Id)
         {
-            var query = context.Products.FirstOrDefault(p => p.Id == Id);
+            var query = context.Products.Include("Brand").Include("Category").FirstOrDefault(p => p.Id == Id);
             if (query == null)
                 return NotFound();
             return View(query);
@@ -117,13 +117,13 @@ namespace Webshop.Controllers
         }
         public IActionResult ProductDetail(int Id)
         {
-            var query = context.Products.FirstOrDefault(p => p.Id == Id);
+
+            var query = context.Products.Include("Brand").Include("Category").FirstOrDefault(p => p.Id == Id);
             if (query == null)
                 return NotFound();
             return View(query);
 
         }
-
 
     }
 }
