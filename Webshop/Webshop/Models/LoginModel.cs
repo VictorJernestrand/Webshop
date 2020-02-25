@@ -10,6 +10,7 @@ namespace Webshop.Models
     {
         [Required(ErrorMessage = "Ange e-postadress")]
         [EmailAddress]
+        [RegularExpression(@"^[a-z\d._%+-]+@[a-z\d.-]+\.[a-z]{2,}$", ErrorMessage = "E-postadressen är ogiltig")]
         public string UserEmail { get; set; }
 
         [Required(ErrorMessage = "Ange lösenord")]

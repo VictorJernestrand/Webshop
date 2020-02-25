@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Webshop.Context;
 using Webshop.Models;
 
@@ -25,13 +26,14 @@ namespace Webshop.Controllers
         //This mtd display the Products based on Passed in CategoryId
         public IActionResult Index(int catid)
         {
-           
-                var query = (from product in context.Products
-                             where product.CategoryId==catid
-                             select product).ToList();
-                return View(query);           
-                
+           List<Product> categoryList = context.Products.Include("Brand").Include("Category").ToList();
+
+           List<CategoryViewModel> categoryViewList = categoryList.Select(x => new CategoryViewModel(x))
+                                   .Where(x => x.CategoryId == catid).ToList();
+
+            return View(categoryViewList);                
         }
+
         [Authorize(Roles = "Admin")]
         public IActionResult CreateProduct()
         {
