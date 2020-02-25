@@ -26,36 +26,5 @@ namespace Webshop.Controllers
         {
             return View();
         }
-
-        [Authorize(Roles = "Admin")]
-        [Produces("Application/json")]
-        public object AdminTest()
-        {
-            var test = new { Name = "test", Nr = 3 };
-            return test;
-        }
-
-        /*
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task CreateRole([Bind]UserRoleModel model)
-        {
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var result2 = await RoleMgr.CreateAsync(new AppRole("Admin"));
-                    //var user = await UserMgr.
-                    var result = UserMgr.Users.Where(x => x.Id == 1).FirstOrDefault();
-                    var test = await UserMgr.AddToRoleAsync(result, "Admin"); 
-                }
-                catch
-                {
-                    //...
-                }
-            }
-        }*/
-
     }
 }

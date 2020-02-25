@@ -10,14 +10,16 @@ namespace Webshop.Models
     {
         [Required(ErrorMessage = "Förnamn saknas")]
         [StringLength(30)]
+        [RegularExpression(@"^\p{L}+[ \s]?\p{L}+$", ErrorMessage = "Förnamnet innehåller ogiltiga tecken")]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Efternamn saknas")]
         [StringLength(30)]
+        [RegularExpression(@"^\p{L}+[ \s]?\p{L}+$", ErrorMessage = "Efternamnet innehåller ogiltiga tecken")]
         public string LastName { get; set; }
 
-        [Required(ErrorMessage = "Felaktig e-postadress")]
-        [EmailAddress]
+        [Required(ErrorMessage = "E-postadress saknas")]
+        [RegularExpression(@"^[a-z\d._%+-]+@[a-z\d.-]+\.[a-z]{2,}$", ErrorMessage = "E-postadressen är ogiltig")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Välj ett lösenord")]
