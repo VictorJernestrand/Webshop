@@ -45,6 +45,7 @@ namespace Webshop.Controllers
         {
             //User = await UserMgr.GetUserAsync(HttpContext.User);
             //ViewData["UserName"] = User.FirstName;// HttpContext.Session.GetString(SessionCookies.USER_NAME);
+            //var result = context.Categories.ToList();
             return View(User);
         }
 
