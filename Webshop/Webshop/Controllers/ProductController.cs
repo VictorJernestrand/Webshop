@@ -113,7 +113,7 @@ namespace Webshop.Controllers
                 return Content("its Inside catch block, some error in adding product");
             }
         }
-
+        
         public IActionResult AllProducts()
         {
             var query = context.Products.ToList();
