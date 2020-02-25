@@ -80,6 +80,15 @@ namespace Webshop.Context
             return await CommitChanges();
         }
 
+        public List<Category> GetAllCategoriesAsync()
+        {
+            // TODO: Investigate this async!!!!!!!!
+            //var result = context.Categories.Where(x => x.Id == 1).FirstOrDefault();
+            var result = context.Categories.ToList();
+            return result;
+
+        }
+
         public async Task<int> CommitChanges()
         { 
             return await context.SaveChangesAsync();
