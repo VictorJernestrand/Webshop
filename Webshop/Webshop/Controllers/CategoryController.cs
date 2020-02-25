@@ -22,7 +22,7 @@ namespace Webshop.Controllers
             var catlist = (from category in context.Categories
                            select category).ToList();
             // var catlist = context.Categories.Select(x => x).ToList();
-
+ 
             return View(catlist);
         }
         [HttpPost]

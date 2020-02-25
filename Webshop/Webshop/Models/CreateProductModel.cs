@@ -11,6 +11,7 @@ namespace Webshop.Models
        public int Id { get; set; }
 
         [Required(ErrorMessage = "Ange Produkt Namn")]
+        
         public string Name { get; set; }
         [Required(ErrorMessage = "Ange Produkt Pris")]
         public decimal? Price { get; set; }
@@ -25,6 +26,6 @@ namespace Webshop.Models
 
         public string Description { get; set; }
         public string Photo { get; set; }
-      // public List<Category> categories { get; set; }
+      
     }
 }

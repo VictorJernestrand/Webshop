@@ -81,7 +81,7 @@ namespace Webshop.Controllers
                 }               
 
                else
-                {                    
+                {                   
                         StringBuilder result = new StringBuilder();
 
                         foreach (var item in ModelState)
@@ -98,9 +98,9 @@ namespace Webshop.Controllers
                         TempData["Errors"] = result.ToString();
                     return View(model);
                     
-                }                         
+                }
 
-                
+                TempData["Succesmsg"] = "Great!! Product is added to the database"; 
                 return RedirectToAction("AllProducts", "Product");
 
 
