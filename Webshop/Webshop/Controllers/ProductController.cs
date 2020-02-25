@@ -85,7 +85,43 @@ namespace Webshop.Controllers
             var query = context.Products.ToList();
             return View(query);
         }
+        [HttpPost, ActionName("DeleteProduct")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteProductConfirmed(int? Id)
+        {
+            Product product = context.Products.FirstOrDefault(p => p.Id == Id);
 
-      
+            context.Products.Remove(product);
+            context.SaveChanges();
+
+            if (product != null)
+            {
+                TempData["Deleted"] = $"{product.Name} är nu borttagen!";
+                return RedirectToAction("AllProducts", "Product");
+            }
+            if (product == null)
+            {
+                return Content("Det sket sig.");
+            }
+            return View();
+        }
+        public IActionResult DeleteProduct(int Id)
+        {
+            var query = context.Products.FirstOrDefault(p => p.Id == Id);
+            if (query == null)
+                return NotFound();
+            return View(query);
+
+        }
+        public IActionResult ProductDetail(int Id)
+        {
+            var query = context.Products.FirstOrDefault(p => p.Id == Id);
+            if (query == null)
+                return NotFound();
+            return View(query);
+
+        }
+
+
     }
 }
