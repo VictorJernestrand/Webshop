@@ -1,13 +1,23 @@
-﻿@model List<Product>
+﻿@model IEnumerable<Webshop.Models.CategoryViewModel>
 @{
     ViewData["Title"] = "Produkter";
+    int a = 0;
 }
-    
-<h1></h1>
+
+@foreach (var category in Model)
+{   
+    if (a == 0)
+    {
+     <h1>@category.CategoryName</h1>
+    }
+    a++;
+}
+
 <table class="bg-text">
 
     <thead>
-        <tr>
+        <tr>          
+            <th><h3>Märke</h3></th>
             <th><h3>Produkt namn</h3></th>
             <th><h3>Pris</h3></th>
             <th><h3>Lagersaldo</h3></th>
@@ -15,11 +25,12 @@
         </tr>
         @foreach (var product in Model)
         {
-            <tr>
+            <tr>               
+                <th><h5>@product.BrandName</h5></th>
                 <td><h5>@product.Name</h5></td>
                 <td><h5>@product.Price</h5></td>
                 <td><h5>@product.Quantity</h5></td>
-                <td><h5>@product.Description</h5></td>                  
+                <td><h5>@product.Description</h5></td>
             </tr>
         }
     </thead>
