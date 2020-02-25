@@ -98,7 +98,7 @@ body {
     transform: translate(-50%, -50%);
     z-index: 2;
     width: 50%;
-    padding: 15px;
+    padding: 1px;
     text-align: center;
 }
 
@@ -109,5 +109,5 @@ body {
     text-align: center;
     white-space: nowrap;
     line-height: 60px; /* Vertically center the text there */
-    
+    background-color: white;
 }
