@@ -8,12 +8,12 @@ namespace Webshop.Models
 {
     public class CreateProductModel
     {
-        public int Id { get; set; }
+       public int Id { get; set; }
 
         [Required(ErrorMessage = "Ange Produkt Namn")]
         public string Name { get; set; }
         [Required(ErrorMessage = "Ange Produkt Pris")]
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; }
 
         [Required(ErrorMessage = "Ange Antal")]
         public int Quantity { get; set; }
@@ -25,6 +25,6 @@ namespace Webshop.Models
 
         public string Description { get; set; }
         public string Photo { get; set; }
-      
+      // public List<Category> categories { get; set; }
     }
 }

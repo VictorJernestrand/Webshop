@@ -8,7 +8,10 @@
 <h1>AllaProdukter</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+   
+    <a href='@Url.Action("CreateProduct", "Product")'>
+        <input type='button' value='Skapa Produkt' />
+    </a>
 </p>
 <table class="table">
     <thead>
@@ -56,7 +59,7 @@
                 @Html.DisplayFor(modelItem => item.Photo)
             </td>
             <td>
-                                                            @*why category name is not displaying???*@
+                                                          
                 @Html.DisplayFor(modelItem => item.CategoryId)
             </td>
             <td>
