@@ -106,14 +106,14 @@ namespace Webshop.Controllers
                     
                 }
 
-                TempData["Succesmsg"] = "Great!! Product is added to the database"; 
+                TempData["Succesmsg"] = $"Great!! {model.Name} uppdateras i databasen"; 
                 return RedirectToAction("AllProducts", "Product");
 
 
             }
             catch
             {
-                TempData["Database error"] = "Sorry!! Something went wrong in adding to Data to database";
+                TempData["Database error"] = "Sorry!! Något gick fel när du lägger Data till databasen";
                 return RedirectToAction("CreateProduct", "Product");
                // return Content("its Inside catch block, some error in adding product");
             }
