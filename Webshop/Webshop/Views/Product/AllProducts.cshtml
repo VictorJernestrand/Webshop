@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Webshop.Models.Product>
+﻿@model IEnumerable<Webshop.Models.AllProductsViewModel>
 
 
 @{
@@ -20,16 +20,26 @@
 }
 
 @*@if (TempData["Sucessmsg"] != null)
-    {
+<<<<<<< HEAD
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["Sucessmsg"]
+    </div>
+}*@
+
+   
+   <h1>Alla Produkter</h1>
+
+    @*{
         <div class="alert alert-success" role="alert">
             @TempData["Sucessmsg"]
         </div>
-    }*@
+    }*@*
 
 <h1>Alla Produkter</h1>
 
 
-<table class="text">
+<table class="bg-allProducts">
     <thead>
         <tr>
             <th>
@@ -76,10 +86,10 @@
                     @Html.DisplayFor(modelItem => item.Photo)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CategoryId)
+                    @Html.DisplayFor(modelItem => item.CategoryName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.BrandId)
+                    @Html.DisplayFor(modelItem => item.BrandName)
                 </td>
 
                 @if (User.IsInRole("Admin"))
