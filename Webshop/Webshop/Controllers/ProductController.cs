@@ -121,8 +121,15 @@ namespace Webshop.Controllers
         
         public IActionResult AllProducts()
         {
-            var query = context.Products.ToList();
-            return View(query);
+            //var query = context.Products.ToList();
+            //return View(query);
+
+            ///////////////////////////////////
+            var products = context.Products.Include("Brand").Include("Category").ToList();
+
+            List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).ToList();
+
+            return View(allProducts);
         }
         [HttpPost, ActionName("DeleteProduct")]
         [Authorize(Roles = "Admin")]
