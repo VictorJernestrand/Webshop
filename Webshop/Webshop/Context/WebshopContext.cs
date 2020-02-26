@@ -106,14 +106,13 @@ namespace Webshop.Context
                 new Product() { Id = 12, Name = "P-45", Price = 4900, Quantity = 3, CategoryId = 4, Description = "Our best keyboard", BrandId = 3 }
 
 
-                );
-
+                ); 
 
 
 
         }
         
-        public DbSet<Webshop.Models.CreateProductModel> CreateProductModel { get; set; }
+       
 
     }
 
