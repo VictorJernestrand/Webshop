@@ -75,6 +75,7 @@ namespace Webshop.Context
                 entity.Property(x => x.Name).IsRequired().HasMaxLength(30);
             });
 
+
             builder.Entity<Brand>().HasData(
                 new Brand() { Id = 1, Name = "Gibson" },
                 new Brand() { Id = 2, Name = "Fender" },
@@ -111,9 +112,10 @@ namespace Webshop.Context
 
 
 
+
         }
         
-        public DbSet<Webshop.Models.CreateProductModel> CreateProductModel { get; set; }
+        
 
     }
 
