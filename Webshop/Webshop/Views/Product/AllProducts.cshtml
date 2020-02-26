@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Webshop.Models.Product>
+﻿@model IEnumerable<Webshop.Models.AllProductsViewModel>
 
 
 @{
@@ -25,8 +25,9 @@
         @TempData["Sucessmsg"]
     </div>
 }*@
-
-    <h1>AllaProdukter</h1>
+<body>
+   
+   <h1>Alla Produkter</h1>
 
     <p>
 
@@ -34,7 +35,7 @@
             <input type='button' value='Skapa Produkt' />
         </a>
     </p>
-    <table class="text">
+    <table class="bg-allproducts">
         <thead>
             <tr>
                 <th>
@@ -81,10 +82,10 @@
                         @Html.DisplayFor(modelItem => item.Photo)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.CategoryId)
+                        @Html.DisplayFor(modelItem => item.CategoryName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.BrandId)
+                        @Html.DisplayFor(modelItem => item.BrandName)
                     </td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
@@ -95,4 +96,9 @@
             }
         </tbody>
     </table>
+</body>
+
+<footer>
+
+</footer>
 
