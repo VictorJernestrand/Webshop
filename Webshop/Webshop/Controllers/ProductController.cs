@@ -66,14 +66,8 @@ namespace Webshop.Controllers
             try
             {
                 if (ModelState.IsValid)
-                {                    
-                    
-
-                    //var folderPath = "Images / " + newProduct.CategoryId;
-                    //if (!Directory.Exists(folderPath))
-                    //{
-                    //    Directory.CreateDirectory(folderPath);
-                    //}
+                {             
+                                 
 
                                        
 
