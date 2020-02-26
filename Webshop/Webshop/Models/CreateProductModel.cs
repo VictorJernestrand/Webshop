@@ -28,6 +28,7 @@ namespace Webshop.Models
 
         public string Description { get; set; }
         public string Photo { get; set; }
-      
+        public List<Category> categoryVM { get; set; } = new List<Category>();
+        public List<Brand> brandVM { get; set; } = new List<Brand>();
     }
 }

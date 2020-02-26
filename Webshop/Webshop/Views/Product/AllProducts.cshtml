@@ -15,18 +15,25 @@
                 @TempData["Deleted"]
             </span>
         </font>
-</p>
+    </p>
 
 }
 
-@*@if (TempData["Sucessmsg"] != null)
-{
-    <div class="alert alert-success" role="alert">
-        @TempData["Sucessmsg"]
-    </div>
-}*@
 
-    <h1>AllaProdukter</h1>
+@if ( TempData["Succesmsg"] != null)
+{
+
+    <p>
+        <font size="6">
+            <span style="color: red;">
+                @TempData["Succesmsg"]
+            </span>
+        </font>
+    </p>
+
+}
+
+<h1>AllaProdukter</h1>
 
     <p>
 

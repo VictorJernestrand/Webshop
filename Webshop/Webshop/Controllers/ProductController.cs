@@ -12,24 +12,31 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Webshop.Context;
 using Webshop.Models;
+using Microsoft.AspNetCore.Hosting;
+
 
 namespace Webshop.Controllers
 {
     public class ProductController : Controller
     {
+
         private readonly WebshopContext context;
+        public CreateProductModel createProductModel = new CreateProductModel();
 
-        // Create product from model CreateProductModel
-        public CreateProductModel createProductModel { get; set; }
-
+        private IWebHostEnvironment environment;
 
         private DatabaseCRUD databaseCRUD;
 
-        public ProductController(WebshopContext context)
+
+
+        public ProductController(WebshopContext context, IWebHostEnvironment env)
         {
             this.context = context;
             databaseCRUD = new DatabaseCRUD(context);
+            this.environment = env;
         }
+
+
         //This mtd display the Products based on Passed in CategoryId
         public IActionResult Index(int catid)
         {
@@ -44,22 +51,20 @@ namespace Webshop.Controllers
         [Authorize(Roles = "Admin")]
         public  IActionResult CreateProduct()
         {
-            
-            //createProductModel = databaseCRUD.GetAllCategoriesAsync();
-           //  createProductModel.categories = databaseCRUD.GetAllCategoriesAsync();
-            // var result = context.Categories.ToList();
+            createProductModel.categoryVM = context.Categories.ToList();
+            createProductModel.brandVM = context.Brands.ToList();
 
-             return View(createProductModel);
-           
+            return View(createProductModel);           
         }
+
        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateProduct([Bind]CreateProductModel model)
         {
             try
             {
-                
                 if (ModelState.IsValid)
                 {                    
                     Product newProduct = new Product()
@@ -73,17 +78,14 @@ namespace Webshop.Controllers
                         Photo=model.Photo
                     };
 
-                    //var folderPath = "Images / " + newProduct.CategoryId;
-                    //if (!Directory.Exists(folderPath))
-                    //{
-                    //    Directory.CreateDirectory(folderPath);
-                    //}
+                    
+
 
                     await databaseCRUD.InsertAsync<Product>(newProduct);
                 }               
 
                else
-                {                   
+                {                 
                         StringBuilder result = new StringBuilder();
 
                         foreach (var item in ModelState)
@@ -97,6 +99,8 @@ namespace Webshop.Controllers
                             }
                         }
 
+                    model.categoryVM = context.Categories.ToList();
+                    model.brandVM = context.Brands.ToList();
                         TempData["Errors"] = result.ToString();
                     return View(model);
                     
@@ -109,8 +113,9 @@ namespace Webshop.Controllers
             }
             catch
             {
-                
-                return Content("its Inside catch block, some error in adding product");
+                TempData["Database error"] = "Sorry!! Something went wrong in adding to Data to database";
+                return RedirectToAction("CreateProduct", "Product");
+               // return Content("its Inside catch block, some error in adding product");
             }
         }
         
