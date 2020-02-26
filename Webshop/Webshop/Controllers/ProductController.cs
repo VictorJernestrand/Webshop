@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -17,11 +19,16 @@ namespace Webshop.Controllers
     {
         private readonly WebshopContext context;
 
-        //public CreateProductModel createProductModel { get; set; }
-        public DatabaseCRUD databaseCRUD;
+        // Create product from model CreateProductModel
+        public CreateProductModel createProductModel { get; set; }
+
+
+        private DatabaseCRUD databaseCRUD;
+
         public ProductController(WebshopContext context)
         {
             this.context = context;
+            databaseCRUD = new DatabaseCRUD(context);
         }
         //This mtd display the Products based on Passed in CategoryId
         public IActionResult Index(int catid)
@@ -35,10 +42,15 @@ namespace Webshop.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public IActionResult CreateProduct()
+        public  IActionResult CreateProduct()
         {
-            CreateProductModel createProductModel = new CreateProductModel();
-            return View(createProductModel);
+            
+            //createProductModel = databaseCRUD.GetAllCategoriesAsync();
+           //  createProductModel.categories = databaseCRUD.GetAllCategoriesAsync();
+            // var result = context.Categories.ToList();
+
+             return View(createProductModel);
+           
         }
        
         [HttpPost]
@@ -49,28 +61,48 @@ namespace Webshop.Controllers
             {
                 
                 if (ModelState.IsValid)
-                {
-                    
+                {                    
                     Product newProduct = new Product()
                     {
                         Name = model.Name, 
-                        Price = model.Price,
+                        Price = Convert.ToDecimal(model.Price),
                         Quantity = model.Quantity,
                         CategoryId = model.CategoryId,
                         BrandId = model.BrandId,
                         Description=model.Description,
                         Photo=model.Photo
                     };
-                //    DatabaseCRUD databaseCRUD = new DatabaseCRUD(context.Products);
-                    
-                 // await databaseCRUD.InsertAsync<Product>(newProduct);
-                  context.Products.Add(newProduct);
-                    context.SaveChanges();
+
+                    //var folderPath = "Images / " + newProduct.CategoryId;
+                    //if (!Directory.Exists(folderPath))
+                    //{
+                    //    Directory.CreateDirectory(folderPath);
+                    //}
+
+                    await databaseCRUD.InsertAsync<Product>(newProduct);
+                }               
+
+               else
+                {                   
+                        StringBuilder result = new StringBuilder();
+
+                        foreach (var item in ModelState)
+                        {
+                            string key = item.Key;
+                            var errors = item.Value.Errors;
+
+                            foreach (var error in errors)
+                            {
+                                result.Append(key + " " + error.ErrorMessage);
+                            }
+                        }
+
+                        TempData["Errors"] = result.ToString();
+                    return View(model);
                     
                 }
-                //this can be used to display summerize the error
-                //return View(model);
-                // return Content("Successfully added");
+
+                TempData["Succesmsg"] = "Great!! Product is added to the database"; 
                 return RedirectToAction("AllProducts", "Product");
 
 
@@ -81,7 +113,7 @@ namespace Webshop.Controllers
                 return Content("its Inside catch block, some error in adding product");
             }
         }
-
+        
         public IActionResult AllProducts()
         {
             var query = context.Products.ToList();
@@ -125,5 +157,8 @@ namespace Webshop.Controllers
 
         }
 
+        
+
+      
     }
 }
