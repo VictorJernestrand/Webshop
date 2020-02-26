@@ -19,11 +19,11 @@
 
 }
 
-<h4>Skapa Produkt</h4>
+<h1>Skapa Produkt</h1>
 <hr />
 <div class="row">
 
-    <div class="col-md-4">
+    <div class="bg-createProduct">
         @if (User.Identity.IsAuthenticated)
         {
             <form asp-action="CreateProduct" method="post" enctype="multipart/form-data">

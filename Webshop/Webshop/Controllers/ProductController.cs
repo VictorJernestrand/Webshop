@@ -162,8 +162,15 @@ namespace Webshop.Controllers
         
         public IActionResult AllProducts()
         {
-            var query = context.Products.ToList();
-            return View(query);
+            //var query = context.Products.ToList();
+            //return View(query);
+
+            ///////////////////////////////////
+            var products = context.Products.Include("Brand").Include("Category").ToList();
+
+            List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).ToList();
+
+            return View(allProducts);
         }
         [HttpPost, ActionName("DeleteProduct")]
         [Authorize(Roles = "Admin")]
@@ -185,6 +192,7 @@ namespace Webshop.Controllers
             }
             return View();
         }
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteProduct(int Id)
         {
             var query = context.Products.Include("Brand").Include("Category").FirstOrDefault(p => p.Id == Id);
