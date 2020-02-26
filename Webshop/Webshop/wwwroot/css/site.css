@@ -103,7 +103,7 @@ body {
 }
 
 
-.bg-allproducts {
+.bg-allProducts {
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0, 0.7); /* Black w/opacity/see-through */
     color: white;
@@ -114,7 +114,32 @@ body {
     padding: 10px;
 }
 
-.footer {
+.bg-createProduct {
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0, 0.7); /* Black w/opacity/see-through */
+    color: white;
+    font-weight: bold;
+    border: 3px solid #f1f1f1;
+    text-align: center;
+    width: 30%;
+    padding: 10px;
+}
+
+.bg-deletetOrDetailsProduct {
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0, 0.7); /* Black w/opacity/see-through */
+    color: white;
+   
+    border: 3px solid #f1f1f1;
+    text-align: center;
+    width: 30%;
+    padding-top: 2px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+    .footer {
     position: absolute;
     bottom: 0px;
     width: 100%;
