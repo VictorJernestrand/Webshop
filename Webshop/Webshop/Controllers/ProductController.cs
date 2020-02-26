@@ -151,6 +151,7 @@ namespace Webshop.Controllers
             }
             return View();
         }
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteProduct(int Id)
         {
             var query = context.Products.Include("Brand").Include("Category").FirstOrDefault(p => p.Id == Id);

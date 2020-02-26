@@ -15,90 +15,107 @@
                 @TempData["Deleted"]
             </span>
         </font>
-</p>
+    </p>
 
 }
 
 @*@if (TempData["Sucessmsg"] != null)
+<<<<<<< HEAD
 {
     <div class="alert alert-success" role="alert">
         @TempData["Sucessmsg"]
     </div>
 }*@
-<body>
+
    
    <h1>Alla Produkter</h1>
 
+    @*{
+        <div class="alert alert-success" role="alert">
+            @TempData["Sucessmsg"]
+        </div>
+    }*@*
+
+<h1>Alla Produkter</h1>
+
+
+<table class="bg-allProducts">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Photo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Brand)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Photo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CategoryName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BrandName)
+                </td>
+
+                @if (User.IsInRole("Admin"))
+                {
+            <td>
+                <a class="btn btn-lg" style="color:white;" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id"><i class="fa fa-search-plus"></i></a>
+                <a class="btn btn-lg" style="color:blue" asp-action="Edit" asp-route-id="@item.Id"><i class="fa fa-edit"></i></a>
+                <a class="btn btn-lg" style="color:red;" asp-controller="Product" asp-action="DeleteProduct" asp-route-id="@item.Id"><i class="fa fa-trash"></i></a>
+
+            </td>
+
+                }
+
+            </tr>
+        }
+    </tbody>
+
+</table>
+@if (User.IsInRole("Admin"))
+{
+    <p></p>
     <p>
 
         <a href='@Url.Action("CreateProduct", "Product")'>
-            <input type='button' value='Skapa Produkt' />
+            <input type='button' value='Lägg till Ny Produkt' />
         </a>
     </p>
-    <table class="bg-allProducts">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Price)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Quantity)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Description)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Photo)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Category)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Brand)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Price)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Quantity)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Photo)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CategoryName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.BrandName)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id">Details</a> |
-                        <a asp-controller="Product" asp-action="DeleteProduct" asp-route-id="@item.Id">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</body>
-
-<footer>
-
-</footer>
+}
 
