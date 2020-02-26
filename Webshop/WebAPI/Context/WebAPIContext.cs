@@ -23,7 +23,9 @@ namespace WebAPI.Context
             // ...
         }
 
-        public DbSet<Products> Products { get; set; }
+        public DbSet<ProductModel> Products { get; set; }
+
+        public DbSet<CategoryModel> Categories { get; set; }
 
     }
 }

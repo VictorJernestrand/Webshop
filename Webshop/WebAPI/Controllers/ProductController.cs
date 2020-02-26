@@ -11,24 +11,24 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class ProductController : ControllerBase
     {
         private readonly WebAPIContext _context;
 
-        public ProductsController(WebAPIContext context)
+        public ProductController(WebAPIContext context)
         {
             this._context = context;
         }
 
         [HttpGet("All")]
-        public IEnumerable<Products> Get()
+        public IEnumerable<ProductModel> Get()
         {
             var products = _context.Products.OrderBy(x => x.Price);
             return products;
         }
 
         [HttpGet]
-        public Products Get(int id)
+        public ProductModel Get(int id)
         {
             var product = _context.Products.Where(x => x.Id == id).FirstOrDefault();
             return product;
