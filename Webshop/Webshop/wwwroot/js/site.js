@@ -4,7 +4,7 @@
 // Write your JavaScript code.
 
 
-/*
+
 function GetCategories() {
 
     var categoryElement = document.getElementById("CategoryDropdown");
@@ -28,4 +28,4 @@ function GetCategories() {
 
 $(document).ready(function () {
     GetCategories();
-})*/
+})

@@ -60,10 +60,5 @@ namespace Webshop.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
        
-        public IActionResult CategoryMenu()
-        {
-            var result = context.Categories.ToList();
-            return PartialView("_MyTestMenuPartial", result);
-        }
     }
 }
