@@ -54,6 +54,9 @@ namespace Webshop
                 options.SlidingExpiration = true;
             });
 
+            // Needed for IHttpClientFactory to work and accessing our WebAPI
+            services.AddHttpClient();
+
             services.AddMvcCore().AddAuthorization(); // Note - this is on the IMvcBuilder, not the service collection
 
             services.AddSession(); // Enable session cookies
@@ -81,7 +84,6 @@ namespace Webshop
             app.UseStaticFiles();
 
             app.UseRouting();
-
 
             app.UseSession();           // Enable session cookies. Must be added BEFORE .UseEndpoints!!!
             app.UseCookiePolicy();
