@@ -4,7 +4,7 @@
     ViewData["Title"] = "EditProduct";
 }
 
-<h1>EditProduct</h1>
+    <h1>Redigera Produkten</h1>
 
 @if (TempData["Database error"] != null)
 {
@@ -74,14 +74,14 @@
                 <span asp-validation-for="Photo" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit"  value="Save" class="btn btn-primary" />
+                <input type="submit"  value="Spara" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="AllProducts">Tillbaka till alla produkter</a>
+    <a asp-action="AllProducts" class="btn btn-info">Tillbaka till alla produkter</a>
 </div>
 
 @section Scripts {

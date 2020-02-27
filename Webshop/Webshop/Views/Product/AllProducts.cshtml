@@ -96,8 +96,8 @@
                 @if (User.IsInRole("Admin"))
                 {
                     <td>
-                        <a class="btn btn-lg" style="color:white;" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id"><i class="fa fa-search-plus"></i></a>
-                        <a class="btn btn-lg" style="color:blue" asp-action="EditProduct" asp-route-id="@item.Id"><i class="fa fa-edit"></i></a>
+                        <a class="btn btn-lg" style="color:violet;" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id"><i class="fa fa-search-plus"></i></a>
+                        <a class="btn btn-lg" style="color:greenyellow" asp-action="EditProduct" asp-route-id="@item.Id"><i class="fa fa-edit"></i></a>
                         <a class="btn btn-lg" style="color:red;" asp-controller="Product" asp-action="DeleteProduct" asp-route-id="@item.Id"><i class="fa fa-trash"></i></a>
 
                     </td>
@@ -106,7 +106,7 @@
             @if (!User.IsInRole("Admin"))
             {
         <td>
-            <a class="btn btn-lg" style="color:white;" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id"><i class="fa fa-search-plus"></i></a>
+            <a class="btn btn-lg" style="color:violet;" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id"><i class="fa fa-search-plus"></i></a>
         </td>
             }
 
