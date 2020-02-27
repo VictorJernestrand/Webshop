@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Context;
-using WebAPI.Models;
+using WebsAPI.Models;
 
 namespace WebAPI.Controllers
 {
@@ -20,15 +20,15 @@ namespace WebAPI.Controllers
             this._context = context;
         }
 
-        [HttpGet("All")]
-        public IEnumerable<Products> Get()
+        [HttpGet]
+        public IEnumerable<Product> Get()
         {
             var products = _context.Products.OrderBy(x => x.Price);
             return products;
         }
 
-        [HttpGet]
-        public Products Get(int id)
+        [HttpGet("{id}")]
+        public Product Get(int id)
         {
             var product = _context.Products.Where(x => x.Id == id).FirstOrDefault();
             return product;
