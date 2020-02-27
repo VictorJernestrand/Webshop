@@ -61,24 +61,60 @@ namespace Webshop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateProduct([Bind]CreateProductModel model)
+        public async Task<ActionResult> CreateProduct(IFormFile file,[Bind]CreateProductModel model)
         {
             try
             {
                 if (ModelState.IsValid)
-                {                    
+                {             
+                                 
+
+                                       
+
+                    // Get path to wwwroot folder
+                    var wwwRoot = environment.WebRootPath;
+
+                    //string foldername = null;
+
+
+                    //var productFolder = "products";
+                    var query = from cat in context.Categories
+                                where cat.Id == model.CategoryId
+                                select cat.Name;
+
+                    var foldername = context.Categories.Where(x => x.Id == model.CategoryId).Select(x => x.Name).FirstOrDefault();
+
+                  
+
+                    // Create folder for storing product images if it does not exist
+                    if (!Directory.Exists(wwwRoot + @"\Image\" + foldername))
+                        Directory.CreateDirectory(wwwRoot + @"\Image\" + foldername);
+
+                    // Get name of file. Validate file before using it!
+                    var fileName = System.IO.Path.GetFileName(file.FileName);
+
+                    // Set the path to point to 
+                    var filePath = Path.Combine(foldername, fileName);
+
+                    var fullfilepath= Path.Combine(wwwRoot,@"Image\" + foldername, fileName);
+
+                    using (var fileStream = new FileStream(fullfilepath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+
+                    //return View(nameof(TestUploadFile));
+
                     Product newProduct = new Product()
                     {
-                        Name = model.Name, 
+                        Name = model.Name,
                         Price = Convert.ToDecimal(model.Price),
                         Quantity = model.Quantity,
                         CategoryId = model.CategoryId,
                         BrandId = model.BrandId,
-                        Description=model.Description,
-                        Photo=model.Photo
+                        Description = model.Description,
+                        Photo = filePath
                     };
-
-                    
 
 
                     await databaseCRUD.InsertAsync<Product>(newProduct);
@@ -106,16 +142,15 @@ namespace Webshop.Controllers
                     
                 }
 
-                TempData["Succesmsg"] = "Great!! Product is added to the database"; 
+                TempData["Succesmsg"] = $"Great!! {model.Name} uppdateras i databasen"; 
                 return RedirectToAction("AllProducts", "Product");
 
 
             }
             catch
             {
-                TempData["Database error"] = "Sorry!! Something went wrong in adding to Data to database";
-                return RedirectToAction("CreateProduct", "Product");
-               // return Content("its Inside catch block, some error in adding product");
+                TempData["Database error"] = "Sorry!! Något gick fel när du lägger Data till databasen";
+                return RedirectToAction("CreateProduct", "Product");              
             }
         }
         
