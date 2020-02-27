@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebAPI.Models;
+using WebsAPI.Models;
 //using Webshop.Models;
 
 namespace WebAPI.Context
@@ -23,7 +23,9 @@ namespace WebAPI.Context
             // ...
         }
 
-        public DbSet<Products> Products { get; set; }
+        public DbSet<Product> Products { get; set; }
+
+        public DbSet<Category> Categories { get; set; }
 
     }
 }
