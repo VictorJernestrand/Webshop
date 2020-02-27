@@ -23,10 +23,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Hem</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Kategorier
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="CategoryDropdown"></div>
+                            @await Component.InvokeAsync("CategoryMenuList")
                         </li>
                         <li>
                             <a class="nav-link text-dark" asp-area="" asp-controller="QandA" asp-action="Index">Vanliga frågor</a>
