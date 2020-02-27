@@ -56,7 +56,12 @@
     
     <form asp-action="DeleteProduct" method="post">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="AllProducts">Tillbaka till alla produkter</a>
+        <br/>
+        <br/>
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        <div class="form-group">
+            <input type="submit" value="Tillbaka till alla produkter" class="btn btn-success"  asp-action="AllProducts" />
+
+        </div>
     </form>
 </div>
