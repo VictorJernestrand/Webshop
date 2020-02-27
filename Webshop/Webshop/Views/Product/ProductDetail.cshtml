@@ -52,10 +52,15 @@
             @Html.DisplayFor(model => model.Brand.Name)
         </dd>
     </dl>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="AllProducts">Tillbaka till alla produkter</a>
+    @if (User.IsInRole("Admin"))
+    {
+        <a class="btn btn-lg" style="color:blue" asp-action="Edit" asp-route-id="@Model.Id"><i class="fa fa-edit"></i></a>
+        <a class="btn btn-lg" style="color:red;" asp-controller="Product" asp-action="DeleteProduct" asp-route-id="@Model.Id"><i class="fa fa-trash"></i></a>
+    }
+    <form asp-action="AllProducts" method="get">
+        <div class="form-group">
+            <input type="submit" value="Tillbaka till alla produkter" class="btn btn-success" a asp-action="AllProducts" />
+
+        </div>
+    </form>
 </div>
-@*<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="AllProducts">Tillbaka till alla produkter</a>
-</div>*@
