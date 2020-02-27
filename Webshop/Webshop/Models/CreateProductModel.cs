@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,5 +31,10 @@ namespace Webshop.Models
         public string Photo { get; set; }
         public List<Category> categoryVM { get; set; } = new List<Category>();
         public List<Brand> brandVM { get; set; } = new List<Brand>();
+
+        internal Task CopyToAsync(FileStream fileStream)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
