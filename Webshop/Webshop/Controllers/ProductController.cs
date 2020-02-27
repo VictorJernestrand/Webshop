@@ -21,7 +21,7 @@ namespace Webshop.Controllers
     {
 
         private readonly WebshopContext context;
-        public CreateProductModel createProductModel = new CreateProductModel();
+        public CreateProductModel createProductModel = new CreateProductModel();       
 
         private IWebHostEnvironment environment;
 
@@ -66,44 +66,31 @@ namespace Webshop.Controllers
             try
             {
                 if (ModelState.IsValid)
-                {             
-                                 
-
-                                       
+                {           
 
                     // Get path to wwwroot folder
-                    var wwwRoot = environment.WebRootPath;
+                    var wwwRoot = environment.WebRootPath;             
 
-                    //string foldername = null;
+                    var folderName = databaseCRUD.GetCategoryName(model.CategoryId);
 
-
-                    //var productFolder = "products";
-                    var query = from cat in context.Categories
-                                where cat.Id == model.CategoryId
-                                select cat.Name;
-
-                    var foldername = context.Categories.Where(x => x.Id == model.CategoryId).Select(x => x.Name).FirstOrDefault();
-
-                  
-
-                    // Create folder for storing product images if it does not exist
-                    if (!Directory.Exists(wwwRoot + @"\Image\" + foldername))
-                        Directory.CreateDirectory(wwwRoot + @"\Image\" + foldername);
+                    // Create folder for storing product images if it's not exists
+                    if (!Directory.Exists(wwwRoot + @"\Image\" + folderName))
+                        Directory.CreateDirectory(wwwRoot + @"\Image\" + folderName);
 
                     // Get name of file. Validate file before using it!
                     var fileName = System.IO.Path.GetFileName(file.FileName);
 
                     // Set the path to point to 
-                    var filePath = Path.Combine(foldername, fileName);
+                    var filePath = Path.Combine(folderName, fileName);
 
-                    var fullfilepath= Path.Combine(wwwRoot,@"Image\" + foldername, fileName);
+                    var fullfilepath= Path.Combine(wwwRoot,@"Image\" + folderName, fileName);
 
                     using (var fileStream = new FileStream(fullfilepath, FileMode.Create))
                     {
                         await file.CopyToAsync(fileStream);
                     }
 
-                    //return View(nameof(TestUploadFile));
+                   
 
                     Product newProduct = new Product()
                     {
@@ -142,7 +129,7 @@ namespace Webshop.Controllers
                     
                 }
 
-                TempData["Succesmsg"] = $"Great!! {model.Name} uppdateras i databasen"; 
+                TempData["Succesmsg"] = $"Great!! {model.Name} skapad i databasen"; 
                 return RedirectToAction("AllProducts", "Product");
 
 
@@ -156,10 +143,7 @@ namespace Webshop.Controllers
         
         public IActionResult AllProducts()
         {
-            //var query = context.Products.ToList();
-            //return View(query);
-
-            ///////////////////////////////////
+           
             var products = context.Products.Include("Brand").Include("Category").ToList();
 
             List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).ToList();
@@ -204,9 +188,106 @@ namespace Webshop.Controllers
             return View(query);
 
         }
+        [Authorize(Roles = "Admin")]
+        public IActionResult EditProduct(int id)
+        {         
 
-        
+            Product product = new Product();
+            product = context.Products.Include("Brand").
+                       Include("Category").FirstOrDefault(p => p.Id == id);
 
-      
+            EditProductModel editProductModel = new EditProductModel(product);
+
+            editProductModel.categoryVM = context.Categories.ToList();
+            editProductModel.brandVM = context.Brands.ToList();
+
+            return View(editProductModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditProduct(IFormFile file, [Bind]CreateProductModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+
+                    // Get path to wwwroot folder
+                    var wwwRoot = environment.WebRootPath;
+
+                    var folderName = databaseCRUD.GetCategoryName(model.CategoryId);
+
+                    // Create folder for storing product images if it's not exists
+                    if (!Directory.Exists(wwwRoot + @"\Image\" + folderName))
+                        Directory.CreateDirectory(wwwRoot + @"\Image\" + folderName);
+
+                    // Get name of file. Validate file before using it!
+                    var fileName = System.IO.Path.GetFileName(file.FileName);
+
+                    // Set the path to point to 
+                    var filePath = Path.Combine(folderName, fileName);
+
+                    var fullfilepath = Path.Combine(wwwRoot, @"Image\" + folderName, fileName);
+
+                    using (var fileStream = new FileStream(fullfilepath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+
+
+
+                    Product editproduct = new Product()
+                    {
+                        Name = model.Name,
+                        Price = Convert.ToDecimal(model.Price),
+                        Quantity = model.Quantity,
+                        CategoryId = model.CategoryId,
+                        BrandId = model.BrandId,
+                        Description = model.Description,
+                        Photo = filePath
+                    };
+
+
+                    await databaseCRUD.UpdateAsync<Product>(editproduct);
+                }
+
+                else
+                {
+                    StringBuilder result = new StringBuilder();
+
+                    foreach (var item in ModelState)
+                    {
+                        string key = item.Key;
+                        var errors = item.Value.Errors;
+
+                        foreach (var error in errors)
+                        {
+                            result.Append(key + " " + error.ErrorMessage);
+                        }
+                    }
+
+                    model.categoryVM = context.Categories.ToList();
+                    model.brandVM = context.Brands.ToList();
+                    TempData["Errors"] = result.ToString();
+                    return View(model);
+
+                }
+
+                TempData["EditSuccesmsg"] = $"Great!! {model.Name} uppdateras i databasen";
+                return RedirectToAction("AllProducts", "Product");
+
+
+            }
+            catch
+            {
+                TempData["EditDatabase error"] = "Sorry!! Något gick fel när du lägger Data till databasen";
+                return RedirectToAction("EditProduct", "Product");
+            }
+        }
+
+
+
+
     }
 }

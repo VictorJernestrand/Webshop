@@ -80,13 +80,18 @@ namespace Webshop.Context
             return await CommitChanges();
         }
 
-        public List<Category> GetAllCategoriesAsync()
+       public async Task<int> DeleteAsynById<T>(T obj)
         {
-            // TODO: Investigate this async!!!!!!!!
-            //var result = context.Categories.Where(x => x.Id == 1).FirstOrDefault();
-            var result = context.Categories.ToList();
-            return result;
+            
+            return await CommitChanges();
+        }
 
+        public string GetCategoryName(int categorid)
+        {
+            var categoryName= context.Categories
+                .Where(x => x.Id == categorid).
+                Select(x => x.Name).FirstOrDefault();
+            return (categoryName);
         }
 
         public async Task<int> CommitChanges()

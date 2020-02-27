@@ -19,19 +19,23 @@
 
 }
 
-@*@if (TempData["Sucessmsg"] != null)
-<<<<<<< HEAD
+@if (TempData["Sucessmsg"] != null)
+
 {
     <div class="alert alert-success" role="alert">
         @TempData["Sucessmsg"]
     </div>
-}*@
+}
 
-    @*{
-        <div class="alert alert-success" role="alert">
-            @TempData["Sucessmsg"]
-        </div>
-    }*@*
+@if (TempData["EditSuccesmsg"] != null)
+
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["EditSuccesmsg"]
+    </div>
+}
+
+
 
 <h1>Alla Produkter</h1>
 
@@ -91,12 +95,12 @@
 
                 @if (User.IsInRole("Admin"))
                 {
-            <td>
-                <a class="btn btn-lg" style="color:white;" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id"><i class="fa fa-search-plus"></i></a>
-                <a class="btn btn-lg" style="color:blue" asp-action="Edit" asp-route-id="@item.Id"><i class="fa fa-edit"></i></a>
-                <a class="btn btn-lg" style="color:red;" asp-controller="Product" asp-action="DeleteProduct" asp-route-id="@item.Id"><i class="fa fa-trash"></i></a>
+                    <td>
+                        <a class="btn btn-lg" style="color:white;" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id"><i class="fa fa-search-plus"></i></a>
+                        <a class="btn btn-lg" style="color:blue" asp-action="EditProduct" asp-route-id="@item.Id"><i class="fa fa-edit"></i></a>
+                        <a class="btn btn-lg" style="color:red;" asp-controller="Product" asp-action="DeleteProduct" asp-route-id="@item.Id"><i class="fa fa-trash"></i></a>
 
-            </td>
+                    </td>
 
                 }
 
@@ -111,7 +115,7 @@
     <p>
 
         <a href='@Url.Action("CreateProduct", "Product")'>
-            <input type='button' value='Lägg till Ny Produkt' />
+            <input type='button' class="btn btn-primary" value='Lägg till Ny Produkt' />
         </a>
     </p>
 }
