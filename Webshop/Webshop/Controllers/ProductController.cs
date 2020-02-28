@@ -21,7 +21,9 @@ namespace Webshop.Controllers
     {
 
         private readonly WebshopContext context;
-        public CreateProductModel createProductModel = new CreateProductModel();       
+        public CreateProductModel createProductModel = new CreateProductModel();
+
+        public EditProductModel EditProductModel { get; set; }
 
         private IWebHostEnvironment environment;
 
@@ -95,7 +97,7 @@ namespace Webshop.Controllers
                     Product newProduct = new Product()
                     {
                         Name = model.Name,
-                        Price = Convert.ToDecimal(model.Price),
+                        Price = Convert.ToDecimal(model.PriceToConvert.Replace('.',',')),
                         Quantity = model.Quantity,
                         CategoryId = model.CategoryId,
                         BrandId = model.BrandId,
@@ -150,11 +152,22 @@ namespace Webshop.Controllers
 
             return View(allProducts);
         }
+
         [HttpPost, ActionName("DeleteProduct")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProductConfirmed(int? Id)
         {
-            Product product = context.Products.FirstOrDefault(p => p.Id == Id);
+            Product product = await context.Products.FirstOrDefaultAsync(p => p.Id == Id);
+
+            // Get full path to wwwroot folder and concatenate product image from database
+            var pathToProductImage = environment.WebRootPath + @"\Image\" + product.Photo;
+
+            // Check if the product image exist...
+            if (System.IO.File.Exists(pathToProductImage))
+            {
+                // Remove product Image from Image folder
+                System.IO.File.Delete(pathToProductImage);
+            }
 
             context.Products.Remove(product);
             context.SaveChanges();
@@ -169,13 +182,16 @@ namespace Webshop.Controllers
                 return Content("Det sket sig.");
             }
             return View();
+
         }
+
         [Authorize(Roles = "Admin")]
         public IActionResult DeleteProduct(int Id)
         {
             var query = context.Products.Include("Brand").Include("Category").FirstOrDefault(p => p.Id == Id);
             if (query == null)
                 return NotFound();
+
             return View(query);
 
         }
@@ -190,18 +206,40 @@ namespace Webshop.Controllers
         }
         [Authorize(Roles = "Admin")]
         public IActionResult EditProduct(int id)
-        {         
-
+        {
             Product product = new Product();
+
             product = context.Products.Include("Brand").
                        Include("Category").FirstOrDefault(p => p.Id == id);
 
-            EditProductModel editProductModel = new EditProductModel(product);
+            var result = context.Products.Include("Brand")
+                .Include("Category")
+                .Select(x => new EditProductModel
+                {
+                   Id = x.Id,
+                   Name = x.Name,
+                   Description = x.Description,
+                   Price = x.Price,
+                   PriceToConvert = x.Price.ToString(),
+                   Quantity = x.Quantity,
+                   Photo = x.Photo,
+                   CategoryId = x.CategoryId,
+                   BrandId = x.BrandId
+                })
+                .FirstOrDefault(p => p.Id == id);
 
-            editProductModel.categoryVM = context.Categories.ToList();
-            editProductModel.brandVM = context.Brands.ToList();
+            EditProductModel = result;
 
-            return View(editProductModel);
+            EditProductModel.categoryVM = context.Categories.ToList();
+            EditProductModel.brandVM = context.Brands.ToList();
+            return View(EditProductModel);
+
+            //EditProductModel editProductModel = new EditProductModel(product);
+
+            //editProductModel.categoryVM = context.Categories.ToList();
+            //editProductModel.brandVM = context.Brands.ToList();
+
+            //return View(editProductModel);
         }
 
         [HttpPost]
@@ -210,43 +248,48 @@ namespace Webshop.Controllers
         {
             try
             {
+                //model.Price = Convert.ToDecimal(model.Price.ToString().Replace(',', '.'));
                 if (ModelState.IsValid)
                 {
 
-                    // Get path to wwwroot folder
-                    var wwwRoot = environment.WebRootPath;
-
-                    var folderName = databaseCRUD.GetCategoryName(model.CategoryId);
-
-                    // Create folder for storing product images if it's not exists
-                    if (!Directory.Exists(wwwRoot + @"\Image\" + folderName))
-                        Directory.CreateDirectory(wwwRoot + @"\Image\" + folderName);
-
-                    // Get name of file. Validate file before using it!
-                    var fileName = System.IO.Path.GetFileName(file.FileName);
-
-                    // Set the path to point to 
-                    var filePath = Path.Combine(folderName, fileName);
-
-                    var fullfilepath = Path.Combine(wwwRoot, @"Image\" + folderName, fileName);
-
-                    using (var fileStream = new FileStream(fullfilepath, FileMode.Create))
-                    {
-                        await file.CopyToAsync(fileStream);
-                    }
-
-
-
                     Product editproduct = new Product()
                     {
+                        Id = model.Id,
                         Name = model.Name,
-                        Price = Convert.ToDecimal(model.Price),
+                        Price = Convert.ToDecimal(model.PriceToConvert.ToString().Replace('.', ',')),//.ToString().Replace(',','.')),
                         Quantity = model.Quantity,
                         CategoryId = model.CategoryId,
                         BrandId = model.BrandId,
                         Description = model.Description,
-                        Photo = filePath
+                        Photo = model.Photo
                     };
+
+                    if (file != null)
+                    {
+                        // Get path to wwwroot folder
+                        var wwwRoot = environment.WebRootPath;
+
+                        var folderName = databaseCRUD.GetCategoryName(model.CategoryId);
+
+                        // Create folder for storing product images if it's not exists
+                        if (!Directory.Exists(wwwRoot + @"\Image\" + folderName))
+                            Directory.CreateDirectory(wwwRoot + @"\Image\" + folderName);
+
+                        // Get name of file. Validate file before using it!
+                        var fileName = System.IO.Path.GetFileName(file.FileName);
+
+                        // Set the path to point to 
+                        var filePath = Path.Combine(folderName, fileName);
+
+                        var fullfilepath = Path.Combine(wwwRoot, @"Image\" + folderName, fileName);
+
+                        using (var fileStream = new FileStream(fullfilepath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
+
+                        editproduct.Photo = filePath;
+                    }
 
 
                     await databaseCRUD.UpdateAsync<Product>(editproduct);
