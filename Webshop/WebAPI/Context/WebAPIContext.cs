@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebsAPI.Models;
+using WebAPI.Models;
 //using Webshop.Models;
 
 namespace WebAPI.Context

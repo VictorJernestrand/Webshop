@@ -206,7 +206,7 @@ namespace Webshop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditProduct(IFormFile file, [Bind]CreateProductModel model)
+        public async Task<ActionResult> EditProduct(IFormFile file, [Bind]EditProductModel model)
         {
             try
             {

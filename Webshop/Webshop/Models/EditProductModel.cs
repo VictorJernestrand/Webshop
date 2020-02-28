@@ -41,7 +41,7 @@ namespace Webshop.Models
         [Required(ErrorMessage = "Ange Brand Id")]
         public int BrandId { get; set; }
         public string Description { get; set; }
-        [Required(ErrorMessage = "Välje en fil")]
+        
         public string Photo { get; set; }
         public List<Product> products { get; set; }
         public List<Category> categoryVM { get; set; } = new List<Category>();

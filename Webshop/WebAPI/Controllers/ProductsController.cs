@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Context;
-using WebsAPI.Models;
+using WebAPI.Models;
 
 namespace WebAPI.Controllers
 {
