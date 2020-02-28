@@ -1,10 +1,10 @@
-﻿@model CreateProductModel
+﻿@model EditProductModel
 
 @{
-    ViewData["Title"] = "CreateProduct";
+    ViewData["Title"] = "EditProduct";
 }
 
-
+    <h1>Redigera Produkten</h1>
 
 @if (TempData["Database error"] != null)
 {
@@ -12,21 +12,18 @@
     <p>
         <font size="6">
             <span style="color: red;">
-                @TempData["Database error"]
+                @TempData["EditDatabase error"]
             </span>
         </font>
     </p>
 
 }
-
-<h1>Skapa Produkt</h1>
 <hr />
 <div class="row">
-
     <div class="bg-createProduct">
-
-        <form asp-action="CreateProduct" method="post" enctype="multipart/form-data">
+        <form asp-action="EditProduct" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label">Namn</label>
                 <input asp-for="Name" class="form-control" />
@@ -44,7 +41,6 @@
             </div>
             <div class="form-group">
                 <label asp-for="CategoryId" class="control-label">Kategori</label>
-                <br />
                 <select asp-for="CategoryId">
                     <option>Välj</option>
                     @foreach (var item in Model.categoryVM)
@@ -57,7 +53,6 @@
             </div>
             <div class="form-group">
                 <label asp-for="BrandId" class="control-label">Märke</label>
-                <br />
                 <select asp-for="BrandId">
                     <option>Välj</option>
                     @foreach (var item in Model.brandVM)
@@ -74,20 +69,22 @@
             </div>
             <div class="form-group">
                 <label asp-for="Photo" class="control-label">Bild</label>
+                <input type="hidden" asp-for="Photo" />
                 <br />
                 <input name="file" type="file" />
                 <span asp-validation-for="Photo" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit"  value="Spara" class="btn btn-primary" />
             </div>
         </form>
-        <div>
-            <a asp-action="AllProducts">Tillbaka till alla produkter</a>
-        </div>
-
-
     </div>
-    </div>
+</div>
 
+<div>
+    <a asp-action="AllProducts" class="btn btn-info">Tillbaka till alla produkter</a>
+</div>
 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

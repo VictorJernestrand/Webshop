@@ -1,4 +1,4 @@
-﻿@model Webshop.Models.Product
+﻿@model Product
 
 @{
     ViewData["Title"] = "ProductDetail";
@@ -52,15 +52,17 @@
             @Html.DisplayFor(model => model.Brand.Name)
         </dd>
     </dl>
+
     @if (User.IsInRole("Admin"))
     {
-        <a class="btn btn-lg" style="color:blue" asp-action="Edit" asp-route-id="@Model.Id"><i class="fa fa-edit"></i></a>
-        <a class="btn btn-lg" style="color:red;" asp-controller="Product" asp-action="DeleteProduct" asp-route-id="@Model.Id"><i class="fa fa-trash"></i></a>
-    }
-    <form asp-action="AllProducts" method="get">
-        <div class="form-group">
-            <input type="submit" value="Tillbaka till alla produkter" class="btn btn-success" a asp-action="AllProducts" />
+        <td>
+            <a asp-action="EditProduct" class="btn btn-primary" asp-route-id="@Model.Id">Redigera</a> 
 
-        </div>
-    </form>
+
+        </td>
+
+    }
+    <a asp-action="AllProducts" class="btn btn-info">Tillbaka till alla produkter</a>
+
 </div>
+
