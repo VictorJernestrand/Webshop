@@ -68,31 +68,33 @@ namespace Webshop.Controllers
             try
             {
                 if (ModelState.IsValid)
-                {           
+                {
+                    string filePath = null;
 
-                    // Get path to wwwroot folder
-                    var wwwRoot = environment.WebRootPath;             
-
-                    var folderName = databaseCRUD.GetCategoryName(model.CategoryId);
-
-                    // Create folder for storing product images if it's not exists
-                    if (!Directory.Exists(wwwRoot + @"\Image\" + folderName))
-                        Directory.CreateDirectory(wwwRoot + @"\Image\" + folderName);
-
-                    // Get name of file. Validate file before using it!
-                    var fileName = System.IO.Path.GetFileName(file.FileName);
-
-                    // Set the path to point to 
-                    var filePath = Path.Combine(folderName, fileName);
-
-                    var fullfilepath= Path.Combine(wwwRoot,@"Image\" + folderName, fileName);
-
-                    using (var fileStream = new FileStream(fullfilepath, FileMode.Create))
+                    if (file != null)
                     {
-                        await file.CopyToAsync(fileStream);
-                    }
+                        // Get path to wwwroot folder
+                        var wwwRoot = environment.WebRootPath;
 
-                   
+                        var folderName = databaseCRUD.GetCategoryName(model.CategoryId);
+
+                        // Create folder for storing product images if it's not exists
+                        if (!Directory.Exists(wwwRoot + @"\Image\" + folderName))
+                            Directory.CreateDirectory(wwwRoot + @"\Image\" + folderName);
+
+                        // Get name of file. Validate file before using it!
+                        var fileName = System.IO.Path.GetFileName(file.FileName);
+
+                        // Set the path to point to 
+                        filePath = Path.Combine(folderName, fileName);
+
+                        var fullfilepath = Path.Combine(wwwRoot, @"Image\" + folderName, fileName);
+
+                        using (var fileStream = new FileStream(fullfilepath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
+                    }
 
                     Product newProduct = new Product()
                     {
