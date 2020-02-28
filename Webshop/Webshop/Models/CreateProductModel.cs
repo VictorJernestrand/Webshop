@@ -16,8 +16,8 @@ namespace Webshop.Models
         [Required(ErrorMessage = "Ange Produkt Namn")]
         
         public string Name { get; set; }
-        [Required(ErrorMessage = "Ange Produkt Pris")]
-        public decimal? Price { get; set; }
+        
+        public decimal Price { get; set; }
 
         [Required(ErrorMessage = "Ange Antal")]
         public int Quantity { get; set; }
@@ -31,6 +31,9 @@ namespace Webshop.Models
         public string Photo { get; set; }
         public List<Category> categoryVM { get; set; } = new List<Category>();
         public List<Brand> brandVM { get; set; } = new List<Brand>();
+
+        [Required(ErrorMessage = "Ange Produkt Pris")]
+        public string PriceToConvert { get; set; }
 
         internal Task CopyToAsync(FileStream fileStream)
         {

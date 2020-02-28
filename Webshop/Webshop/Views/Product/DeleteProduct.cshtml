@@ -1,4 +1,4 @@
-﻿@model Webshop.Models.Product
+﻿@model Product
 
 @{
     ViewData["Title"] = "DeleteProduct";
@@ -58,7 +58,8 @@
         <input type="hidden" asp-for="Id" />
         <br/>
         <br/>
-        <input type="submit" value="Delete" class="btn btn-danger" />
+        <input type="submit" value="Radera" class="btn btn-danger" />
+        <p></p>
         <div class="form-group">
             <input type="submit" value="Tillbaka till alla produkter" class="btn btn-success"  asp-action="AllProducts" />
 
