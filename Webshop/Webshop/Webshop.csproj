@@ -25,6 +25,12 @@
     <Compile Remove="Migrations\20200225091608_ee.Designer.cs" />
     <Compile Remove="Migrations\20200225123332_eee.cs" />
     <Compile Remove="Migrations\20200225123332_eee.Designer.cs" />
+    <Compile Remove="Migrations\20200302202307_rka.cs" />
+    <Compile Remove="Migrations\20200302202307_rka.Designer.cs" />
+    <Compile Remove="Migrations\20200302203232_rka.cs" />
+    <Compile Remove="Migrations\20200302203232_rka.Designer.cs" />
+    <Compile Remove="Migrations\20200302203526_rka.cs" />
+    <Compile Remove="Migrations\20200302203526_rka.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
