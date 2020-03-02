@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Webshop.Models
+namespace Webshop.Models.Data
 {
-    public class ProductOrder
+    public class ShoppingCart
     {
         public int Id { get; set; }
-        public int OrderId { get; set; }
+        public Guid CartId { get; set; }
         public int ProductId { get; set; }
         public int Amount { get; set; }
-        public float Discount { get; set; }
+        public DateTime TimeStamp { get; set; } = DateTime.Now;
         public Product Product { get; set; }
-        public Order Order { get; set; }
-
 
     }
 }
