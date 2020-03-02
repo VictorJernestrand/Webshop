@@ -1,0 +1,63 @@
+﻿
+@{
+    ViewData["Title"] = "Slide";
+}
+
+<h1>Slide</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div id="imageCarousel" class="carousel slide" data-interval="2000"
+                 data-ride="carousel" data-pause="hover" data-wrap="true">
+
+                <ol class="carousel-indicators">
+                    <li data-target="#imageCarousel" data-slide-to="0" class="active"></li>
+                    <li data-target="#imageCarousel" data-slide-to="1"></li>
+                    <li data-target="#imageCarousel" data-slide-to="2"></li>
+                    <li data-target="#imageCarousel" data-slide-to="3"></li>
+                </ol>
+
+                <div class="carousel-inner">
+                    <div class="item active"> 
+                        <img src="~/Image/Guitar/guitar_orange.jpg" class="img-responsive">
+                        <div class="carousel-caption">
+                            <h3>Orange Guitar</h3>
+                            <p>Orange Guitar Description</p>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img src="~/Image/Guitar/guitar_blue.jpg" class="img-responsive">
+                        <div class="carousel-caption">
+                            <h3>Blue Guitar</h3>
+                            <p>Blue Guitar Description</p>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img src="~/Image/Guitar/guitar_white.jpg" class="img-responsive">
+                        <div class="carousel-caption">
+                            <h3>White Guitar</h3>
+                            <p>White Guitar Description</p>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img src="~/Image/Guitar/guitar_grey.jpg" class="img-responsive">
+                        <div class="carousel-caption">
+                            <h3>Grey Guitar</h3>
+                            <p>Grey Guitar Description</p>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="#imageCarousel" class="carousel-control left" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </a>
+                <a href="#imageCarousel" class="carousel-control right" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
