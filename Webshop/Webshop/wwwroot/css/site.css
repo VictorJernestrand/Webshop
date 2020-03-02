@@ -2,9 +2,11 @@
 for details on configuring this project to bundle and minify static web assets. */
 
 a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+   
+  
 }
 
 /* Provide sufficient contrast against white background */
@@ -22,6 +24,15 @@ a {
   color: #fff;
   background-color: #1b6ec2;
   border-color: #1861ac;
+}
+
+.thumbnail {
+    padding: 0;
+}
+
+.caption {
+    height: 130px;
+    overflow: hidden;
 }
 
 /* Sticky footer styles
@@ -54,16 +65,19 @@ button.accept-policy {
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
-/*
+
 body {
-    background-image: url('../image/thumb-1920-143357.jpg');
-    height: 100%;
-    margin-bottom: 60px;
+    /*background-image: url('../image/thumb-1920-143357.jpg');*/
+    /*height: 100%;
+    margin-bottom: 60px;*/
+
+   
+   
 }
-*/
+
 * {
     box-sizing: border-box;
 }
@@ -139,7 +153,6 @@ body {
 }
 
     .footer {
-    position: absolute;
     bottom: 0px;
     width: 100%;
     text-align: center;
