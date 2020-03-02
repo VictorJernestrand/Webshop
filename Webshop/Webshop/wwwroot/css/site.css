@@ -68,15 +68,14 @@ html {
     position: relative;
     min-height: 100%;
 }
-
+/*
 body {
-    /* Margin bottom by footer height */
     background-image: url('../image/thumb-1920-143357.jpg');
     height: 100%;
     margin-bottom: 60px;
    
 }
-
+*/
 * {
     box-sizing: border-box;
 }
