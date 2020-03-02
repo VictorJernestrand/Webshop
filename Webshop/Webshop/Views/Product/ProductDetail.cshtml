@@ -37,9 +37,8 @@
             @Html.DisplayNameFor(model => model.Photo)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Photo)
-        </dd>
-        <dt class="col-sm-2">
+            <img src="@Url.Content("~/Image/" + Model.Photo)" height="80" width="100" alt="Finns ingen bild än">
+            <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Category)
         </dt>
         <dd class="col-sm-10">
@@ -52,6 +51,7 @@
             @Html.DisplayFor(model => model.Brand.Name)
         </dd>
     </dl>
+
     @if (User.IsInRole("Admin"))
     {
         <td>
