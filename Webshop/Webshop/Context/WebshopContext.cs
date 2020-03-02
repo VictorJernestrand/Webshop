@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Webshop.Models;
+using Webshop.Models.Data;
 
 namespace Webshop.Context
 {
@@ -19,6 +20,7 @@ namespace Webshop.Context
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductOrder> ProductOrders { get; set; }
         public DbSet<Status> Statuses { get; set; }
+        public DbSet<ShoppingCart> ShoppingCart { get; set; }
 
         public WebshopContext()
         {
@@ -37,6 +39,10 @@ namespace Webshop.Context
             builder.Entity<ProductOrder>(entity =>
             {
                 entity.Property(x => x.Discount).HasDefaultValue(0);
+                entity.Property(x => x.Amount).IsRequired();
+                entity.Property(x => x.OrderId).IsRequired();
+                entity.Property(x => x.ProductId).IsRequired();
+
             });
 
             builder.Entity<User>(entity =>
@@ -74,6 +80,15 @@ namespace Webshop.Context
             {
                 entity.Property(x => x.Name).IsRequired().HasMaxLength(30);
             });
+
+            builder.Entity<ShoppingCart>(entity =>
+            {
+                entity.Property(x => x.CartId).IsRequired();
+                entity.Property(x => x.ProductId).IsRequired();
+                entity.Property(x => x.Amount).IsRequired();
+            });
+
+
 
 
             builder.Entity<Brand>().HasData(
