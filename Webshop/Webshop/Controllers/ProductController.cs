@@ -45,7 +45,7 @@ namespace Webshop.Controllers
            List<Product> categoryList = context.Products.Include("Brand").Include("Category").ToList();
 
            List<CategoryViewModel> categoryViewList = categoryList.Select(x => new CategoryViewModel(x))
-                                   .Where(x => x.CategoryId == catid).ToList();
+                                   .Where(x => x.CategoryId == catid).OrderBy(c => c.Name).ToList();
 
             return View(categoryViewList);                
         }
@@ -150,7 +150,7 @@ namespace Webshop.Controllers
            
             var products = context.Products.Include("Brand").Include("Category").ToList();
 
-            List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).ToList();
+            List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).ToList();
 
             return View(allProducts);
         }
@@ -209,10 +209,10 @@ namespace Webshop.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult EditProduct(int id)
         {
-            Product product = new Product();
+           // Product product = new Product();
 
-            product = context.Products.Include("Brand").
-                       Include("Category").FirstOrDefault(p => p.Id == id);
+            //product = context.Products.Include("Brand").
+            //           Include("Category").FirstOrDefault(p => p.Id == id);
 
             var result = context.Products.Include("Brand")
                 .Include("Category")
