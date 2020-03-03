@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Webshop.Context;
 using Webshop.Models;
 using Microsoft.AspNetCore.Hosting;
-
+using Webshop.Models.Data;
 
 namespace Webshop.Controllers
 {
@@ -331,7 +331,67 @@ namespace Webshop.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddToCart(int id)
+        {
+            // Generate a unique id
+            Guid guid = Guid.NewGuid();
 
+            // Check if session cookie exist
+            if (HttpContext.Session.GetString("CustomerCartSessionId") == null)
+            {
+                // Set session cookie with Guid Id
+                HttpContext.Session.SetString("CustomerCartSessionId", guid.ToString());
+            }
+
+            // Get product form database
+            Product product = context.Products.Find(id);
+
+            // Cart Id
+            Guid cartId = Guid.Parse(HttpContext.Session.GetString("CustomerCartSessionId"));
+
+            // Are there any products left ot buy
+            if (product.Quantity > 0)
+            {
+                // Does product allready exist in shoppingcart??
+                var cartItem = context.ShoppingCart.Where(x => x.CartId == cartId && x.ProductId == id).FirstOrDefault();
+                if (cartItem != null)
+                {
+                    cartItem.Amount++; // add one more
+                }
+                else
+                {
+                    // Instantiate a new schoppingcart item with the selected prodcut id
+                    ShoppingCart shoppingCart = new ShoppingCart()
+                    {
+                        CartId = cartId,
+                        ProductId = id,
+                        Amount = 1
+                    };
+
+                    // All good, put item in shoppingcart
+                    var result = await databaseCRUD.InsertAsync<ShoppingCart>(shoppingCart);
+                }
+
+                // Update timestamp 
+                List<ShoppingCart> carts = context.ShoppingCart.Where(x => x.CartId == cartId).ToList();
+                carts.ForEach(x => x.TimeStamp = DateTime.Now);
+
+
+
+                // Update product quantity
+                product.Quantity--;
+
+
+                // save you fool!
+                context.SaveChanges();
+            }
+
+
+            return RedirectToAction(nameof(AllProducts));
+
+        }
 
 
     }

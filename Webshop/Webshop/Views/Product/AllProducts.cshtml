@@ -140,7 +140,7 @@
 @foreach (var item in Model)
 {
 
-
+<form asp-action="AddToCart" method="post">
     <div class="col-sm-4 col-lg-4 col-md-4">
         <div class="thumbnail">
             <img src="@Url.Content("~/Image/" + item.Photo)" height="70" width="100" alt="Finns ingen bild än">
@@ -158,21 +158,17 @@
                     <a class="btn btn-lg" style="color:violet;" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id"><i class="fa fa-search-plus"></i></a>
                     <a class="btn btn-lg " style="color:greenyellow" asp-action="EditProduct" asp-route-id="@item.Id"><i class="fa fa-edit"></i></a>
                     <a class="btn btn-lg " style="color:red;" asp-controller="Product" asp-action="DeleteProduct" asp-route-id="@item.Id"><i class="fa fa-trash"></i></a>
-
-
-
                 }
-                @if (!User.IsInRole("Admin"))
+                else
                 {
-
+                    <input type="hidden" name="Id" value="@item.Id" />
                     <a class="btn btn-lg" style="color:violet;" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id"><i class="fa fa-search-plus"></i></a>
-
+                    <button type="submit" class="btn btn-success">Köp</button>
                 }
 
             </div>
 
         </div>
     </div>
+</form>
 }
-
-
