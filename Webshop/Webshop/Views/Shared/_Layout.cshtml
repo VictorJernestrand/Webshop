@@ -89,16 +89,7 @@
     </div>
 
     <footer class="container border-top footer text-dark" >
-        @*<div class="container">
-            &copy; 2020 - Webshop - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-            <a>Adress: Liljeholmskajen 2, 123 21 Stockholm Tel: 08-12 34 52 Email: info@orkester.se</a>
-        </div>*@
-        @*<div class="row">
-            <div class="col">
-                &copy;Orkeseter.se @DateTime.Now.Year | <a href="#">Kontakta Oss</a>
-                <a>Adress: Liljeholmskajen 2, 123 21 Stockholm Tel: 08-12 34 52 Email: info@orkester.se</a>
-            </div>
-        </div>*@
+    
         &copy;rockstart.se @DateTime.Now.Year | <a asp-area="" asp-controller="Contact" asp-action="Index" >Kontakta Oss | </a>
        <a>Adress: Liljeholmskajen 2 | 123 21 Stockholm | Tel: 08-12 34 52 | Email: info@rockstart.se</a>
     </footer>
@@ -109,4 +100,6 @@
     <script src="https://kit.fontawesome.com/a59e8a19b5.js" crossorigin="anonymous"></script>
     @RenderSection("Scripts", required: false)
 </body>
+
+
 </html>
