@@ -6,10 +6,7 @@
 }
 
     <head>
-        <meta name="viewport" content="width=device-width" />
-        <title>@ViewBag.Title</title>
-        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro">
-        <link href="~/lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
+     
         @*<script src="~/lib/jquery/jquery.js"></script>
         <script src="~/lib/bootstrap/js/bootstrap.js"></script>
         <link href="~/Content/site.css" rel="stylesheet" />*@
@@ -51,40 +48,44 @@
 {
 
 
-    <div class="col-sm-4 col-lg-4 col-md-4">
-        <div class="thumbnail">
-            <img src="@Url.Content("~/Image/" + item.Photo)" height="70" width="100" alt="Finns ingen bild än">
+<div class="col-sm-4 col-lg-4 col-md-4">
+    @*<meta name="viewport" content="width=device-width" />*@
+    @*<title>@ViewBag.Title</title>*@
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro">
+    <link href="~/lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <div class="thumbnail">
+        <img src="@Url.Content("~/Image/" + item.Photo)" height="70" width="100" alt="Finns ingen bild än">
 
-            <div class="caption">
-                <h3 class="pull-right">@item.Price.ToString("c") </h3>
-                <h3> <a>@item.Name</a></h3>
-                <p class="pull-right">@item.CategoryName</p>
-                <p class="pull-right">@item.BrandName &nbsp;&nbsp;</p>
-                <p>@item.Description</p>
-
-
-                @if (User.IsInRole("Admin"))
-                {
-
-                    <a class="btn btn-lg" style="color:violet;" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id"><i class="fa fa-search-plus"></i></a>
-                    <a class="btn btn-lg" style="color:greenyellow" asp-action="EditProduct" asp-route-id="@item.Id"><i class="fa fa-edit"></i></a>
-                    <a class="btn btn-lg" style="color:red;" asp-controller="Product" asp-action="DeleteProduct" asp-route-id="@item.Id"><i class="fa fa-trash"></i></a>
+        <div class="caption">
+            <h3 class="pull-right">@item.Price.ToString("c") </h3>
+            <h3> <a>@item.Name</a></h3>
+            <p class="pull-right">@item.CategoryName</p>
+            <p class="pull-right">@item.BrandName &nbsp;&nbsp;</p>
+            <p>@item.Description</p>
 
 
+            @if (User.IsInRole("Admin"))
+            {
 
-                }
-                @if (!User.IsInRole("Admin"))
-                {
-
-                    <a class="btn btn-lg" style="color:violet;" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id"><i class="fa fa-search-plus"></i></a>
-
-                }
+                <a class="btn btn-lg" style="color:violet;" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id"><i class="fa fa-search-plus"></i></a>
+                <a class="btn btn-lg" style="color:greenyellow" asp-action="EditProduct" asp-route-id="@item.Id"><i class="fa fa-edit"></i></a>
+                <a class="btn btn-lg" style="color:red;" asp-controller="Product" asp-action="DeleteProduct" asp-route-id="@item.Id"><i class="fa fa-trash"></i></a>
 
 
 
-            </div>
+            }
+            @if (!User.IsInRole("Admin"))
+            {
+
+                <a class="btn btn-lg" style="color:violet;" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id"><i class="fa fa-search-plus"></i></a>
+
+            }
+
+
 
         </div>
+
     </div>
+</div>
 }
 
