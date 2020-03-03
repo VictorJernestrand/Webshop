@@ -15,5 +15,6 @@
 
 <form asp-action="DeleteConfirmed" method="post" class="form-inline">
     <input type="hidden" asp-for="Id" />
-    <input type="submit" class="btn btn-danger" value="Ja, radera skiten!" />
+    <input type="submit" class="btn btn-danger mr-2" value="Ja, radera skiten!" />
+    <a asp-action="Index" class="btn btn-warning mr-2">Avbryt</a>
 </form>
