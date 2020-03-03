@@ -5,20 +5,21 @@
 }
 
 
+<span asp-validation-for="Name" class="text-danger" style="margin-left: 30px"></span>
 <form asp-action="Edit" method="post" class="form-inline">
-    @if (Model.Brand != null)
+    
+    @if (Model.Id > 0)
     {
         <div class="form-group mx-sm-3 mb-2" style="width: 300px">
-            <input type="hidden" asp-for="Brand.Id" />
-            <input type="text" asp-for="Brand.Name" class="form-control d-inline" id="newBrand" value="@Model.Brand.Name" style="width: 300px" />
+            <input type="hidden" asp-for="Id" />
+            <input type="text" asp-for="Name" class="form-control" id="newBrand" value="@Model.Name" style="width: 300px" />
         </div>
-        <button type="submit" class="btn btn-warning d-inline">Uppdatera</button>
-        <span><a asp-action="Index" asp-route-id="">Skapa ny tillverkare</a></span>
+        <button type="submit" class="btn btn-warning mb-2 mr-2">Uppdatera</button> <span><a asp-action="Index" asp-route-id="">(Skapa ny tillverkare)</a></span>
     }
     else
     {
         <div class="form-group mx-sm-3 mb-2" style="width: 300px">
-            <input type="text" asp-for="Brand.Name" class="form-control" id="newBrand" placeholder="Ny tillverkare..."style=" width: 300px" />
+            <input type="text" asp-for="Name" class="form-control" id="newBrand" placeholder="Ny tillverkare..." style=" width: 300px" />
         </div>
         <button type="submit" class="btn btn-success mb-2">Skapa Ny</button>
     }
@@ -30,7 +31,6 @@
         <tr>
             <th scope="col">Tillverkare</th>
             <th scope="col"></th>
-            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
@@ -38,8 +38,10 @@
     {
         <tr>
             <td>@brand.Name</td>
-            <td><a asp-action="Index" asp-route-id="@brand.Id">Uppdatera</a></td>
-            <td><a asp-action="Delete" asp-route-id="@brand.Id">Radera</a></td>
+            <td>
+                <a asp-action="Index" asp-route-id="@brand.Id">Uppdatera</a> |
+                <a asp-action="Delete" asp-route-id="@brand.Id">Radera</a>
+            </td>
         </tr>
     }
     </tbody>
