@@ -209,10 +209,10 @@ namespace Webshop.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult EditProduct(int id)
         {
-            Product product = new Product();
+           // Product product = new Product();
 
-            product = context.Products.Include("Brand").
-                       Include("Category").FirstOrDefault(p => p.Id == id);
+            //product = context.Products.Include("Brand").
+            //           Include("Category").FirstOrDefault(p => p.Id == id);
 
             var result = context.Products.Include("Brand")
                 .Include("Category")
