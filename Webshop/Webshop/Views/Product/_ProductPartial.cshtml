@@ -1,0 +1,38 @@
+﻿@model AllProductsViewModel
+
+
+   <form asp-action="AddToCart" method="post" class="col-md-5 col-lg-4">
+            <div class="card text-center m-2 shadow p-3 mb-5 bg-white rounded border-0">
+                <div class="product-grid2">
+                    <div class="product-image2">
+                        <a href="">
+                            <img class="pic-1 mx-auto d-block mt-2" style="height: 250px; width:auto;" src="@Url.Content("~/Image/" + @Model.Photo)" alt="ingen bild">
+                            <img class="pic-2 mx-auto d-block mt-2" style="transform:scale(1.2); height: 250px; width:200px;" src="@Url.Content("~/Image/" + @Model.Photo)" alt="ingen bild">
+
+                        </a>
+                        @if (!User.IsInRole("Admin"))
+                        {
+                            <ul class="social">
+                                <li><a style="color:violet" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@Model.Id" data-tip="Visa detaljer"><i class="fa fa-eye"></i></a></li>
+
+                            </ul>
+                            <a class="add-to-cart add-to-cart" href="">Köp!</a>
+
+                        }
+                        else
+                        {
+                            <ul class="social">
+                                <li><a class="" style="color:violet" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@Model.Id" data-tip="Visa detaljer"><i class="fa fa-eye"></i></a></li>
+                                <li><a class="" style="color:greenyellow" asp-action="EditProduct" asp-route-id="@Model.Id" data-tip="Ändra produkt"><i class="fa fa-edit"></i></a></li>
+                                <li><a class="" style="color:red;" asp-controller="Product" asp-action="DeleteProduct" asp-route-id="@Model.Id" data-tip="Ta bort"><i class="fa fa-trash"></i></a></li>
+                            </ul>
+                        }
+                    </div>
+                    <div class="card-body">        
+                        <h5 class="card-title">@Model.Name</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">@Model.BrandName - @Model.CategoryName</h6>
+                        <h5 class="card-title text-success">@Model.Price.ToString("C0")</h5>
+                    </div>
+                </div>
+            </div>        
+</form>
