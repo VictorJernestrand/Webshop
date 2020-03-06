@@ -22,6 +22,7 @@ namespace Webshop.Controllers
             this.context = context;
         }
 
+        
         [HttpGet]
         public IActionResult Index(int? id)
         {
@@ -81,6 +82,7 @@ namespace Webshop.Controllers
             }
         }
 
+      
         [HttpGet]
         public IActionResult Delete(int id)
         {

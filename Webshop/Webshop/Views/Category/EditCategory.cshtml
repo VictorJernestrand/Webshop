@@ -1,0 +1,50 @@
+﻿@model Webshop.Models.EditCategoryModel
+
+@{
+    ViewData["Title"] = "Kategori";
+}
+
+<span asp-validation-for="Name" class="text-danger" style="margin-left: 30px"></span>
+<form asp-action="EditCategory" method="post" class="form-inline">
+
+    @if (Model.Id > 0)
+    {
+        <div class="form-group mx-sm-3 mb-2" style="width: 300px">
+            <input type="hidden" asp-for="Id" />
+            <input type="text" asp-for="Name" class="form-control" id="newBrand" value="@Model.Name" style="width: 300px" />
+        </div>
+        <button type="submit" class="btn btn-warning mb-2 mr-2">Uppdatera</button> <span><a asp-action="EditCategory" asp-route-id="">(Skapa ny Kategori)</a></span>
+    }
+    else
+    {
+        <div class="form-group mx-sm-3 mb-2" style="width: 300px">
+            <input type="text" asp-for="Name" class="form-control" id="newBrand" placeholder="Ny Kategori..." style=" width: 300px" />
+        </div>
+        <button type="submit" class="btn btn-success mb-2">Skapa Ny</button>
+    }
+</form>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Kategori</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model.categoryCollection)
+        {
+            <tr>
+                <td>@category.Name</td>
+                <td>
+                    <a asp-action="EditCategory" asp-route-id="@category.Id">Uppdatera</a> |
+                    <a asp-action="DeleteCategory" asp-route-id="@category.Id">Radera</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+    <a asp-action="Index" asp-controller="Admin">Home(Admin)</a>
+</div>
