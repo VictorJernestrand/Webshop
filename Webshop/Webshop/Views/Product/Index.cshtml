@@ -1,38 +1,27 @@
-﻿@model IEnumerable<CategoryViewModel>
+﻿@model IEnumerable<AllProductsViewModel>
 @{
-    ViewData["Title"] = "Produkter";
+    ViewData["Title"] = "Rock★Start";
     int a = 0;
+
 }
 
+
 @foreach (var category in Model)
-{   
+{
     if (a == 0)
     {
-     <h1>@category.CategoryName</h1>
+        <h1>@category.CategoryName</h1>
     }
     a++;
 }
 
-<table class="bg-text">
+<div class="container">
+    <div class=" row justify-content-center">
 
-    <thead>
-        <tr>          
-            <th><h3>Märke</h3></th>
-            <th><h3>Produkt namn</h3></th>
-            <th><h3>Pris</h3></th>
-            <th><h3>Lagersaldo</h3></th>
-            <th><h3>Beskrivning</h3></th>
-        </tr>
-        @foreach (var product in Model)
+        @foreach (var item in Model)
         {
-            <tr>               
-                <th><h5>@product.BrandName</h5></th>
-                <td><h5>@product.Name</h5></td>
-                <td><h5>@product.Price</h5></td>
-                <td><h5>@product.Quantity</h5></td>
-                <td><h5>@product.Description</h5></td>
-            </tr>
+            <partial name="_Productpartial" model="item" />
         }
-    </thead>
-</table>
+    </div>
+</div>
 

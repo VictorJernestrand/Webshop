@@ -2,8 +2,10 @@
 
 
 @{
-    ViewData["Title"] = "AllProducts";
+    ViewData["Title"] = "Rock★Start - Alla Produkter";
 }
+
+
 
 
 @if (TempData["Deleted"] != null)
@@ -134,3 +136,12 @@
     </p>
 }
 
+<div class="container">
+    <div class=" row justify-content-center">
+
+        @foreach (var item in Model)
+        {
+            <partial name="_Productpartial" model="item" />
+        }
+    </div>
+</div>

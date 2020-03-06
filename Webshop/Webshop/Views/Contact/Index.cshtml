@@ -1,37 +1,42 @@
 ﻿@model ContactModel
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Rock★Start - Kontakta oss";
 }
 
-    <div class="bg-text">
-        <div class="col-md-4 mx-auto">
-            <form asp-action="Contact">
-                <h2>Kontakta oss!</h2>
-                <p></p>
-                <div class="form-group">
-                    <input asp-for="FirstName" class="form-control" placeholder="Förnamn" />
-                    <span asp-validation-for="FirstName" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input asp-for="LastName" class="form-control" placeholder="Efternamn" />
-                    <span asp-validation-for="LastName" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input asp-for="Email" class="form-control" placeholder="exempel@epostadress.se" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input asp-for="PhoneNumber" class="form-control" placeholder="Telefonnummer" />
-                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <textarea asp-for="Message" placeholder="Meddelande..." rows="5" cols="51" border-radius: 5px;></textarea>
-                    <span asp-validation-for="Message" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Skicka hänsynslösa klagomål nu!" class="btn btn-success" a asp-action="Index"/>
+@if (TempData["MessageSuccess"] != null)
 
-                </div>
-            </form>
-        </div>
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["MessageSuccess"]
     </div>
+}
+<div class="col-md-4 mx-auto">
+    <form asp-action="Contact">
+        <h2>Kontakta oss!</h2>
+        <p></p>
+        <div class="form-group">
+            <input asp-for="FirstName" class="form-control" placeholder="Förnamn" />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input asp-for="LastName" class="form-control" placeholder="Efternamn" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input asp-for="Email" class="form-control" placeholder="exempel@epostadress.se" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input asp-for="PhoneNumber" class="form-control" placeholder="Telefonnummer" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <textarea asp-for="Message" placeholder="Meddelande..." rows="5" class="form-control"></textarea>
+            <span asp-validation-for="Message" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Skicka hänsynslösa klagomål nu!" class="btn btn-success" a asp-action="Index" />
+
+        </div>
+    </form>
+</div>
