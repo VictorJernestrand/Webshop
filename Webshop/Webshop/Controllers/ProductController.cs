@@ -44,7 +44,7 @@ namespace Webshop.Controllers
         {
            List<Product> categoryList = context.Products.Include("Brand").Include("Category").ToList();
 
-           List<CategoryViewModel> categoryViewList = categoryList.Select(x => new CategoryViewModel(x))
+           List<AllProductsViewModel> categoryViewList = categoryList.Select(x => new AllProductsViewModel(x))
                                    .Where(x => x.CategoryId == catid).OrderBy(c => c.Name).ToList();
 
             return View(categoryViewList);                

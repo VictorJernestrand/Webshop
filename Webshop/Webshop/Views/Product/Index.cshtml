@@ -1,16 +1,10 @@
-﻿@model IEnumerable<CategoryViewModel>
+﻿@model IEnumerable<AllProductsViewModel>
 @{
     ViewData["Title"] = "Rock★Start";
     int a = 0;
 
 }
 
-    <head>
-     
-        @*<script src="~/lib/jquery/jquery.js"></script>
-        <script src="~/lib/bootstrap/js/bootstrap.js"></script>
-        <link href="~/Content/site.css" rel="stylesheet" />*@
-    </head>
 
 @foreach (var category in Model)
 {
@@ -21,71 +15,13 @@
     a++;
 }
 
-@*<table class="bg-text">
+<div class="container">
+    <div class=" row justify-content-center">
 
-    <thead>
-        <tr>
-            <th><h3>Märke</h3></th>
-            <th><h3>Produkt namn</h3></th>
-            <th><h3>Pris</h3></th>
-            <th><h3>Lagersaldo</h3></th>
-            <th><h3>Beskrivning</h3></th>
-        </tr>
-        @foreach (var product in Model)
+        @foreach (var item in Model)
         {
-            <tr>
-                <th><h5>@product.BrandName</h5></th>
-                <td><h5>@product.Name</h5></td>
-                <td><h5>@product.Price</h5></td>
-                <td><h5>@product.Quantity</h5></td>
-                <td><h5>@product.Description</h5></td>
-            </tr>
+            <partial name="_Productpartial" model="item" />
         }
-    </thead>
-</table>*@
-
-@foreach (var item in Model)
-{
-
-
-<div class="col-sm-4 col-lg-4 col-md-4">
-    @*<meta name="viewport" content="width=device-width" />*@
-    @*<title>@ViewBag.Title</title>*@
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro">
-    <link href="~/lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
-    <div class="thumbnail">
-        <img src="@Url.Content("~/Image/" + item.Photo)" height="70" width="100" alt="Finns ingen bild än">
-
-        <div class="caption">
-            <h3 class="pull-right">@item.Price.ToString("c") </h3>
-            <h3> <a>@item.Name</a></h3>
-            <p class="pull-right">@item.CategoryName</p>
-            <p class="pull-right">@item.BrandName &nbsp;&nbsp;</p>
-            <p>@item.Description</p>
-
-
-            @if (User.IsInRole("Admin"))
-            {
-
-                <a class="btn btn-lg" style="color:violet;" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id"><i class="fa fa-search-plus"></i></a>
-                <a class="btn btn-lg" style="color:greenyellow" asp-action="EditProduct" asp-route-id="@item.Id"><i class="fa fa-edit"></i></a>
-                <a class="btn btn-lg" style="color:red;" asp-controller="Product" asp-action="DeleteProduct" asp-route-id="@item.Id"><i class="fa fa-trash"></i></a>
-
-
-
-            }
-            @if (!User.IsInRole("Admin"))
-            {
-
-                <a class="btn btn-lg" style="color:violet;" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id"><i class="fa fa-search-plus"></i></a>
-
-            }
-
-
-
-        </div>
-
     </div>
 </div>
-}
 
