@@ -5,11 +5,13 @@
             <div class="card text-center m-2 shadow p-3 mb-5 bg-white rounded border-0">
                 <div class="product-grid2">
                     <div class="product-image2">
-                        <a href="">
-                            <img class="pic-1 mx-auto d-block mt-2" style="height: 250px; width:auto;" src="@Url.Content("~/Image/" + @Model.Photo)" alt="Ingen bild">
-                            <img class="pic-2 mx-auto d-block mt-2" style="transform:scale(1.2); height: 250px; width:auto;" src="@Url.Content("~/Image/" + @Model.Photo)" alt="Ingen bild">
 
-                        </a>
+                       
+                            <img class="pic-1 mx-auto d-block mt-2" style="height: 250px; width:auto;" src="@Url.Content("~/Image/" + @Model.Photo)" alt=" Bild på en/ett @Model.CategoryName saknas">
+                            <img class="pic-2 mx-auto d-block mt-2" style="transform:scale(1.1); height: 250px; width:auto;" src="@Url.Content("~/Image/" + @Model.Photo)" alt="Bild på en/ett @Model.CategoryName saknas">
+
+
+                        
                         @if (!User.IsInRole("Admin"))
                         {
                             <ul class="social">
