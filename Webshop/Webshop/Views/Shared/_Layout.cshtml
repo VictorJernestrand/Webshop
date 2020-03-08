@@ -6,12 +6,11 @@
     <title>@ViewData["Title"] - Webshop</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-
-    <!------ Include the above in your HEAD tag ---------->
+   
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <!------ Include the above in your HEAD tag ---------->
+   
 
 </head>
 <body>
@@ -21,7 +20,9 @@
             <div class="row" style="height: inherit">
 
                 <div class="col-md-4 d-flex justify-content-center align-items-center text-white">
-                    <img src="~/Image/logo.png" style="max-width: 217px; height: auto" />
+                    <a asp-area="" asp-controller="Home" asp-action="Index">
+                        <img src="~/Image/logo.png" style="max-width: 217px; height: auto" />
+                    </a>
                 </div>
 
                 <div class="col d-flex justify-content-center align-items-center">
