@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Webshop.Context;
@@ -18,7 +19,6 @@ namespace Webshop.Controllers
         private readonly WebshopContext context;
 
 
-        public CategoryController(WebshopContext context)
         public CategoryController(WebshopContext context, IWebHostEnvironment env)
         {
             this.context = context;
