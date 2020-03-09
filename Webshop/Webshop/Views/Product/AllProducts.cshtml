@@ -1,12 +1,8 @@
 ﻿@model IEnumerable<AllProductsViewModel>
-
-
 @{
     ViewData["Title"] = "Rock★Start - Alla Produkter";
 }
-
-
-
+<partial name="_AddToCartMessagePartial" />
 
 @if (TempData["Deleted"] != null)
 {
