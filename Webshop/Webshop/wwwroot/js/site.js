@@ -164,11 +164,11 @@ function IncreaseSingleProductInCart(productId) {
     let total = parseInt(document.getElementById('cartProductId_' + productId).innerHTML) + 1;
 
     if (total > 0) {
-        document.getElementById('DecreaseBtn').disabled = false;
+        document.getElementById('DecreaseBtn_' + productId).disabled = false;
     }
 
     if (total >= 50) {
-        document.getElementById('IncreaseBtn').disabled = true;
+        document.getElementById('IncreaseBtn_' + productId).disabled = true;
     }
 
     document.getElementById('cartProductId_' + productId).innerHTML = total;
@@ -179,11 +179,11 @@ function DecreaseSingleProductInCart(productId) {
     let total = parseInt(document.getElementById('cartProductId_' + productId).innerHTML) - 1;
 
     if (total == 0) {
-        document.getElementById('DecreaseBtn').disabled = true;
+        document.getElementById('DecreaseBtn_' + productId).disabled = true;
     }
 
     if (total <= 50) {
-        document.getElementById('IncreaseBtn').disabled = false;
+        document.getElementById('IncreaseBtn_' + productId).disabled = false;
     }
 
     document.getElementById('cartProductId_' + productId).innerHTML = total;
