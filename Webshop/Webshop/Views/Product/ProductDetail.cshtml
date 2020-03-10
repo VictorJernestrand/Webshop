@@ -1,5 +1,11 @@
 ﻿@model Product
-
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions{
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
 @{
     ViewData["Title"] = "Rock★Start - Detaljer";
 }
@@ -62,7 +68,7 @@
         }
         else
         {
-            <a class="btn btn-success mb-2 mr-2" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Köp skiten!</a>
+            <a class="btn btn-success mb-2 mr-2" onclick="AddCrapToCart(@Model.Id, '@Model.Name', '@GetAntiXsrfRequestToken()')">Köp skiten!</a>
         }
 
         <a asp-action="AllProducts" class="btn btn-info mb-2 mr-2">Tillbaka till alla produkter</a>
