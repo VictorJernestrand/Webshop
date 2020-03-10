@@ -26,7 +26,7 @@
                 <td><button class="btn btn-warning" onclick="RemoveCrapFromCart(@product.ShoppingCartId, @product.ProductId)" id="DecreaseBtn"><i class="fas fa-minus-square"></i></button></td>
                 <td><span id="cartProductId_@product.ProductId">@product.Amount</span></td>
                 <td><button class="btn btn-success" onclick="AddCrapToCart(@product.ProductId, null)" id="IncreaseBtn"><i class="fas fa-plus-square"></i></button></td>
-                <td><button class="btn btn-outline-danger" onclick="DeleteCrapFromCart(@product.ShoppingCartId)"><i class="fas fa-dumpster-fire"></i></button></td>
+                <td><button class="btn btn-outline-danger" onclick="DeleteCrapFromCart(@product.ShoppingCartId)" ><i class="fas fa-dumpster-fire"></i></button></td>
             </tr>
         }
     </table>
