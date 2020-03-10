@@ -1,11 +1,11 @@
 ﻿@model AllProductsViewModel
-@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@*@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @functions{
     public string GetAntiXsrfRequestToken()
     {
         return Xsrf.GetAndStoreTokens(Context).RequestToken;
     }
-}
+}*@
 
 <div class="col-md-5 col-lg-4">
     <div class="card text-center m-2 shadow p-3 mb-5 bg-white rounded border-0">
@@ -21,7 +21,7 @@
                     <ul class="social">
                         <li><a style="color:violet" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@Model.Id" data-tip="Visa detaljer"><i class="fa fa-eye"></i></a></li>
                     </ul>
-                    <button class="add-to-cart add-to-cart" onclick="AddCrapToCart(@Model.Id, '@Model.Name', '@GetAntiXsrfRequestToken()')">Köp skiten!</button>
+                    <button class="add-to-cart add-to-cart" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Köp skiten!</button>
                 }
                 else
                 {
