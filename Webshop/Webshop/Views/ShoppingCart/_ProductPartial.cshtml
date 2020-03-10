@@ -1,0 +1,22 @@
+﻿@model ShoppingCartModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions{
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
+@{
+}
+<tr>
+    <td>
+        <a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@Model.ProductId">
+            <img src="@Url.Content("~/Image/" + Model.Photo)" style="height: 80px; width: auto" />
+        </a>
+    </td>
+    <td>@Model.Name</td>
+    <td>@Model.Price.ToString("C0")</td>
+    <td><a href="#" class="btn btn-warning"><i class="fas fa-minus-square"></i></a></td>
+    <td><span id="cartProductId_@Model.ProductId">@Model.Amount</span></td>
+    <td><button class="btn btn-success" onclick="AddCrapToCart(@Model.ProductId, null, '@GetAntiXsrfRequestToken()')"><i class="fas fa-plus-square"></i></button></td>
+</tr>
