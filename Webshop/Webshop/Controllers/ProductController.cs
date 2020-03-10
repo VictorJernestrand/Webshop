@@ -83,7 +83,7 @@ namespace Webshop.Controllers
                             Directory.CreateDirectory(wwwRoot + @"\Image\" + folderName);
 
                         // Get name of file. Validate file before using it!
-                        var fileName = System.IO.Path.GetFileName(file.FileName);
+                        var fileName = Path.GetFileName(file.FileName);
 
                         // Set the path to point to 
                         filePath = Path.Combine(folderName, fileName);
