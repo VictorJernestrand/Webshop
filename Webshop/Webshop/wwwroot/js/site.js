@@ -55,6 +55,7 @@ function AddCrapToCart(productId, name, antiForgeryToken) {
             if (response.ok) {
                 UpdateCartButton();
                 DisplayResponseMessage(name);
+                UpdateSingleProductInCart(productId);
             } else {
                 alert("Skit också, något gick fel. Försök igen eller kontakta vår sketna support!");
             }
@@ -62,22 +63,42 @@ function AddCrapToCart(productId, name, antiForgeryToken) {
 }
 
 // Show user a message notification that the product was added to cart
-function DisplayResponseMessage(product) {
-    document.getElementById('item_added_to_cart').innerHTML = product;
+function DisplayResponseMessage(productName) {
+
+    // If productName is null, break here
+    if (productName == null)
+        return;
+
+    document.getElementById('item_added_to_cart').innerHTML = productName;
     $('#exampleModalCenter').modal('show');
 }
 
 // Update cart button with info on total items and current cost
 function UpdateCartButton() {
+
+    // Get cart content using an AJAX call to GetCartContent() actionmethod
     fetch('https://localhost:44364/Product/GetCartContent')
+
+        // Get response as Json data
         .then((response) => {
             return response.json();
         })
+
+        // Update cart button with totalItems and totalCost by manipulating DOM
         .then((data) => {
+
             document.getElementById('cartTotalItems').innerHTML = data.totalItems;
             document.getElementById('cartTotalCost').innerHTML = data.totalCost;
         });
 }
+
+
+// Update amount for each product in the view (index.cshtml) for ShoppingCart
+function UpdateSingleProductInCart(productId) {
+    let total = parseInt(document.getElementById('cartProductId_' + productId).innerHTML) + 1;
+    document.getElementById('cartProductId_' + productId).innerHTML = total;
+}
+
 
 // Invoke UpdateCartButton() as soon as page has loaded
 $(document).ready(function () {

@@ -409,13 +409,36 @@ namespace Webshop.Controllers
                 .Select(x => new CartButtonInfoModel
                 {
                     TotalItems = x.Sum(x => x.Amount),
-                    //TotalCost = x.Sum(p => p.Product.Price * (x.Select(x => x.Amount))).ToString("C0"),
-                    TotalCost = x.Sum(a => a.Product.Price * a.Amount).ToString("C0"),
+                    TotalCost = x.Sum(a => a.Product.Price * a.Amount).ToString("C0")
 
                 }).FirstOrDefault();
 
             return cartContent;
         }
 
+        /*
+        [HttpGet]
+        [Produces("application/json")]
+        public CartButtonInfoModel GetCartContentDetails()
+        {
+            // Is there a session cookie?
+            if (HttpContext.Session.GetString("CustomerCartSessionId") == null)
+                return new CartButtonInfoModel();
+
+            // Get cart contents
+            var cartContent = context.ShoppingCart.Include(x => x.Product)
+                .Where(x => x.CartId == Guid.Parse(HttpContext.Session.GetString("CustomerCartSessionId")))
+                .ToList()
+                .GroupBy(x => new { x.CartId })
+                .Select(x => new CartButtonInfoModel
+                {
+                    TotalItems = x.Sum(x => x.Amount),
+                    TotalCost = x.Sum(a => a.Product.Price * a.Amount).ToString("C0")
+
+                }).FirstOrDefault();
+
+            return cartContent;
+        }
+        */
     }
 }
