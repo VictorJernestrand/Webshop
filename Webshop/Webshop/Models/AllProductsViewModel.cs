@@ -10,6 +10,11 @@ namespace Webshop.Models
     public class AllProductsViewModel
     {
 
+        public AllProductsViewModel()
+        {
+            // Do nothing
+        }
+
         public AllProductsViewModel(Product product)
         {
             Id = product.Id;
@@ -24,8 +29,9 @@ namespace Webshop.Models
             CategoryName = product.Category.Name;
             Category = product.Category;
             Brand = product.Brand;
-
         }
+
+
         public int Id { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }

@@ -1,4 +1,11 @@
 ﻿@model IEnumerable<AllProductsViewModel>
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions{
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
 @{
     ViewData["Title"] = "Rock★Start - Alla Produkter";
 }
@@ -140,4 +147,5 @@
             <partial name="_Productpartial" model="item" />
         }
     </div>
+    <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
 </div>
