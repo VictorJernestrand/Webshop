@@ -44,7 +44,7 @@ namespace Webshop.Controllers
         {
            List<Product> categoryList = context.Products.Include("Brand").Include("Category").ToList();
 
-           List<CategoryViewModel> categoryViewList = categoryList.Select(x => new CategoryViewModel(x))
+           List<AllProductsViewModel> categoryViewList = categoryList.Select(x => new AllProductsViewModel(x))
                                    .Where(x => x.CategoryId == catid).OrderBy(c => c.Name).ToList();
 
             return View(categoryViewList);                
@@ -333,7 +333,7 @@ namespace Webshop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddToCart(int id)
+        public void AddToCart(int id)
         {
             // Generate a unique id
             Guid guid = Guid.NewGuid();
@@ -371,7 +371,8 @@ namespace Webshop.Controllers
                     };
 
                     // All good, put item in shoppingcart
-                    var result = await databaseCRUD.InsertAsync<ShoppingCart>(shoppingCart);
+                    //var result = await databaseCRUD.InsertAsync<ShoppingCart>(shoppingCart);
+                    context.Add<ShoppingCart>(shoppingCart);
                 }
 
                 // Update timestamp 
@@ -388,11 +389,56 @@ namespace Webshop.Controllers
                 context.SaveChanges();
             }
 
-
-            return RedirectToAction(nameof(AllProducts));
-
         }
 
 
+
+        [HttpGet]
+        [Produces("application/json")]
+        public CartButtonInfoModel GetCartContent()
+        {
+            // Is there a session cookie?
+            if (HttpContext.Session.GetString("CustomerCartSessionId") == null)
+                return new CartButtonInfoModel();
+
+            // Get cart contents
+            var cartContent = context.ShoppingCart.Include(x => x.Product)
+                .Where(x => x.CartId == Guid.Parse(HttpContext.Session.GetString("CustomerCartSessionId")))
+                .ToList()
+                .GroupBy(x => new { x.CartId })
+                .Select(x => new CartButtonInfoModel
+                {
+                    TotalItems = x.Sum(x => x.Amount),
+                    TotalCost = x.Sum(a => a.Product.Price * a.Amount).ToString("C0")
+
+                }).FirstOrDefault();
+
+            return cartContent;
+        }
+
+        /*
+        [HttpGet]
+        [Produces("application/json")]
+        public CartButtonInfoModel GetCartContentDetails()
+        {
+            // Is there a session cookie?
+            if (HttpContext.Session.GetString("CustomerCartSessionId") == null)
+                return new CartButtonInfoModel();
+
+            // Get cart contents
+            var cartContent = context.ShoppingCart.Include(x => x.Product)
+                .Where(x => x.CartId == Guid.Parse(HttpContext.Session.GetString("CustomerCartSessionId")))
+                .ToList()
+                .GroupBy(x => new { x.CartId })
+                .Select(x => new CartButtonInfoModel
+                {
+                    TotalItems = x.Sum(x => x.Amount),
+                    TotalCost = x.Sum(a => a.Product.Price * a.Amount).ToString("C0")
+
+                }).FirstOrDefault();
+
+            return cartContent;
+        }
+        */
     }
 }

@@ -27,14 +27,15 @@ namespace WebAPI.Controllers
         public async Task<ActionResult<IEnumerable<CategoryProductCountModel>>> GetCategories()
         {
             // Get categories and count total instruments in each category
-            var categories = await _context.Categories.Include(x => x.Products)
-                                                      .Select(x => new CategoryProductCountModel
-                                                      {
-                                                          Id = x.Id,
-                                                          Name = x.Name,
-                                                          InstrumentCount = x.Products.Count()
-                                                      })
-                                                      .ToListAsync();
+            //var categories = await _context.Categories.Include(x => x.Products)
+            //                                          .Select(x => new CategoryProductCountModel
+            //                                          {
+            //                                              Id = x.Id,
+            //                                              Name = x.Name,
+            //                                              InstrumentCount = x.Products.Count()
+            //                                          })
+            //                                          .ToListAsync();
+            var categories = await _context.Categories.ToListAsync();
 
             return Ok(categories);
         }
@@ -50,6 +51,7 @@ namespace WebAPI.Controllers
 
             return Ok(category);
         }
+
 
         // PUT: api/Categories/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for

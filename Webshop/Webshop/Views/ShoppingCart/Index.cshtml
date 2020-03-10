@@ -1,0 +1,21 @@
+﻿@model IEnumerable<ShoppingCartModel>
+@{
+    ViewData["Title"] = "Din Varukorg";
+}
+
+@if (Model != null)
+{
+    <table class="table">
+        @foreach (var product in Model)
+        {
+            <partial name="_ProductPartial" model="product" />
+        }
+    </table>
+
+    <button href="#" class="btn btn-warning" onClick="history.go(-1); return false;">Fortsätt Shoppa snålis</button>
+    <a href="#" class="btn btn-success">Gå till kassan</a>
+}
+else
+{
+    <span>Fjant!</span>
+}
