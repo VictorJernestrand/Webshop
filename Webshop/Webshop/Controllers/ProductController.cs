@@ -352,8 +352,8 @@ namespace Webshop.Controllers
             Guid cartId = Guid.Parse(HttpContext.Session.GetString("CustomerCartSessionId"));
 
             // Are there any products left ot buy
-            if (product.Quantity > 0)
-            {
+            //if (product.Quantity > 0)
+            //{
                 // Does product allready exist in shoppingcart??
                 var cartItem = context.ShoppingCart.Where(x => x.CartId == cartId && x.ProductId == id).FirstOrDefault();
                 if (cartItem != null)
@@ -382,15 +382,58 @@ namespace Webshop.Controllers
 
 
                 // Update product quantity
-                product.Quantity--;
+                //product.Quantity--;
+
 
 
                 // save you fool!
                 context.SaveChanges();
-            }
 
+            /*}
+            else
+                return NotFound();*/
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public void RemoveFromCart(int id)
+        {
+            // Is there a session cookie? Remove product from cart!!
+            if (HttpContext.Session.GetString("CustomerCartSessionId") != null)
+            {
+
+                // Get item from shoppingcart to be removed
+                var cartProductItem = context.ShoppingCart.Find(id);
+
+                // Are there anything to be removed?
+                if (cartProductItem.Amount > 0)
+                {
+                    // Update database quantity
+                    var productInStock = context.Products.Find(cartProductItem.ProductId);
+
+                    // Put item back
+                    productInStock.Quantity++;
+
+                    // Remove item from cart
+                    cartProductItem.Amount--;
+
+                    // Update database
+                    context.SaveChanges();
+                }
+
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public void DeleteItemFromCart(int id)
+        {
+            var cartItem = context.ShoppingCart.Find(id);
+            context.Remove(cartItem);
+            context.SaveChanges();
+
+
+        }
 
 
         [HttpGet]
@@ -409,12 +452,12 @@ namespace Webshop.Controllers
                 .Select(x => new CartButtonInfoModel
                 {
                     TotalItems = x.Sum(x => x.Amount),
-                    //TotalCost = x.Sum(p => p.Product.Price * (x.Select(x => x.Amount))).ToString("C0"),
-                    TotalCost = x.Sum(a => a.Product.Price * a.Amount).ToString("C0"),
+                    TotalCost = x.Sum(a => a.Product.Price * a.Amount).ToString("C0")
 
                 }).FirstOrDefault();
 
-            return cartContent;
+            // If cartContent is null return new CartButtonmodel with default values
+            return (cartContent != null) ? cartContent : new CartButtonInfoModel();
         }
 
     }
