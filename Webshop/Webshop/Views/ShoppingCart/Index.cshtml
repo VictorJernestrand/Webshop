@@ -1,4 +1,11 @@
 ﻿@model IEnumerable<ShoppingCartModel>
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions{
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
 @{
     ViewData["Title"] = "Din Varukorg";
 }
@@ -8,9 +15,22 @@
     <table class="table">
         @foreach (var product in Model)
         {
-            <partial name="_ProductPartial" model="product" />
+            <tr id="DumpCrap_@product.ShoppingCartId">
+                <td>
+                    <a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">
+                        <img src="@Url.Content("~/Image/" + product.Photo)" style="height: 80px; width: auto" />
+                    </a>
+                </td>
+                <td>@product.Name</td>
+                <td>@product.Price.ToString("C0")</td>
+                <td><button class="btn btn-warning" onclick="RemoveCrapFromCart(@product.ShoppingCartId, @product.ProductId)" id="DecreaseBtn"><i class="fas fa-minus-square"></i></button></td>
+                <td><span id="cartProductId_@product.ProductId">@product.Amount</span></td>
+                <td><button class="btn btn-success" onclick="AddCrapToCart(@product.ProductId, null)" id="IncreaseBtn"><i class="fas fa-plus-square"></i></button></td>
+                <td><button class="btn btn-outline-danger" onclick="DeleteCrapFromCart(@product.ShoppingCartId)"><i class="fas fa-dumpster-fire"></i></button></td>
+            </tr>
         }
     </table>
+    <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
 
     <button href="#" class="btn btn-warning" onClick="history.go(-1); return false;">Fortsätt Shoppa snålis</button>
     <a href="#" class="btn btn-success">Gå till kassan</a>

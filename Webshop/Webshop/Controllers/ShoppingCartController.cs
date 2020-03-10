@@ -35,6 +35,7 @@ namespace Webshop.Controllers
                     .Where(x => x.CartId == cartId)
                     .Select(x => new ShoppingCartModel
                     {
+                        ShoppingCartId = x.Id,
                         ProductId = x.Product.Id,
                         Name = x.Product.Name,
                         Price = x.Product.Price,
