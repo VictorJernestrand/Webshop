@@ -29,8 +29,8 @@ namespace Webshop.Models
             CategoryName = product.Category.Name;
             Category = product.Category;
             Brand = product.Brand;
+            FullDescription = product.FullDescription;
         }
-
 
         public int Id { get; set; }
         public string Name { get; set; }
@@ -38,8 +38,8 @@ namespace Webshop.Models
         public int Quantity { get; set; }
         public int CategoryId { get; set; }
         public int BrandId { get; set; }
-
         public string Description { get; set; }
+        public string FullDescription { get; set; }
         public string Photo { get; set; }
         public string BrandName { get; set; }
         public string CategoryName { get; set; }
