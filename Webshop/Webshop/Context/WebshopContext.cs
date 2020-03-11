@@ -59,6 +59,7 @@ namespace Webshop.Context
                 entity.Property(x => x.Name).IsRequired().HasMaxLength(50);
                 entity.Property(x => x.Price).IsRequired();
                 entity.Property(x => x.Quantity).IsRequired();
+                entity.Property(x => x.FullDescription).HasMaxLength(10000);
             });
 
             builder.Entity<Category>(entity =>

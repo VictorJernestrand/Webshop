@@ -41,13 +41,15 @@ a {
 }
 
 /*----------------------------------------------*/
-html {
+/*html {
   font-size: 14px;
-}
+}*/
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+
+        overflow-y: scroll;
+    }
 }
 
 .border-top {
@@ -76,9 +78,7 @@ body {
     /*background-image: url('../image/thumb-1920-143357.jpg');*/
     /*height: 100%;
     margin-bottom: 60px;*/
-
-   
-   
+    /*background-image: url('../image/background_homepage.jpg');*/
 }
 
 * {
