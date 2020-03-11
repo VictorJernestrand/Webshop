@@ -1,0 +1,20 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model List<AllProductsViewModel>
+
+<div>
+    
+    <p> Din sökning gav @Model.Count @((Model.Count == 1)? "träff" : "träffar")</p>
+</div>
+<div class="container">
+    <div class=" row justify-content-center">
+
+        @foreach (var product in Model)
+        {
+            <partial name="_ProductPartial" model="product" />
+        }
+    </div>
+</div>
