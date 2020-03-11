@@ -17,6 +17,20 @@
     <Compile Remove="Migrations\20200214185606_InitialCreate.Designer.cs" />
     <Compile Remove="Migrations\20200216174406_InitialCreate.cs" />
     <Compile Remove="Migrations\20200216174406_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20200224134751_robin1.cs" />
+    <Compile Remove="Migrations\20200224134751_robin1.Designer.cs" />
+    <Compile Remove="Migrations\20200224135511_robin1.cs" />
+    <Compile Remove="Migrations\20200224135511_robin1.Designer.cs" />
+    <Compile Remove="Migrations\20200225091608_ee.cs" />
+    <Compile Remove="Migrations\20200225091608_ee.Designer.cs" />
+    <Compile Remove="Migrations\20200225123332_eee.cs" />
+    <Compile Remove="Migrations\20200225123332_eee.Designer.cs" />
+    <Compile Remove="Migrations\20200302202307_rka.cs" />
+    <Compile Remove="Migrations\20200302202307_rka.Designer.cs" />
+    <Compile Remove="Migrations\20200302203232_rka.cs" />
+    <Compile Remove="Migrations\20200302203232_rka.Designer.cs" />
+    <Compile Remove="Migrations\20200302203526_rka.cs" />
+    <Compile Remove="Migrations\20200302203526_rka.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +38,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.1" />
     <Compile Remove="Migrations\20200217084017_Product_Data.cs" />
     <Compile Remove="Migrations\20200217084017_Product_Data.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\Image\Guitar\guitar3.jpg" />
   </ItemGroup>
 
   <ItemGroup>

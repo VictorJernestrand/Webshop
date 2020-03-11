@@ -1,27 +1,35 @@
-﻿@model List<Product>
-@{
-    ViewData["Title"] = "Produkter";
+﻿@model IEnumerable<AllProductsViewModel>
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions{
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
 }
-    
-<h1></h1>
-<table class="bg-text">
+@{
+    ViewData["Title"] = "Rock★Start";
+    int a = 0;
 
-    <thead>
-        <tr>
-            <th><h3>Produkt namn</h3></th>
-            <th><h3>Pris</h3></th>
-            <th><h3>Lagersaldo</h3></th>
-            <th><h3>Beskrivning</h3></th>
-        </tr>
-        @foreach (var product in Model)
+}
+<partial name="_AddToCartMessagePartial" />
+
+@foreach (var category in Model)
+{
+    if (a == 0)
+    {
+        <h1>@category.CategoryName</h1>
+    }
+    a++;
+}
+
+<div class="container">
+    <div class=" row justify-content-center">
+
+        @foreach (var item in Model)
         {
-            <tr>
-                <td><h5>@product.Name</h5></td>
-                <td><h5>@product.Price</h5></td>
-                <td><h5>@product.Quantity</h5></td>
-                <td><h5>@product.Description</h5></td>                  
-            </tr>
+            <partial name="_Productpartial" model="item" />
         }
-    </thead>
-</table>
+    </div>
+    <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
+</div>
 

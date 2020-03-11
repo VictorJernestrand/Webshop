@@ -237,6 +237,32 @@ namespace Webshop.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Webshop.Models.Data.ShoppingCart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("CartId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ShoppingCart");
+                });
+
             modelBuilder.Entity("Webshop.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -299,6 +325,9 @@ namespace Webshop.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<float>("Discount")
+                        .HasColumnType("real");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)")
@@ -328,7 +357,9 @@ namespace Webshop.Migrations
                             BrandId = 2,
                             CategoryId = 5,
                             Description = "Black and white",
+                            Discount = 0f,
                             Name = "Stratocaster",
+                            Photo = "Guitar\\guitar1.jpg",
                             Price = 4000m,
                             Quantity = 4
                         },
@@ -338,7 +369,9 @@ namespace Webshop.Migrations
                             BrandId = 2,
                             CategoryId = 3,
                             Description = "Smooth",
+                            Discount = 0f,
                             Name = "Precision",
+                            Photo = "Piano\\piano1.jpg",
                             Price = 3000m,
                             Quantity = 5
                         },
@@ -348,7 +381,9 @@ namespace Webshop.Migrations
                             BrandId = 2,
                             CategoryId = 3,
                             Description = "Blue bas",
+                            Discount = 0f,
                             Name = "Vintera",
+                            Photo = "Piano\\piano2.jpg",
                             Price = 4000m,
                             Quantity = 2
                         },
@@ -358,7 +393,9 @@ namespace Webshop.Migrations
                             BrandId = 1,
                             CategoryId = 3,
                             Description = "Advanced",
+                            Discount = 0f,
                             Name = "Epiphone",
+                            Photo = "Piano\\piano3.jpg",
                             Price = 4000m,
                             Quantity = 2
                         },
@@ -368,7 +405,9 @@ namespace Webshop.Migrations
                             BrandId = 5,
                             CategoryId = 2,
                             Description = "For kids",
+                            Discount = 0f,
                             Name = "Youngster",
+                            Photo = "Bas\\bas1.jpg",
                             Price = 1100m,
                             Quantity = 8
                         },
@@ -378,7 +417,9 @@ namespace Webshop.Migrations
                             BrandId = 5,
                             CategoryId = 2,
                             Description = "For good players",
+                            Discount = 0f,
                             Name = "MPS-150X",
+                            Photo = "Bas\\bas2.jpg",
                             Price = 3200m,
                             Quantity = 4
                         },
@@ -388,7 +429,9 @@ namespace Webshop.Migrations
                             BrandId = 3,
                             CategoryId = 1,
                             Description = "Nice set of drums",
+                            Discount = 0f,
                             Name = "DTX­432K",
+                            Photo = "Drum set\\drum1.jpg",
                             Price = 5600m,
                             Quantity = 2
                         },
@@ -398,7 +441,9 @@ namespace Webshop.Migrations
                             BrandId = 3,
                             CategoryId = 4,
                             Description = "Black and black",
+                            Discount = 0f,
                             Name = "P116M",
+                            Photo = "Keyboard\\keyboard1.jpg",
                             Price = 8000m,
                             Quantity = 1
                         },
@@ -408,7 +453,9 @@ namespace Webshop.Migrations
                             BrandId = 3,
                             CategoryId = 4,
                             Description = "Old model",
+                            Discount = 0f,
                             Name = "Calvinova",
+                            Photo = "Keyboard\\keyboard2.jpg",
                             Price = 8900m,
                             Quantity = 1
                         },
@@ -418,7 +465,9 @@ namespace Webshop.Migrations
                             BrandId = 4,
                             CategoryId = 3,
                             Description = "Digitalpiano",
+                            Discount = 0f,
                             Name = "B2SP",
+                            Photo = "Piano\\piano4.jpg",
                             Price = 2300m,
                             Quantity = 6
                         },
@@ -428,7 +477,9 @@ namespace Webshop.Migrations
                             BrandId = 4,
                             CategoryId = 5,
                             Description = "Traveling model",
+                            Discount = 0f,
                             Name = "SP-280",
+                            Photo = "Guitar\\guitar2.jpg",
                             Price = 5300m,
                             Quantity = 3
                         },
@@ -438,7 +489,9 @@ namespace Webshop.Migrations
                             BrandId = 3,
                             CategoryId = 4,
                             Description = "Our best keyboard",
+                            Discount = 0f,
                             Name = "P-45",
+                            Photo = "Keyboard\\keyboard3.jpg",
                             Price = 4900m,
                             Quantity = 3
                         });
@@ -450,6 +503,9 @@ namespace Webshop.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
 
                     b.Property<float>("Discount")
                         .ValueGeneratedOnAdd()
@@ -622,6 +678,15 @@ namespace Webshop.Migrations
                     b.HasOne("Webshop.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Webshop.Models.Data.ShoppingCart", b =>
+                {
+                    b.HasOne("Webshop.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

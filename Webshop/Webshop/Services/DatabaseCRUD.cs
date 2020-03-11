@@ -80,10 +80,26 @@ namespace Webshop.Context
             return await CommitChanges();
         }
 
+       public async Task<int> DeleteAsynById<T>(T obj)
+        {
+            
+            return await CommitChanges();
+        }
+
+        public string GetCategoryName(int categorid)
+        {
+            var categoryName= context.Categories
+                .Where(x => x.Id == categorid).
+                Select(x => x.Name).FirstOrDefault();
+            return (categoryName);
+        }
+
         public async Task<int> CommitChanges()
         { 
             return await context.SaveChangesAsync();
         }
+
+       
 
     }
 }
