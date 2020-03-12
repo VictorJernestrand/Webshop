@@ -36,12 +36,10 @@ namespace Webshop.Controllers
             this.environment = env;
         }
 
-
         //This mtd display the Products based on Passed in CategoryId
         public IActionResult Index(int catid)
         {
            List<Product> categoryList = context.Products.Include("Brand").Include("Category").ToList();
-
            List<AllProductsViewModel> categoryViewList = categoryList.Select(x => new AllProductsViewModel(x))
                                    .Where(x => x.CategoryId == catid).OrderBy(c => c.Name).ToList();
 
@@ -74,7 +72,6 @@ namespace Webshop.Controllers
 
             return View(productSpecification);
         }
-
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
@@ -123,24 +120,23 @@ namespace Webshop.Controllers
                         Photo = filePath
                     };
 
-
                     await databaseCRUD.InsertAsync<Product>(newProduct);
                 }               
 
                else
                 {                 
-                        StringBuilder result = new StringBuilder();
+                    StringBuilder result = new StringBuilder();
 
-                        foreach (var item in ModelState)
+                    foreach (var item in ModelState)
+                    {
+                        string key = item.Key;
+                        var errors = item.Value.Errors;
+
+                        foreach (var error in errors)
                         {
-                            string key = item.Key;
-                            var errors = item.Value.Errors;
-
-                            foreach (var error in errors)
-                            {
-                                result.Append(key + " " + error.ErrorMessage);
-                            }
+                            result.Append(key + " " + error.ErrorMessage);
                         }
+                    }
 
                     model.categoryVM = context.Categories.ToList();
                     model.brandVM = context.Brands.ToList();
@@ -151,7 +147,6 @@ namespace Webshop.Controllers
 
                 TempData["Succesmsg"] = $"Great!! {model.Name} skapad i databasen"; 
                 return RedirectToAction("AllProducts", "Product");
-
 
             }
             catch
@@ -227,10 +222,6 @@ namespace Webshop.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult EditProduct(int id)
         {
-           // Product product = new Product();
-
-            //product = context.Products.Include("Brand").
-            //           Include("Category").FirstOrDefault(p => p.Id == id);
 
             var result = context.Products.Include("Brand")
                 .Include("Category")
@@ -253,13 +244,6 @@ namespace Webshop.Controllers
             EditProductModel.categoryVM = context.Categories.ToList();
             EditProductModel.brandVM = context.Brands.ToList();
             return View(EditProductModel);
-
-            //EditProductModel editProductModel = new EditProductModel(product);
-
-            //editProductModel.categoryVM = context.Categories.ToList();
-            //editProductModel.brandVM = context.Brands.ToList();
-
-            //return View(editProductModel);
         }
 
         [Authorize(Roles = "Admin")]
@@ -312,7 +296,6 @@ namespace Webshop.Controllers
                         editproduct.Photo = filePath;
                     }
 
-
                     await databaseCRUD.UpdateAsync<Product>(editproduct);
                 }
 
@@ -340,8 +323,6 @@ namespace Webshop.Controllers
 
                 TempData["EditSuccesmsg"] = $"Great!! {model.Name} uppdateras i databasen";
                 return RedirectToAction("AllProducts", "Product");
-
-
             }
             catch
             {
@@ -349,120 +330,6 @@ namespace Webshop.Controllers
                 return RedirectToAction("EditProduct", "Product");
             }
         }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public void AddToCart(int id)
-        {
-            // Generate a unique id
-            Guid guid = Guid.NewGuid();
-
-            // Check if session cookie exist
-            if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) == null)
-            {
-                // Set session cookie with Guid Id
-                HttpContext.Session.SetString(Common.CART_COOKIE_NAME, guid.ToString());
-            }
-
-            // Get product form database
-            Product product = context.Products.Find(id);
-
-            // Cart Id
-            Guid cartId = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
-
-            // Does product allready exist in shoppingcart??
-            var cartItem = context.ShoppingCart.Where(x => x.CartId == cartId && x.ProductId == id).FirstOrDefault();
-            if (cartItem != null)
-            {
-                cartItem.Amount++; // add one more
-            }
-            else
-            {
-                // Instantiate a new schoppingcart item with the selected prodcut id
-                ShoppingCart shoppingCart = new ShoppingCart()
-                {
-                    CartId = cartId,
-                    ProductId = id,
-                    Amount = 1
-                };
-
-                // All good, put item in shoppingcart
-                //var result = await databaseCRUD.InsertAsync<ShoppingCart>(shoppingCart);
-                context.Add<ShoppingCart>(shoppingCart);
-            }
-
-            // Update timestamp 
-            List<ShoppingCart> carts = context.ShoppingCart.Where(x => x.CartId == cartId).ToList();
-            carts.ForEach(x => x.TimeStamp = DateTime.Now);
-
-            // save you fool!
-            context.SaveChanges();
-
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public void RemoveFromCart(int id)
-        {
-            // Is there a session cookie? Remove product from cart!!
-            if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) != null)
-            {
-
-                // Get item from shoppingcart to be removed
-                var cartProductItem = context.ShoppingCart.Find(id);
-
-                // Are there anything to be removed?
-                if (cartProductItem.Amount > 0)
-                {
-                    // Update database quantity
-                    var productInStock = context.Products.Find(cartProductItem.ProductId);
-
-                    // Put item back
-                    productInStock.Quantity++;
-
-                    // Remove item from cart
-                    cartProductItem.Amount--;
-
-                    // Update database
-                    context.SaveChanges();
-                }
-
-            }
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public void DeleteItemFromCart(int id)
-        {
-            var cartItem = context.ShoppingCart.Find(id);
-            context.Remove(cartItem);
-            context.SaveChanges();
-        }
-
-        [HttpGet]
-        [Produces("application/json")]
-        public CartButtonInfoModel GetCartContent()
-        {
-            // Is there a session cookie?
-            if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) == null)
-                return new CartButtonInfoModel();
-
-            // Get cart contents
-            var cartContent = context.ShoppingCart.Include(x => x.Product)
-                .Where(x => x.CartId == Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME)))
-                .ToList()
-                .GroupBy(x => new { x.CartId })
-                .Select(x => new CartButtonInfoModel
-                {
-                    TotalItems = x.Sum(x => x.Amount),
-                    TotalCost = x.Sum(a => a.Product.Price * a.Amount).ToString("C0")
-
-                }).FirstOrDefault();
-
-            // If cartContent is null return new CartButtonmodel with default values
-            return (cartContent != null) ? cartContent : new CartButtonInfoModel();
-        }
-
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
