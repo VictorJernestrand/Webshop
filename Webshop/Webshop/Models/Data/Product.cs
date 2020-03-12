@@ -19,6 +19,7 @@ namespace Webshop.Models
         public string FullDescription { get; set; }
         public string Photo { get; set; }
         public float Discount { get; set; }
+        public string Specification { get; set; }
         public Category Category { get; set; }
         public Brand Brand { get; set; }
         public List<ProductOrder> ProductOrders { get; set; }
