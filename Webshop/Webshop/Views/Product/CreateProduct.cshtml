@@ -21,8 +21,15 @@
 
 <h1>Skapa Produkt</h1>
 <hr />
-<div class="row">
 
+<div>
+    <a href='@Url.Action("EditCategory", "Category")'>
+        <input class=" btn btn-primary" type='button' value='Skapa NyKategori' />
+    </a>
+</div>
+
+<div class="row">
+    
     <div class="">
 
         <form asp-action="CreateProduct" method="post" enctype="multipart/form-data">
@@ -79,7 +86,7 @@
                 <span asp-validation-for="Photo" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Skapa ny" class="btn btn-primary" />
             </div>
         </form>
         <div>
@@ -88,6 +95,6 @@
 
 
     </div>
-    </div>
+</div>
 
 

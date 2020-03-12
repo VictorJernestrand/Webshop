@@ -60,11 +60,13 @@ namespace WebAPI
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors(_corsePolicyString);
+          
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(_corsePolicyString);
 
             app.UseAuthorization();
 
