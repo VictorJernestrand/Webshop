@@ -14,6 +14,7 @@ using Webshop.Context;
 using Webshop.Models;
 using Microsoft.AspNetCore.Hosting;
 using Webshop.Models.Data;
+using System.Text.Json;
 
 namespace Webshop.Controllers
 {
@@ -22,6 +23,8 @@ namespace Webshop.Controllers
 
         private readonly WebshopContext context;
         public CreateProductModel createProductModel = new CreateProductModel();
+
+        public SpecificationModel productSpecification = new SpecificationModel();
 
         public EditProductModel EditProductModel { get; set; }
 
@@ -59,6 +62,23 @@ namespace Webshop.Controllers
             return View(createProductModel);           
         }
 
+
+        public IActionResult EditSpecifications(int id)
+        {
+            // Get product from database
+            var product = context.Products.Find(id);
+
+            productSpecification.Product = product;
+
+            // Are there any specifications?
+            if (product.Specification != null)
+            {
+                // Deserialize Json data from product specifications
+                productSpecification.SpecificationsList = JsonSerializer.Deserialize<List<SpecificationInfo>>(product.Specification);
+            }
+
+            return View(productSpecification);
+        }
        
 
         [HttpPost]
@@ -460,5 +480,47 @@ namespace Webshop.Controllers
             return (cartContent != null) ? cartContent : new CartButtonInfoModel();
         }
 
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditSpecifications([Bind]SpecificationModel specificationModel)
+        {
+            // Get product from database
+            var product = context.Products.Find(specificationModel.Product.Id);
+
+            // Check if specifications exist
+            if (specificationModel.SpecificationsList != null)
+            {
+                // Loop through the specifications collection in the specs object
+                for (var i = 0; i < specificationModel.SpecificationsList.Count; i++)
+                {
+                    // If SpecInfo or SpecName is null or empty...
+                    if (string.IsNullOrEmpty(specificationModel.SpecificationsList[i].SpecInfo) || string.IsNullOrEmpty(specificationModel.SpecificationsList[i].SpecTitle))
+                    {
+                        // Remove current index from collection
+                        specificationModel.SpecificationsList.RemoveAt(i);
+
+                        // Counter must be reset since the collection will be re-indexed after an index has been removed
+                        i = 0;
+                    }
+                }
+            }
+
+            // If collection contains values, Serialize to Json, else set as null
+            product.Specification = (specificationModel.SpecificationsList != null && specificationModel.SpecificationsList.Count > 0)
+                ? JsonSerializer.Serialize(specificationModel.SpecificationsList)
+                : null;
+
+            // update product
+            context.Update<Product>(product);
+            context.SaveChanges();
+
+            // Temp message
+            TempData["SpecpsUpdated"] = "Specifikationerna har uppdaterats";
+
+            // Reload page
+            return RedirectToAction("EditSpecifications", "Product", new { id = product.Id });
+        }
     }
 }

@@ -196,6 +196,14 @@ function GetAntiForgerytoken() {
 }
 
 
+
+
+
+
+
+
+
+
 // Invoke UpdateCartButton() as soon as page has loaded
 $(document).ready(function () {
     UpdateCartButton();
