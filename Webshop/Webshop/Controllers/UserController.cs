@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Webshop.Context;
-using Webshop.Data;
 using Webshop.Models;
+using Webshop.Services;
 
 namespace Webshop.Controllers
 {
@@ -135,7 +135,7 @@ namespace Webshop.Controllers
                         }
 
                         // Bake a new session-cookie with the User's name as the main ingredient ;)
-                        HttpContext.Session.SetString(SessionCookies.USER_NAME, user.FirstName + " " + user.LastName);
+                        HttpContext.Session.SetString(Common.USER_NAME, user.FirstName + " " + user.LastName);
 
                         // Login succesfull! Redirect to main page :)
                         return RedirectToAction("Index", "Home");
@@ -302,6 +302,7 @@ namespace Webshop.Controllers
         public IActionResult LogOut()
         {
             SignMgr.SignOutAsync();
+            HttpContext.Session.Remove(Common.CART_COOKIE_NAME);
             return RedirectToAction("Index", "Home");
         }
 

@@ -15,24 +15,19 @@ using Webshop.Models;
 using Microsoft.AspNetCore.Hosting;
 using Webshop.Models.Data;
 using System.Text.Json;
+using Webshop.Services;
 
 namespace Webshop.Controllers
 {
     public class ProductController : Controller
     {
-
         private readonly WebshopContext context;
         public CreateProductModel createProductModel = new CreateProductModel();
-
         public SpecificationModel productSpecification = new SpecificationModel();
-
-        public EditProductModel EditProductModel { get; set; }
-
         private IWebHostEnvironment environment;
-
         private DatabaseCRUD databaseCRUD;
 
-
+        public EditProductModel EditProductModel { get; set; }
 
         public ProductController(WebshopContext context, IWebHostEnvironment env)
         {
@@ -62,7 +57,7 @@ namespace Webshop.Controllers
             return View(createProductModel);           
         }
 
-
+        [Authorize(Roles = "Admin")]
         public IActionResult EditSpecifications(int id)
         {
             // Get product from database
@@ -79,8 +74,9 @@ namespace Webshop.Controllers
 
             return View(productSpecification);
         }
-       
 
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateProduct(IFormFile file,[Bind]CreateProductModel model)
@@ -217,6 +213,7 @@ namespace Webshop.Controllers
             return View(query);
 
         }
+
         public IActionResult ProductDetail(int Id)
         {
 
@@ -226,6 +223,7 @@ namespace Webshop.Controllers
             return View(query);
 
         }
+
         [Authorize(Roles = "Admin")]
         public IActionResult EditProduct(int id)
         {
@@ -264,6 +262,7 @@ namespace Webshop.Controllers
             //return View(editProductModel);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditProduct(IFormFile file, [Bind]EditProductModel model)
@@ -359,59 +358,46 @@ namespace Webshop.Controllers
             Guid guid = Guid.NewGuid();
 
             // Check if session cookie exist
-            if (HttpContext.Session.GetString("CustomerCartSessionId") == null)
+            if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) == null)
             {
                 // Set session cookie with Guid Id
-                HttpContext.Session.SetString("CustomerCartSessionId", guid.ToString());
+                HttpContext.Session.SetString(Common.CART_COOKIE_NAME, guid.ToString());
             }
 
             // Get product form database
             Product product = context.Products.Find(id);
 
             // Cart Id
-            Guid cartId = Guid.Parse(HttpContext.Session.GetString("CustomerCartSessionId"));
+            Guid cartId = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
 
-            // Are there any products left ot buy
-            //if (product.Quantity > 0)
-            //{
-                // Does product allready exist in shoppingcart??
-                var cartItem = context.ShoppingCart.Where(x => x.CartId == cartId && x.ProductId == id).FirstOrDefault();
-                if (cartItem != null)
-                {
-                    cartItem.Amount++; // add one more
-                }
-                else
-                {
-                    // Instantiate a new schoppingcart item with the selected prodcut id
-                    ShoppingCart shoppingCart = new ShoppingCart()
-                    {
-                        CartId = cartId,
-                        ProductId = id,
-                        Amount = 1
-                    };
-
-                    // All good, put item in shoppingcart
-                    //var result = await databaseCRUD.InsertAsync<ShoppingCart>(shoppingCart);
-                    context.Add<ShoppingCart>(shoppingCart);
-                }
-
-                // Update timestamp 
-                List<ShoppingCart> carts = context.ShoppingCart.Where(x => x.CartId == cartId).ToList();
-                carts.ForEach(x => x.TimeStamp = DateTime.Now);
-
-
-
-                // Update product quantity
-                //product.Quantity--;
-
-
-
-                // save you fool!
-                context.SaveChanges();
-
-            /*}
+            // Does product allready exist in shoppingcart??
+            var cartItem = context.ShoppingCart.Where(x => x.CartId == cartId && x.ProductId == id).FirstOrDefault();
+            if (cartItem != null)
+            {
+                cartItem.Amount++; // add one more
+            }
             else
-                return NotFound();*/
+            {
+                // Instantiate a new schoppingcart item with the selected prodcut id
+                ShoppingCart shoppingCart = new ShoppingCart()
+                {
+                    CartId = cartId,
+                    ProductId = id,
+                    Amount = 1
+                };
+
+                // All good, put item in shoppingcart
+                //var result = await databaseCRUD.InsertAsync<ShoppingCart>(shoppingCart);
+                context.Add<ShoppingCart>(shoppingCart);
+            }
+
+            // Update timestamp 
+            List<ShoppingCart> carts = context.ShoppingCart.Where(x => x.CartId == cartId).ToList();
+            carts.ForEach(x => x.TimeStamp = DateTime.Now);
+
+            // save you fool!
+            context.SaveChanges();
+
         }
 
         [HttpPost]
@@ -419,7 +405,7 @@ namespace Webshop.Controllers
         public void RemoveFromCart(int id)
         {
             // Is there a session cookie? Remove product from cart!!
-            if (HttpContext.Session.GetString("CustomerCartSessionId") != null)
+            if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) != null)
             {
 
                 // Get item from shoppingcart to be removed
@@ -451,22 +437,19 @@ namespace Webshop.Controllers
             var cartItem = context.ShoppingCart.Find(id);
             context.Remove(cartItem);
             context.SaveChanges();
-
-
         }
-
 
         [HttpGet]
         [Produces("application/json")]
         public CartButtonInfoModel GetCartContent()
         {
             // Is there a session cookie?
-            if (HttpContext.Session.GetString("CustomerCartSessionId") == null)
+            if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) == null)
                 return new CartButtonInfoModel();
 
             // Get cart contents
             var cartContent = context.ShoppingCart.Include(x => x.Product)
-                .Where(x => x.CartId == Guid.Parse(HttpContext.Session.GetString("CustomerCartSessionId")))
+                .Where(x => x.CartId == Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME)))
                 .ToList()
                 .GroupBy(x => new { x.CartId })
                 .Select(x => new CartButtonInfoModel
@@ -481,7 +464,7 @@ namespace Webshop.Controllers
         }
 
 
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult EditSpecifications([Bind]SpecificationModel specificationModel)
