@@ -4,7 +4,12 @@
     ViewData["Title"] = "Rock★Start - Skapa Produkt";
 }
 
-
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">       
+        <li class="breadcrumb-item"><a href='@Url.Action("AllProducts", "Product")'>AllProducts</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Lägg till Ny Produkt</li>
+    </ol>
+</nav>
 
 @if (TempData["Database error"] != null)
 {
@@ -22,15 +27,21 @@
 <h1>Skapa Produkt</h1>
 <hr />
 
-<div>
+<div align="right">
     <a href='@Url.Action("EditCategory", "Category")'>
-        <input class=" btn btn-primary" type='button' value='Skapa NyKategori' />
+        <input class=" btn btn-success" type='button' value='NyKategori' />
+    </a>
+    <a href='@Url.Action("Index", "Brand")'>
+        <input class="btn btn-success" type='button' value='NyMärke' />
     </a>
 </div>
+<br />
+<br />
 
 
 
 <div class="row">
+
 
     <form asp-action="CreateProduct" method="post" enctype="multipart/form-data">
 
@@ -125,10 +136,6 @@
                     });
             </script>
         </div>
-
-
-
-
 
 
 
