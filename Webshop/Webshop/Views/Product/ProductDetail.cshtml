@@ -13,14 +13,7 @@
 }
 
 <partial name="_AddToCartMessagePartial" />
-<head>
-    <style>
-        .container > nav-tabs > nav-item > li.active > a {
-            background: linear-gradient(to right, #FFF, #FFF) !important;
-            border-style: solid solid none solid !important;
-        }
-    </style>
-</head>
+
 <h1>Produktinformation</h1>
 
 <div class="container" style="text-align: center;">
@@ -29,72 +22,8 @@
 
         <div class="col-xs-6 col-sm-6 " style="text-align: right;">
             <img src="@Url.Content("~/Image/" + Model.Photo)" style="max-height: 200px; width: auto" alt="Finns ingen bild än">
-
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Quantity)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Quantity)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Category.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Brand)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Brand.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.FullDescription)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.Raw(HttpUtility.HtmlDecode(Model.FullDescription))
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Specification)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.Raw(HttpUtility.HtmlDecode(Model.Specification))
-        </dd>
-
-    </dl>
-
-    <div class="d-inline">
-        @if (User.IsInRole("Admin"))
-        {
-            <a asp-action="EditProduct" class="btn btn-primary mb-2 mr-2" asp-route-id="@Model.Id">Redigera</a>
-            <a asp-action="DeleteProduct" asp-route-id="@Model.Id" asp-controller="Product" class="btn btn-danger mb-2 mr-2">Radera</a>
-        }
-        else
-        {
-            <a class="btn btn-success  mb-2 mr-2" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Köp skiten!</a>
-        }
-      
-      
-      
-      
-      
-      
-      
-      
-
+        </div>
+    <div class="col-xs-6 col-sm-6">
 
             <div class="container" style="text-align: center;">
                 <h1>@Model.Name</h1>
@@ -124,7 +53,6 @@
     </div>
 </div>
 
-
     <div class="container" style="padding : 10px ;" >
     <ul class="nav nav-tabs" >
     <li class="nav-item" >
@@ -140,40 +68,14 @@
 
     <div class="tab-content " >
     <div role="tabpanel" class="tab-pane active" id="produktinformation" >
-        <p style="padding : 5px 15px;" >
-        Lorem ipsum dolor sit amet, ne has iudico libris putant. Qui ad omittam vituperata, ex sed fugit delicata dissentias. Ei nostrum commune est, odio philosophia vim ei. An omnes nusquam nec. Ei eos latine senserit partiendo, utamur scripta mediocrem id nam.
-
-        Graecis pericula te est, tota feugait perpetua mei ut, vis diam sonet epicurei eu. Paulo timeam ei usu, decore nonumy at qui. Duo an tritani debitis. Nibh luptatum maiestatis quo et. Vim hinc consetetur inciderint et, vix ea liber accusamus reformidans, adhuc mundi ad pri.
-
-        At per suas adipisci, vix ne quot dolore iudicabit. Mel agam numquam inimicus in, an pro oportere euripidis rationibus. Ut sea impetus suscipiantur, cum epicuri eligendi ullamcorper at, at pro senserit concludaturque. Dictas scripserit ius an, cu appareat repudiare urbanitas vis.
-
-        Te unum lorem has, graecis volumus ea ius. Te mei aperiam suavitate sententiae, mollis tritani eloquentiam cu ius. Ea qui utinam verterem. Ea ipsum quaerendum usu, nominati facilisis pri ex, justo denique id eum.
-
-        Mel molestiae percipitur et. Te sit doming semper. Liber omittam mel cu. An mea voluptua repudiandae philosophia, per enim commodo no. Accusam aliquando an eos.
-        </p >
+        <p style="padding : 5px 15px;">
+            @Html.Raw(HttpUtility.HtmlDecode(Model.FullDescription))
+        </p>
     </div >
     <div role="tabpanel" class="tab-pane" id="specifikationer" >
-    <p style="padding : 5px 15px;" >
-    Lorem ipsum dolor sit amet, in iudico tritani periculis ius, in sit fugit denique. Et eum tacimates similique, his ei duis quaestio accommodare. Sea vocibus ancillae ponderum te, porro omnium mea id. Vocent legimus delectus ex mei, doctus eloquentiam sed ex.
-
-    Per te tota philosophia, iudico utinam ex mel. Scripta interesset est ei. Ad per commune periculis temporibus. Eos magna feugiat inermis cu, ex est augue aliquam, nisl labore efficiantur ne mei. Cu reque feugiat per, id his mutat dicta viris. An sed tale consulatu, eos consul malorum ea, duo no maiorum recteque.
-
-    Purto ubique commodo ex mei. Vis eu mazim iusto. Ea vim nusquam denique patrioque, sint mentitum at vis. Mutat interpretaris et mea. Nostro audiam mea no, eu vis quando adipiscing.
-
-    Percipit adipiscing qui ne. Vide doctus indoctum duo et, mei no consul constituam. Qui mundi invidunt in. An brute ubique nam.
-
-    Ne vivendum recteque vix. Explicari patrioque in pri, vim mundi sensibus ad, has cu ipsum civibus. No vis homero nominati, at sea putant fastidii instructior. Pri accusamus consulatu te.
-
-    Vis ut ceteros erroribus imperdiet, ea eum laudem accommodare. Mea ei veri luptatum, cu eam paulo euismod. An solum munere soluta nam, sed et modus appellantur. Sea graeci admodum assueverit an, vim nemore similique at. At mazim molestie gloriatur his. Salutandi rationibus ex mei. Eos quas omnes dolore ea, pri no rebum commodo, ex his omnis quaeque.
-
-    Ex omnis tempor pri. Ad vim veritus habemus recteque. Amet consulatu in pro, mea illum possim fuisset ad. Idque populo iudicabit id mei, sea stet expetendis ad, id usu mandamus oportere instructior. In per perpetua tractatos assentior, in eum vivendo gubergren intellegat, ea quem adversarium vis.
-
-    Te pro aeque denique, assum suavitate ei eam. Te stet aeque vel, ei sint quot iuvaret eum. Eum ad eros admodum. Et pro vivendum reprimique.
-
-    Eos possit omnium id, brute placerat his ne, hinc elitr offendit et nam. Ea ius omnes commune. Per at erant audiam mandamus. Ea eum odio saepe repudiare, sed ei debitis nonumes euripidis. Cu ius epicurei posidonium, facilisis reprehendunt pro ut, duo te propriae quaestio. Vis cu facete recusabo contentiones, sit ullum placerat constituam ad.
-
-    Mea dicta liberavisse at, partem mucius sit et. Viris commodo id mei, ignota possit vim eu. Nibh propriae indoctum et est, et volumus complectitur sed, et pro sint everti appetere. Cum munere quidam animal ex. Cum habeo iudicabit consequat eu. Persius fabulas disputando ex vel.
-    </p >
+        <p style="padding : 5px 15px;">
+            @Html.Raw(HttpUtility.HtmlDecode(Model.Specification))
+        </p>
     </div >
     <div class="tab-pane" id="kundomdömen" >
     <p style="padding : 5px 15px;" > bla bla bla bla bla</p >
