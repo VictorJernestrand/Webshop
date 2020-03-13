@@ -4,14 +4,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace Webshop.Models
 {
-    public class EditProductModel
-    {
-        
-      
+     public class EditProductModel
+     {              
         public int Id { get; set; }
-
+            
         [Required(ErrorMessage = "Ange Produkt Namn")]
         public string Name { get; set; }
         //[Required(ErrorMessage = "Ange Produkt Pris")]
@@ -26,12 +25,12 @@ namespace Webshop.Models
         [Required(ErrorMessage = "Ange Brand Id")]
         public int BrandId { get; set; }
         public string Description { get; set; }
-        
+        public string FullDescription { get; set; }        
         public string Photo { get; set; }
         public List<Product> products { get; set; }
         public List<Category> categoryVM { get; set; } = new List<Category>();
         public List<Brand> brandVM { get; set; } = new List<Brand>();
-
+        public string Specification { get; set; }
         public string PriceToConvert { get; set; }
-    }
+     }
 }
