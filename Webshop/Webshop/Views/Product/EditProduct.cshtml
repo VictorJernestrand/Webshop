@@ -77,7 +77,7 @@
                 <input name="file" type="file" />
                 <span asp-validation-for="Photo" class="text-danger"></span>
             </div>
-
+            <a>FullBeskrivning</a>
             <textarea asp-for="FullDescription" id="editor"></textarea>
             <script>
                 ClassicEditor
@@ -89,6 +89,8 @@
                         console.error(error);
                     });
             </script>
+            <p>	&nbsp;</p>       
+            <a>Specifikationer</a>
 
             <textarea asp-for="Specification" id="editor2"></textarea>
             <script>
