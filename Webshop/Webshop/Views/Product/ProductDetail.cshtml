@@ -1,4 +1,5 @@
 ﻿@model Product
+@using System.Web;
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @functions{
     public string GetAntiXsrfRequestToken()
@@ -51,7 +52,7 @@
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Category.Name)
-        </dd>               
+        </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Brand)
         </dt>
@@ -62,9 +63,15 @@
             @Html.DisplayNameFor(model => model.FullDescription)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.FullDescription)
+            @Html.Raw(HttpUtility.HtmlDecode(Model.FullDescription))
         </dd>
-      
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Specification)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.Raw(HttpUtility.HtmlDecode(Model.Specification))
+        </dd>
+
     </dl>
 
     <div class="d-inline">
@@ -75,7 +82,7 @@
         }
         else
         {
-            <a class="btn btn-success mb-2 mr-2" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Köp skiten!</a>
+            <a class="btn btn-success  mb-2 mr-2" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Köp skiten!</a>
         }
 
         <a asp-action="AllProducts" class="btn btn-info mb-2 mr-2">Tillbaka till alla produkter</a>

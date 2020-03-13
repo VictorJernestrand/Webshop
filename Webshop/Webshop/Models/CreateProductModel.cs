@@ -28,12 +28,15 @@ namespace Webshop.Models
         public int BrandId { get; set; }
 
         public string Description { get; set; }
+        public string FullDescription { get; set; }
         public string Photo { get; set; }
         public List<Category> categoryVM { get; set; } = new List<Category>();
         public List<Brand> brandVM { get; set; } = new List<Brand>();
 
         [Required(ErrorMessage = "Ange Produkt Pris")]
         public string PriceToConvert { get; set; }
+
+        public string Specification { get; set; }
 
         internal Task CopyToAsync(FileStream fileStream)
         {
