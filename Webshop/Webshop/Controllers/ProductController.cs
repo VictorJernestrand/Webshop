@@ -117,7 +117,10 @@ namespace Webshop.Controllers
                         CategoryId = model.CategoryId,
                         BrandId = model.BrandId,
                         Description = model.Description,
-                        Photo = filePath
+                        Photo = filePath,
+                        FullDescription = model.FullDescription, //Add
+                        Specification = model.Specification
+                        
                     };
 
                     await databaseCRUD.InsertAsync<Product>(newProduct);
@@ -201,6 +204,8 @@ namespace Webshop.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult DeleteProduct(int Id)
         {
+            // TODO: Also fix so the corresponding product image gets deleted when the product is removed!
+
             var query = context.Products.Include("Brand").Include("Category").FirstOrDefault(p => p.Id == Id);
             if (query == null)
                 return NotFound();
@@ -214,7 +219,7 @@ namespace Webshop.Controllers
 
             var query = context.Products.Include("Brand").Include("Category").FirstOrDefault(p => p.Id == Id);
             if (query == null)
-                return NotFound();
+                return NotFound();          
             return View(query);
 
         }
@@ -235,7 +240,10 @@ namespace Webshop.Controllers
                    Quantity = x.Quantity,
                    Photo = x.Photo,
                    CategoryId = x.CategoryId,
-                   BrandId = x.BrandId
+                   BrandId = x.BrandId,
+                   FullDescription = x.FullDescription,
+                   Specification = x.Specification
+                   
                 })
                 .FirstOrDefault(p => p.Id == id);
 
@@ -253,21 +261,23 @@ namespace Webshop.Controllers
         {
             try
             {
-                //model.Price = Convert.ToDecimal(model.Price.ToString().Replace(',', '.'));
                 if (ModelState.IsValid)
                 {
-
                     Product editproduct = new Product()
                     {
                         Id = model.Id,
                         Name = model.Name,
-                        Price = Convert.ToDecimal(model.PriceToConvert.ToString().Replace('.', ',')),//.ToString().Replace(',','.')),
+                        Price = Convert.ToDecimal(model.PriceToConvert.ToString().Replace('.', ',')),
                         Quantity = model.Quantity,
                         CategoryId = model.CategoryId,
                         BrandId = model.BrandId,
                         Description = model.Description,
-                        Photo = model.Photo
+                        Photo = model.Photo,
+                        FullDescription = model.FullDescription,
+                        Specification = model.Specification
                     };
+
+                    // TODO: Add product-Id to the filename
 
                     if (file != null)
                     {
