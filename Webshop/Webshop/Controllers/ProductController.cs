@@ -15,6 +15,7 @@ using Webshop.Models;
 using Microsoft.AspNetCore.Hosting;
 using Webshop.Models.Data;
 using System.Text.Json;
+using System.Web;
 
 namespace Webshop.Controllers
 {
@@ -124,7 +125,10 @@ namespace Webshop.Controllers
                         CategoryId = model.CategoryId,
                         BrandId = model.BrandId,
                         Description = model.Description,
-                        Photo = filePath
+                        Photo = filePath,
+                        FullDescription = model.FullDescription, //Add
+                        Specification = model.Specification
+                        
                     };
 
 
@@ -222,7 +226,7 @@ namespace Webshop.Controllers
 
             var query = context.Products.Include("Brand").Include("Category").FirstOrDefault(p => p.Id == Id);
             if (query == null)
-                return NotFound();
+                return NotFound();          
             return View(query);
 
         }
@@ -246,7 +250,10 @@ namespace Webshop.Controllers
                    Quantity = x.Quantity,
                    Photo = x.Photo,
                    CategoryId = x.CategoryId,
-                   BrandId = x.BrandId
+                   BrandId = x.BrandId,
+                   FullDescription = x.FullDescription,
+                   Specification = x.Specification
+                   
                 })
                 .FirstOrDefault(p => p.Id == id);
 
@@ -283,7 +290,11 @@ namespace Webshop.Controllers
                         CategoryId = model.CategoryId,
                         BrandId = model.BrandId,
                         Description = model.Description,
-                        Photo = model.Photo
+                        Photo = model.Photo,
+                        FullDescription = model.FullDescription,
+                        Specification = model.Specification
+                        
+                        
                     };
 
                     if (file != null)

@@ -1,4 +1,5 @@
 ﻿@model Product
+@using System.Web;
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @functions{
     public string GetAntiXsrfRequestToken()
@@ -8,79 +9,77 @@
 }
 @{
     ViewData["Title"] = "Rock★Start - Detaljer";
+
 }
+
 <partial name="_AddToCartMessagePartial" />
 
 <h1>Produktinformation</h1>
-<div class="">
-    <hr />
-    <dl class="row">
 
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Photo)
-        </dt>
-        <dd class="col-sm-10">
+<div class="container" style="text-align: center;">
+
+    <div class="row">
+
+        <div class="col-xs-6 col-sm-6 " style="text-align: right;">
             <img src="@Url.Content("~/Image/" + Model.Photo)" style="max-height: 200px; width: auto" alt="Finns ingen bild än">
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Quantity)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Quantity)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Category.Name)
-        </dd>               
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Brand)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Brand.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.FullDescription)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.FullDescription)
-        </dd>
-      
-    </dl>
+        </div>
+    <div class="col-xs-6 col-sm-6">
 
-    <div class="d-inline">
-        @if (User.IsInRole("Admin"))
-        {
-            <a asp-action="EditProduct" class="btn btn-primary mb-2 mr-2" asp-route-id="@Model.Id">Redigera</a>
-            <a asp-action="DeleteProduct" asp-route-id="@Model.Id" asp-controller="Product" class="btn btn-danger mb-2 mr-2">Radera</a>
-        }
-        else
-        {
-            <a class="btn btn-success mb-2 mr-2" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Köp skiten!</a>
-        }
+            <div class="container" style="text-align: center;">
+                <h1>@Model.Name</h1>
+                <p>@Model.Price.ToString("C0")</p>
+                <p>@Model.Description</p>
+                <p><b>Kategori </b>@Model.Category.Name</p>
+                <p><b>Tillverkare </b>@Model.Brand.Name</p>
+                <p><b>Antal i lager </b>@Model.Quantity</p>
 
-        <a asp-action="AllProducts" class="btn btn-info mb-2 mr-2">Tillbaka till alla produkter</a>
-        <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
+                <div class="d-inline">
+                    <a asp-action="AllProducts" class="btn btn-info mb-2 mr-2">Tillbaka till produkter</a>
+                    <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="EditProduct" class="btn btn-primary mb-2 mr-2" asp-route-id="@Model.Id">Redigera</a>
+                        <a asp-action="DeleteProduct" asp-route-id="@Model.Id" asp-controller="Product" class="btn btn-danger mb-2 mr-2">Radera</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-success mb-2 mr-2 text-white" style="font-weight: bold" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Lägg i kundvagn</a>
+                    }
+                </div>
+            </div>
+
+
+        </div>
     </div>
-
 </div>
+
+    <div class="container" style="padding : 10px ;" >
+    <ul class="nav nav-tabs" >
+    <li class="nav-item" >
+    <a href="#produktinformation" class="nav-link active" data-toggle="tab" > Produktinformation</a >
+    </li >
+    <li >
+    <a href="#specifikationer" class="nav-link" data-toggle="tab" > Specifikationer</a >
+    </li >
+    <li >
+    <a href="#kundomdömen" class="nav-link" data-toggle="tab" > Kundomdömen</a >
+    </li >
+    </ul >
+
+    <div class="tab-content " >
+    <div role="tabpanel" class="tab-pane active" id="produktinformation" >
+        <p style="padding : 5px 15px;">
+            @Html.Raw(HttpUtility.HtmlDecode(Model.FullDescription))
+        </p>
+    </div >
+    <div role="tabpanel" class="tab-pane" id="specifikationer" >
+        <p style="padding : 5px 15px;">
+            @Html.Raw(HttpUtility.HtmlDecode(Model.Specification))
+        </p>
+    </div >
+    <div class="tab-pane" id="kundomdömen" >
+    <p style="padding : 5px 15px;" > bla bla bla bla bla</p >
+    </div >
+    </div >
+    </div >
 

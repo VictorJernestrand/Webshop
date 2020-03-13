@@ -4,7 +4,12 @@
     ViewData["Title"] = "Rock★Start - Skapa Produkt";
 }
 
-
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">       
+        <li class="breadcrumb-item"><a href='@Url.Action("AllProducts", "Product")'>AllProducts</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Lägg till Ny Produkt</li>
+    </ol>
+</nav>
 
 @if (TempData["Database error"] != null)
 {
@@ -22,79 +27,131 @@
 <h1>Skapa Produkt</h1>
 <hr />
 
-<div>
+<div align="right">
     <a href='@Url.Action("EditCategory", "Category")'>
-        <input class=" btn btn-primary" type='button' value='Skapa NyKategori' />
+        <input class=" btn btn-success" type='button' value='NyKategori' />
+    </a>
+    <a href='@Url.Action("Index", "Brand")'>
+        <input class="btn btn-success" type='button' value='NyMärke' />
     </a>
 </div>
+<br />
+<br />
+
+
 
 <div class="row">
-    
-    <div class="">
 
-        <form asp-action="CreateProduct" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label">Namn</label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PriceToConvert" class="control-label">Pris</label>
-                <input asp-for="PriceToConvert" class="form-control" />
-                <span asp-validation-for="PriceToConvert" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Quantity" class="control-label">Antal</label>
-                <input asp-for="Quantity" class="form-control" />
-                <span asp-validation-for="Quantity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CategoryId" class="control-label">Kategori</label>
-                <br />
-                <select asp-for="CategoryId">
-                    <option>Välj</option>
-                    @foreach (var item in Model.categoryVM)
-                    {
-                        <option value="@item.Id">@item.Name</option>
-                    }
 
-                </select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="BrandId" class="control-label">Märke</label>
-                <br />
-                <select asp-for="BrandId">
-                    <option>Välj</option>
-                    @foreach (var item in Model.brandVM)
-                    {
-                        <option value="@item.Id">@item.Name</option>
-                    }
-                </select>
-                <span asp-validation-for="BrandId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label">Beskrivning</label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Photo" class="control-label">Bild</label>
-                <br />
-                <input name="file" type="file" />
-                <span asp-validation-for="Photo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Skapa ny" class="btn btn-primary" />
-            </div>
-        </form>
-        <div>
-            <a asp-action="AllProducts">Tillbaka till alla produkter</a>
+    <form asp-action="CreateProduct" method="post" enctype="multipart/form-data">
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Name" class="control-label">Namn</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="PriceToConvert" class="control-label">Pris</label>
+            <input asp-for="PriceToConvert" class="form-control" />
+            <span asp-validation-for="PriceToConvert" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Quantity" class="control-label">Antal</label>
+            <input asp-for="Quantity" class="form-control" />
+            <span asp-validation-for="Quantity" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="CategoryId" class="control-label">Kategori</label>
+            <br />
+            <select asp-for="CategoryId">
+                <option>Välj</option>
+                @foreach (var item in Model.categoryVM)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+
+            </select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="BrandId" class="control-label">Märke</label>
+            <br />
+            <select asp-for="BrandId">
+                <option>Välj</option>
+                @foreach (var item in Model.brandVM)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            </select>
+            <span asp-validation-for="BrandId" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Description" class="control-label">Beskrivning</label>
+            <input asp-for="Description" class="form-control" />
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Photo" class="control-label">Bild</label>
+            <br />
+            <input name="file" type="file" />
+            <span asp-validation-for="Photo" class="text-danger"></span>
         </div>
 
 
-    </div>
+
+
+        <div class="form-group">
+            <a>FullBeskrivning</a>
+            <textarea asp-for="FullDescription" id="editor" class="form-control"></textarea>
+            @*<input asp-for="Description" class="form-control" />*@
+            <span asp-validation-for="FullDescription" class="text-danger"></span>
+            <script>
+                ClassicEditor
+                    .create(document.querySelector('#editor'))
+                    .then(editor => {
+                        console.log(editor);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            </script>
+        </div>
+
+
+
+        <div class="form-group">
+            <a>Specifikationer</a>
+            <textarea asp-for="Specification" id="editor2" class="form-control"></textarea>
+            @*<input asp-for="Description" class="form-control" />*@
+            <span asp-validation-for="Specification" class="text-danger"></span>
+            <script>
+                ClassicEditor
+                    .create(document.querySelector('#editor2'))
+                    .then(editor => {
+                        console.log(editor);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            </script>
+        </div>
+
+
+
+
+        <div class="form-group">
+            <input type="submit" value="Skapa ny" class="btn btn-primary" />
+        </div>
+    </form>
 </div>
+<div>
+    <a asp-action="AllProducts">Tillbaka till alla produkter</a>
+
+
+
+</div>
+
+
 
 

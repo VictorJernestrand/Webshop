@@ -9,6 +9,15 @@
 @{
     ViewData["Title"] = "Rock★Start - Alla Produkter";
 }
+    @*<div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+
+                <li class="breadcrumb-item active" aria-current="page">AllProducts</li>
+
+            </ol>
+        </nav>
+    </div>*@
 <partial name="_AddToCartMessagePartial" />
 
 @if (TempData["Deleted"] != null)
@@ -43,17 +52,16 @@
 
 
 <h1>Alla Produkter</h1>
+<div align="right"> 
+    @if (User.IsInRole("Admin"))
+    {       
 
-@if (User.IsInRole("Admin"))
-{
-    <p></p>
-    <p>
-
-        <a href='@Url.Action("CreateProduct", "Product")'>
-            <input type='button' class="btn btn-primary" value='Lägg till Ny Produkt' />
-        </a>
-    </p>
-}
+            <a href='@Url.Action("CreateProduct", "Product")'>
+                <input type='button' class="btn btn-success" value='Lägg till Ny Produkt' />
+            </a>
+        
+    }
+</div>
 
 <div class="container">
     <div class=" row justify-content-center">
