@@ -26,8 +26,9 @@
     <div class="col-xs-6 col-sm-6">
 
             <div class="container" style="text-align: center;">
-                <h1>@Model.Name</h1>
-                <p>@Model.Price.ToString("C0")</p>
+                <h5 class="card-title">@Model.Name</h5>
+                <h5 class="card-title text-success" style="margin-bottom: 30px">@Model.Price.ToString("C0")</h5>
+                <p> </p>
                 <p>@Model.Description</p>
                 <p><b>Kategori </b>@Model.Category.Name</p>
                 <p><b>Tillverkare </b>@Model.Brand.Name</p>
