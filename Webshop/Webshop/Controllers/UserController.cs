@@ -22,9 +22,6 @@ namespace Webshop.Controllers
         public LoginModel LoginModel { get; set; }
         public UpdateUserPasswordModel UpdateUserPassword { get; set; }
         public EditUserInfoModel EditUserInfoModel { get; set; }
-
-
-
         private UserManager<User> UserMgr { get; }
         private SignInManager<User> SignMgr { get; }
         private RoleManager<AppRole> RoleMgr { get; }
@@ -302,7 +299,6 @@ namespace Webshop.Controllers
         public IActionResult LogOut()
         {
             SignMgr.SignOutAsync();
-            HttpContext.Session.Remove(Common.CART_COOKIE_NAME);
             return RedirectToAction("Index", "Home");
         }
 
