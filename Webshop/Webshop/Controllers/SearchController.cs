@@ -30,7 +30,9 @@ namespace Webshop.Controllers
                     .Where(x => x.Name.ToLower().Contains(searchtext) ||
                         x.Brand.Name.ToLower().Contains(searchtext) ||
                         x.Category.Name.ToLower().Contains(searchtext) ||
-                        x.Description.ToLower().Contains(searchtext)
+                        x.Description.ToLower().Contains(searchtext) ||
+                        x.FullDescription.ToLower().Contains(searchtext) ||
+                        x.Specification.ToLower().Contains(searchtext)
                         )
                     .Select(x => new AllProductsViewModel(x))
                     .ToList();
