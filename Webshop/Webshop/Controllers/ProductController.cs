@@ -102,38 +102,11 @@ namespace Webshop.Controllers
 
                     if (file != null)
                     {
-                        string wwwRootImage = environment.WebRootPath + @"\Image\";
-
-                        // Get Id from product database insert
-                        int productId = newProduct.Id;
-
-                        // Set category folder name
                         var folderName = databaseCRUD.GetCategoryName(model.CategoryId);
-
-                        // Create folder if doesn't exist
-                        if (!Directory.Exists(wwwRootImage + folderName))
-                            Directory.CreateDirectory(wwwRootImage + folderName);
-
-                        // Get file-extension from file
-                        var fileExtension = Path.GetExtension(file.FileName);
-
-                        // Get name of file. Validate file before using it!
-                        var fileName = productId + fileExtension; // ToString Path.GetFileName(file.FileName);
-
-                        // Set path to point to 
-                        var filePath = Path.Combine(folderName, fileName);
-
-                        //var fullfilepath = Path.Combine(wwwRoot, @"Image\" + folderName, fileName);
-                        var fullFilePath = Path.Combine(wwwRootImage + folderName, fileName);
-
-                        // Move file to new location (wwwroot) folder
-                        using (var fileStream = new FileStream(fullFilePath, FileMode.Create))
-                        {
-                            await file.CopyToAsync(fileStream);
-                        }
+                        ProductImage image = new ProductImage(environment.WebRootPath, folderName, file);
 
                         // Update newProduct with path to new photo
-                        newProduct.Photo = filePath;
+                        newProduct.Photo = image.StoreImage(newProduct.Id);
 
                         // Update product in databse with path to product photo
                         await databaseCRUD.UpdateAsync<Product>(newProduct);
@@ -176,11 +149,8 @@ namespace Webshop.Controllers
         
         public IActionResult AllProducts()
         {
-           
             var products = context.Products.Include("Brand").Include("Category").ToList();
-
             List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).ToList();
-
             return View(allProducts);
         }
 
@@ -194,13 +164,11 @@ namespace Webshop.Controllers
             // Get full path to wwwroot folder and concatenate product image from database
             var pathToProductImage = environment.WebRootPath + @"\Image\" + product.Photo;
 
-            // Check if the product image exist...
-            if (System.IO.File.Exists(pathToProductImage))
-            {
-                // Remove product Image from Image folder
-                System.IO.File.Delete(pathToProductImage);
-            }
+            // Remove image
+            ProductImage image = new ProductImage();
+            image.RemoveImage(pathToProductImage);
 
+            // Remove from database
             context.Products.Remove(product);
             context.SaveChanges();
 
@@ -279,13 +247,6 @@ namespace Webshop.Controllers
                 // Get information about the stored info from database to compare with new info
                 var productInDB = await context.Products.AsNoTracking().FirstOrDefaultAsync(x => x.Id == model.Id);
 
-                // Get path to wwwroot folder
-                var wwwRoot = environment.WebRootPath;
-                string wwwRootImage = environment.WebRootPath + @"\Image\";
-
-                // Get folderName
-                var folderName = databaseCRUD.GetCategoryName(model.CategoryId);
-
                 if (ModelState.IsValid)
                 {
                     Product editproduct = new Product()
@@ -302,55 +263,26 @@ namespace Webshop.Controllers
                         Specification = model.Specification
                     };
 
-                    // TODO: Add product-Id to the filename
-
                     // Update image
                     if (file != null)
                     {
-                        // Create folder for storing product images if it doesn't exist
-                        if (!Directory.Exists(wwwRootImage + folderName))
-                            Directory.CreateDirectory(wwwRootImage + folderName);
+                        var folderName = databaseCRUD.GetCategoryName(model.CategoryId);
+                        ProductImage image = new ProductImage(environment.WebRootPath, folderName, file);
 
-                        // Get file-extension from file
-                        var fileExtension = Path.GetExtension(file.FileName);
+                        // Update newProduct with path to new photo
+                        editproduct.Photo = image.StoreImage(editproduct.Id);
 
-                        // Get name of file. Validate file before using it!
-                        var fileName = model.Id + fileExtension; // ToString Path.GetFileName(file.FileName);
+                        // Update product in databse with path to product photo
+                        await databaseCRUD.UpdateAsync<Product>(editproduct);
 
-                        // Set path to point to 
-                        var filePath = Path.Combine(folderName, fileName);
-
-                        //var fullfilepath = Path.Combine(wwwRoot, @"Image\" + folderName, fileName);
-                        var fullfilepath = Path.Combine(wwwRootImage + folderName, fileName);
-
-                        // Move file to new location (wwwroot) folder
-                        using (var fileStream = new FileStream(fullfilepath, FileMode.Create))
-                        {
-                            await file.CopyToAsync(fileStream);
-                        }
-
-                        editproduct.Photo = filePath;
                     }
 
                     // If category was changed, move existing product photo to selected folder
                     else if(productInDB.CategoryId != model.CategoryId)
                     {
-                        var newPath = folderName + @"\" + Path.GetFileName(productInDB.Photo);
-                        var fullPathToFile = wwwRootImage + newPath;
-
-                        // Check if folder exist
-                        try
-                        {
-                            if (!Directory.Exists(wwwRootImage + folderName))
-                                Directory.CreateDirectory(wwwRootImage + folderName);
-
-                            var currentPath = wwwRootImage + productInDB.Photo;
-                            System.IO.File.Move(currentPath, fullPathToFile);
-                            
-                        }
-                        catch { }
-
-                        editproduct.Photo = newPath;
+                        var newFolderLocation = databaseCRUD.GetCategoryName(model.CategoryId);
+                        ProductImage image = new ProductImage(environment.WebRootPath, newFolderLocation, editproduct.Photo);
+                        editproduct.Photo = image.MoveImage();
                     }
 
                     await databaseCRUD.UpdateAsync<Product>(editproduct);
