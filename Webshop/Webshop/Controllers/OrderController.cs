@@ -32,23 +32,19 @@ namespace Webshop.Controllers
             {
                 if (HttpContext.Session.GetString("CustomerCartSessionId") != null)
                 {
-                    var cartid = Guid.Parse(HttpContext.Session.GetString("CustomerCartSessionId"));
-                    orderviewmodel.shoppinglist = context.ShoppingCart.Where(x => x.CartId == cartid).ToList();
+                    //var cartid = Guid.Parse(HttpContext.Session.GetString("CustomerCartSessionId"));
+                    //orderviewmodel.shoppinglist = context.ShoppingCart.Where(x => x.CartId == cartid).ToList();
                  
                     orderviewmodel.paymentMethodlist = context.PaymentMethods.ToList();
 
-                    //dont use this here
+                  
                     User user = await UserMgr.GetUserAsync(HttpContext.User);
 
                     if(user.StreetAddress==null)
                     {
                         TempData["Address Null"] = "You haven't updated your Address book";
-                    }
+                    }                    
                     
-
-
-                    // get the user id from login??
-                    //get User address from database
                 }
                 else
                 {
@@ -80,8 +76,35 @@ namespace Webshop.Controllers
                 
             };
 
+            
+
             var result = await databaseCRUD.InsertAsync<Order>(order);
-            if(result>0)
+
+            var cartid = Guid.Parse(HttpContext.Session.GetString("CustomerCartSessionId"));
+            var query = context.ShoppingCart.Where(x => x.CartId == cartid).ToList();
+
+            ProductOrder productOrder = new ProductOrder();
+            int output = 0;
+            foreach (var item in query)
+            {
+                var itemPrice = context.Products.Where(x => x.Id == item.ProductId).Select(x => x.Price);
+                foreach (var price in itemPrice)
+                {
+                    productOrder.Amount = Convert.ToInt32(item.Amount * price);
+                }
+              
+                productOrder.OrderId = order.Id;
+                productOrder.ProductId = item.ProductId;
+                productOrder.Discount = 0;
+                 output=  await databaseCRUD.InsertAsync<ProductOrder>(productOrder);
+                productOrder.Id = 0;
+
+
+            }
+
+
+
+            if (result>0&&output>0)
             {
                 TempData["OrderCreated"] = "Your order successfully created";
             }
