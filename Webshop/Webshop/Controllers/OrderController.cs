@@ -26,7 +26,7 @@ namespace Webshop.Controllers
             this.UserMgr = userManager;
         }
         [HttpGet]
-        public  IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             if(User.Identity.IsAuthenticated)
             {
@@ -38,7 +38,12 @@ namespace Webshop.Controllers
                     orderviewmodel.paymentMethodlist = context.PaymentMethods.ToList();
 
                     //dont use this here
-                   // User user = await UserMgr.GetUserAsync(HttpContext.User);
+                    User user = await UserMgr.GetUserAsync(HttpContext.User);
+
+                    if(user.StreetAddress==null)
+                    {
+                        TempData["Address Null"] = "You haven't updated your Address book";
+                    }
                     
 
 
@@ -58,6 +63,9 @@ namespace Webshop.Controllers
             }
             return View(orderviewmodel);
         }
+
+       
+
        
     }
 }
