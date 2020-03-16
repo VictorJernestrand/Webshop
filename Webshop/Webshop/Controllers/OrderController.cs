@@ -17,13 +17,13 @@ namespace Webshop.Controllers
         
         public OrderViewModel orderviewmodel = new OrderViewModel();
         private UserManager<User> UserMgr { get; }
-
+       private DatabaseCRUD databaseCRUD { get; }
 
         public OrderController(WebshopContext context, UserManager<User> userManager)
         {
-            this.context = context;           
-           // this.orderviewmodel = new OrderViewModel();
+            this.context = context;          
             this.UserMgr = userManager;
+            this.databaseCRUD = new DatabaseCRUD(context);
         }
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -64,8 +64,29 @@ namespace Webshop.Controllers
             return View(orderviewmodel);
         }
 
-       
 
-       
+        [HttpPost]
+        public async Task<IActionResult> Index([Bind]OrderViewModel model)
+        {
+            User user = await UserMgr.GetUserAsync(HttpContext.User);
+           
+
+            //user id is not in Order table
+            Order order = new Order()
+            {
+                UserId=user.Id,
+                PaymentMethodId=model.PaymentMethodId,
+                StatusId=1
+                
+            };
+
+            var result = await databaseCRUD.InsertAsync<Order>(order);
+            if(result>0)
+            {
+                TempData["OrderCreated"] = "Your order successfully created";
+            }
+            return RedirectToAction("AllProducts","Product");
+        }
+
     }
 }
