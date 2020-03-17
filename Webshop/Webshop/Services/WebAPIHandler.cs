@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -19,8 +21,11 @@ namespace Webshop.Services
         const string USER_AGENT_VALUE   = "WebshopProject";
         const string ACCEPT_VALUE       = "application/json";
 
+
+
         /// <summary>
-        /// Instantiate IHttpClientFactory for communicating with the WebAPI
+        /// Instantiate a new WebAPIHandler with a IHttpClientFactory parameter.
+        /// The IHttpClientFactory object is required for communicating with the API
         /// </summary>
         /// <param name="clientFactory"></param>
         public WebAPIHandler(IHttpClientFactory clientFactory)
@@ -29,103 +34,121 @@ namespace Webshop.Services
         }
 
         /// <summary>
-        /// Post data to WebAPI
+        /// Send a POST request of T to API
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
+        /// <param name="webApiPath"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<bool> PostToWebAPIAsync<T>(T obj, string webApiPath)
+        public async Task<APIResponseData> PostAsync<T>(T obj, string webApiPath, string token = null)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, webApiPath);
+
+            if (token != null)
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            // Serialize object to JSON
             var postJson = JsonSerializer.Serialize(obj);
             request.Content = new StringContent(postJson, Encoding.UTF8, ACCEPT_VALUE);
 
-            // Send request
+            // Send and receive request
             var result = await SendRequestAsync(request);
-            return result.IsSuccessStatusCode;
+            var responseString = await result.Content.ReadAsStringAsync();
+            
+            return new APIResponseData() { Status = result, ResponseContent = responseString };
         }
 
         /// <summary>
-        /// Get a collection of IEnumerable type of T from WebAPI
+        /// Get a collection of T from API
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<T>> GetAllFromWebAPIAsync<T>(string webApiPath)
+        public async Task<IEnumerable<T>> GetAllAsync<T>(string webApiPath, string token = null)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, webApiPath);
+            var request = new HttpRequestMessage(HttpMethod.Get, webApiPath);   
 
+            if (token != null)
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            
             var response = await _clientFactory.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
-                using (var responseStream = await response.Content.ReadAsStreamAsync())
-                {
-                    var posts = await JsonSerializer.DeserializeAsync<List<T>>(responseStream,
-                        new JsonSerializerOptions()
-                        {
-                            PropertyNameCaseInsensitive = true
-                        }
-                    );
-
-                    return posts;
-                }
+                return await DeserializeJSON<List<T>>(response);
             }
 
             return null;
         }
 
         /// <summary>
-        /// Get single object of T from WebAPI
+        /// Request a single object of T from API
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="webApiPath"></param>
         /// <returns></returns>
-        public async Task<T> GetSingleFromWebAPIAsync<T>(string webApiPath) where T : class
+        public async Task<T> GetOneAsync<T>(string webApiPath) where T : class
         {
             var request = new HttpRequestMessage(HttpMethod.Get, webApiPath);
             var response = await _clientFactory.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
-                using (var responseStream = await response.Content.ReadAsStreamAsync())
-                {
-                    var post = await JsonSerializer.DeserializeAsync<T>(responseStream,
-                        new JsonSerializerOptions()
-                        {
-                            PropertyNameCaseInsensitive = true
-                        }
-                    );
-
-                    return post;
-                }
+                return await DeserializeJSON<T>(response);
             }
 
             return null;
         }
 
-        public async Task<bool> UpdateObjectInWebAPIAsync<T>(T obj, string webApiPath)
+        /// <summary>
+        /// Send an UPDATE request of T to API
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <param name="webApiPath"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task<HttpResponseMessage> UpdateAsync<T>(T obj, string webApiPath, string token)
         {
             HttpResponseMessage response = null;
             using (var request = new HttpRequestMessage(HttpMethod.Put, webApiPath))
             {
+                // Send JWT authentication token
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
                 var serialized = JsonSerializer.Serialize(obj);
                 request.Content = new StringContent(serialized, Encoding.UTF8, ACCEPT_VALUE);
 
                 response = await _clientFactory.SendAsync(request);
             }
 
+            return response;
+        }
+
+        /// <summary>
+        /// Send a DELETE request of T to API
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="webApiPath"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteAsync<T>(string webApiPath, string token)
+        {
+            HttpResponseMessage response = null;
+            using (var request = new HttpRequestMessage(HttpMethod.Delete, webApiPath))
+            {
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                response = await _clientFactory.SendAsync(request);
+            }
+
             return (response.IsSuccessStatusCode) ? true : false;
         }
 
-
-
-
-
-
         /// <summary>
-        /// 
+        /// Check if T exist in API
         /// </summary>
         /// <param name="webApiPath"></param>
         /// <returns></returns>
-        public async Task<bool> ExistInWebAPIAsync(string webApiPath)
+        public async Task<bool> ExistAsync(string webApiPath)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, webApiPath);
 
@@ -142,22 +165,48 @@ namespace Webshop.Services
         }
 
         /// <summary>
-        /// Send request to WebApi async
+        /// Send request message to API
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> SendRequestAsync(HttpRequestMessage request)
+        private async Task<HttpResponseMessage> SendRequestAsync(HttpRequestMessage request)
         {
             request = SetHeaders(request);
             return await _clientFactory.SendAsync(request);
         }
 
-        // Set request headers based on the header constants
+        /// <summary>
+        /// Set default request headers
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         private HttpRequestMessage SetHeaders(HttpRequestMessage request)
         {
             request.Headers.Add(ACCEPT_HEADER, ACCEPT_VALUE);
             request.Headers.Add(USER_AGENT_HEADER, USER_AGENT_VALUE);
             return request;
         }
+
+        /// <summary>
+        /// Deserialize JSON back to object of type T
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="response"></param>
+        /// <returns></returns>
+        private async Task<T> DeserializeJSON<T>(HttpResponseMessage response)
+        {
+            using (var responseStream = await response.Content.ReadAsStreamAsync())
+            {
+                var post = await JsonSerializer.DeserializeAsync<T>(responseStream,
+                    new JsonSerializerOptions()
+                    {
+                        PropertyNameCaseInsensitive = true
+                    }
+                );
+
+                return post;
+            }
+        }
+
     }
 }
