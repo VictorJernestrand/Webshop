@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using WebAPI.Context;
 
 
@@ -40,16 +43,38 @@ namespace WebAPI
 
             services.AddCors(options =>
             {
+                //options.AddPolicy(_corsePolicyString,
+                //    builder =>
+                //    {
+                //        builder.WithOrigins("https://localhost:44364")
+                //               .AllowAnyHeader()
+                //               .AllowAnyMethod();
+                //    });
                 options.AddPolicy(_corsePolicyString,
                     builder =>
                     {
-                        builder.WithOrigins("https://localhost:44364")
+                        builder.AllowAnyOrigin()
                                .AllowAnyHeader()
                                .AllowAnyMethod();
                     });
             });
 
             services.AddControllers();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidateLifetime = true,
+                        ValidIssuer = Configuration["JWT:Issuer"],
+                        ValidAudience = Configuration["JWT:Issuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Key"]))
+                    };
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,6 +92,8 @@ namespace WebAPI
             app.UseRouting();
 
             app.UseCors(_corsePolicyString);
+
+            app.UseAuthorization();
 
             app.UseAuthorization();
 

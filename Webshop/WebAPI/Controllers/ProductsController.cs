@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Context;
-using WebsAPI.Models;
+using WebAPI.Models.Data;
 
 namespace WebAPI.Controllers
 {
