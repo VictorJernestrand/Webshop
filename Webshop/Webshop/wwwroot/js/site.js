@@ -32,7 +32,7 @@ $(document).ready(function () {
 */
 
 
-// Add items to cart using AJAX
+// Add items to cart using AJAX and fetch framework
 function AddCrapToCart(productId, name) {
 
     // Declare new FormData object
@@ -43,7 +43,7 @@ function AddCrapToCart(productId, name) {
     formData.append("__RequestVerificationToken", GetAntiForgerytoken())
 
     // Use Fetch-framework to POST formData
-    fetch("https://localhost:44364/Product/AddToCart", {
+    fetch("https://localhost:44364/ShoppingCart/AddToCart", {
         method: "POST",
         body: formData
     })
@@ -76,7 +76,7 @@ function RemoveCrapFromCart(cartItemId, productId) {
     formData.append("Id", cartItemId);
     formData.append("__RequestVerificationToken", GetAntiForgerytoken());
 
-    fetch("https://localhost:44364/Product/RemoveFromCart", {
+    fetch("https://localhost:44364/ShoppingCart/RemoveFromCart", {
         method: "POST",
         body: formData
     })
@@ -92,7 +92,6 @@ function RemoveCrapFromCart(cartItemId, productId) {
 
 
 
-
 function DeleteCrapFromCart(cartId) {
 
     // Declare new FormData object
@@ -102,7 +101,7 @@ function DeleteCrapFromCart(cartId) {
     formData.append("Id", cartId);
     formData.append("__RequestVerificationToken", GetAntiForgerytoken());
 
-    fetch("https://localhost:44364/Product/DeleteItemFromCart", {
+    fetch("https://localhost:44364/ShoppingCart/DeleteItemFromCart", {
         method: "POST",
         body: formData
     })
@@ -118,16 +117,6 @@ function DeleteCrapFromCart(cartId) {
 
 
 
-
-
-
-
-
-
-
-
-
-
 // Show user a message notification that the product was added to cart
 function DisplayResponseMessage(productName) {
 
@@ -139,11 +128,13 @@ function DisplayResponseMessage(productName) {
     $('#exampleModalCenter').modal('show');
 }
 
+
+
 // Update cart button with info on total items and current cost
 function UpdateCartButton() {
 
     // Get cart content using an AJAX call to GetCartContent() actionmethod
-    fetch('https://localhost:44364/Product/GetCartContent')
+    fetch('https://localhost:44364/ShoppingCart/GetCartContent')
 
         // Get response as Json data
         .then((response) => {
@@ -157,6 +148,7 @@ function UpdateCartButton() {
             document.getElementById('cartTotalCost').innerHTML = data.totalCost;
         });
 }
+
 
 
 // Update amount for each product in the view (index.cshtml) for ShoppingCart
@@ -174,6 +166,8 @@ function IncreaseSingleProductInCart(productId) {
     document.getElementById('cartProductId_' + productId).innerHTML = total;
 }
 
+
+
 // Update amount for each product in the view (index.cshtml) for ShoppingCart
 function DecreaseSingleProductInCart(productId) {
     let total = parseInt(document.getElementById('cartProductId_' + productId).innerHTML) - 1;
@@ -190,17 +184,11 @@ function DecreaseSingleProductInCart(productId) {
 }
 
 
+
 // Get antiforgerytoken from hidden div-element
 function GetAntiForgerytoken() {
     return document.getElementById('AntiForgeryToken').innerHTML;
 }
-
-
-
-
-
-
-
 
 
 
