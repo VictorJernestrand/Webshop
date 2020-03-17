@@ -87,7 +87,7 @@ namespace Webshop.Controllers
             User user = await UserMgr.GetUserAsync(HttpContext.User);
            
 
-            //user id is not in Order table
+            
             Order order = new Order()
             {
                 UserId=user.Id,
@@ -103,28 +103,29 @@ namespace Webshop.Controllers
             var cartid = Guid.Parse(HttpContext.Session.GetString("CustomerCartSessionId"));
             var query = context.ShoppingCart.Where(x => x.CartId == cartid).ToList();
 
+           
             ProductOrder productOrder = new ProductOrder();
             int output = 0;
             foreach (var item in query)
             {
-                //var itemPrice = context.Products.Where(x => x.Id == item.ProductId).Select(x => x.Price);
-                var productItems = context.Products.Where(x => x.Id == item.ProductId).ToList();
 
-                foreach (var product in productItems)
+                //take quantity along with price from product table
+                var itemPrice = context.Products.Where(x => x.Id == item.ProductId).Select(x => x.Price);
+
+                foreach (var price in itemPrice)
                 {
-                    if (product.Quantity == 0)
-                    {
-                        // Do something here...
-
-                    }
-
-                    productOrder.Amount = Convert.ToInt32(item.Amount * product.Price);
+                    //if price.quantity is > item.ammount
+                    productOrder.Amount = Convert.ToInt32(item.Amount * price);
+                    //else
+                    //Intimate the user of late delivery and he wishes to continue??
                 }
               
                 productOrder.OrderId = order.Id;
                 productOrder.ProductId = item.ProductId;
                 productOrder.Discount = 0;
                  output=  await databaseCRUD.InsertAsync<ProductOrder>(productOrder);
+
+                //Update the database with reduced amount
                 productOrder.Id = 0;
 
 
