@@ -9,7 +9,7 @@
 @{
     ViewData["Title"] = "Rock★Start - Alla Produkter";
 }
-    @*<div>
+@*<div>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
 
@@ -41,6 +41,15 @@
     </div>
 }
 
+@if (TempData["OrderCreated"] != null)
+
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["OrderCreated"]
+    </div>
+}
+ 
+
 @if (TempData["EditSuccesmsg"] != null)
 
 {
@@ -52,14 +61,14 @@
 
 
 <h1>Alla Produkter</h1>
-<div align="right"> 
+<div align="right">
     @if (User.IsInRole("Admin"))
-    {       
+    {
 
-            <a href='@Url.Action("CreateProduct", "Product")'>
-                <input type='button' class="btn btn-success" value='Lägg till Ny Produkt' />
-            </a>
-        
+        <a href='@Url.Action("CreateProduct", "Product")'>
+            <input type='button' class="btn btn-success" value='Lägg till Ny Produkt' />
+        </a>
+
     }
 </div>
 

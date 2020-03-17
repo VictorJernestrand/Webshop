@@ -10,6 +10,17 @@
     ViewData["Title"] = "Din Varukorg";
 }
 
+
+
+
+@if (TempData["LoginNeeded"] != null)
+
+{
+    <div class="alert alert-warning" role="alert">
+        @TempData["LoginNeeded"] Klick <a asp-action="Register" asp-controller="User"> här</a> för logga in
+    </div>
+}
+
 @if (Model != null)
 {
     <table class="table">
@@ -31,9 +42,14 @@
         }
     </table>
     <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
+    <div>
+
+    </div>
 
     <button href="#" class="btn btn-warning" onClick="history.go(-1); return false;">Fortsätt Shoppa snålis</button>
-    <a href="#" class="btn btn-success">Gå till kassan</a>
+
+    
+    <a class="btn btn-success" asp-controller="Order" asp-action="Index">Gå till kassan</a>
 }
 else
 {

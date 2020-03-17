@@ -39,7 +39,10 @@ namespace Webshop.Controllers
         //This mtd display the Products based on Passed in CategoryId
         public IActionResult Index(int catid)
         {
-           List<Product> categoryList = context.Products.Include("Brand").Include("Category").ToList();
+
+           List<Product> categoryList = context.Products.Include(x => x.Brand).Include(x=> x.Category).ToList();
+
+
            List<AllProductsViewModel> categoryViewList = categoryList.Select(x => new AllProductsViewModel(x))
                                    .Where(x => x.CategoryId == catid).OrderBy(c => c.Name).ToList();
 
@@ -176,8 +179,8 @@ namespace Webshop.Controllers
         
         public IActionResult AllProducts()
         {
-           
-            var products = context.Products.Include("Brand").Include("Category").ToList();
+
+            var products = context.Products.Include(x => x.Brand).Include(x => x.Category).ToList();
 
             List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).ToList();
 
@@ -220,7 +223,8 @@ namespace Webshop.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult DeleteProduct(int Id)
         {
-            var query = context.Products.Include("Brand").Include("Category").FirstOrDefault(p => p.Id == Id);
+
+            var query = context.Products.Include(x => x.Brand).Include(x => x.Category).FirstOrDefault(p => p.Id == Id);
 
             if (query == null)
                 return NotFound();
@@ -232,7 +236,7 @@ namespace Webshop.Controllers
         public IActionResult ProductDetail(int Id)
         {
 
-            var query = context.Products.Include("Brand").Include("Category").FirstOrDefault(p => p.Id == Id);
+            var query = context.Products.Include(x=> x.Brand).Include(x => x.Category).FirstOrDefault(p => p.Id == Id);
             if (query == null)
                 return NotFound();          
             return View(query);
@@ -243,8 +247,8 @@ namespace Webshop.Controllers
         public IActionResult EditProduct(int id)
         {
 
-            var result = context.Products.Include("Brand")
-                .Include("Category")
+            var result = context.Products.Include(x => x.Brand)
+                .Include(x => x.Category)
                 .Select(x => new EditProductModel
                 {
                    Id = x.Id,
