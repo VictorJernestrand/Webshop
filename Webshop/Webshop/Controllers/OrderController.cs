@@ -1,4 +1,4 @@
-﻿    using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Webshop.Context;
 using Webshop.Models;
+using Webshop.Models.Data;
 using Webshop.Services;
 
 namespace Webshop.Controllers
@@ -30,35 +31,11 @@ namespace Webshop.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            // TODO: Get all products from cart and display all products user wants to by
-            // Also show what items are in stock and ask user how the sucker wants to proceed...
-
             if(User.Identity.IsAuthenticated)
             {
                 var cartId = HttpContext.Session.GetString("CustomerCartSessionId");
                 if (cartId != null)
                 {
-                    //var cartid = Guid.Parse(HttpContext.Session.GetString("CustomerCartSessionId"));
-                    //orderviewmodel.shoppinglist = context.ShoppingCart.Where(x => x.CartId == cartid).ToList();
-
-                    //orderviewmodel.paymentMethodlist = context.PaymentMethods.ToList();
-
-                    //orderviewmodel.Products = new List<Product>();
-                    //var cartItems = context.ShoppingCart.Where(x => x.CartId == Guid.Parse(cartId)).ToList();
-                    //foreach (var item in cartItems)
-                    //{
-
-                    //    var product = context.Products.Find(item.ProductId);
-                    //    orderviewmodel.Products.Add(product);
-
-                    //    //foreach(var product in )
-                    //    //orderviewmodel.Products.Add( new Product
-                    //    //{
-                    //    //    Name = product.Product.Name,
-                    //    //    Quantity = product.Product.Quantity
-                    //    //});
-                    //}
-
                     // Get all products from shopping cart
                     var cartid = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
                     orderviewmodel.Products = GetProductDetails(orderviewmodel, Guid.Parse(cartId));
@@ -147,7 +124,10 @@ namespace Webshop.Controllers
                     TempData["OrderCreated"] = "Your order successfully created";
                 }
 
-                EmptyCart();
+                // Empty cart from all items
+                EmptyCart(cartId);
+
+
                 return RedirectToAction("AllProducts", "Product");
             }
 
@@ -184,8 +164,17 @@ namespace Webshop.Controllers
 
 
         // Empty cart by session id
-        public void EmptyCart()
+        public void EmptyCart(Guid cartId)
         {
+            // TODO: Emppty cart in database based on the cartId
+
+            //List<ShoppingCart> items = context.ShoppingCart.Where(x => x.CartId == cartId).ToList();
+            //foreach(var item in items)
+            //{
+            //    context.Remove<ShoppingCart>(item);
+            //    context.SaveChanges();
+            //}
+
             HttpContext.Session.Remove(Common.CART_COOKIE_NAME);
         }
 
