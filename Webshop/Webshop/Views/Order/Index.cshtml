@@ -23,10 +23,10 @@
         <div class="col-md-4">
             <form asp-action="Index" method="post" asp-controller="Order">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
+                @*TODO.. check address*@
                 <div class="form-group">
                     <label asp-for="PaymentMethodId" class="control-label"></label>
-
+                    @*//TODO*@
                     <select asp-for="PaymentMethodId" class="form-control">
                         <option>Välj</option>
                         @foreach (var item in Model.paymentMethodlist)
