@@ -18,6 +18,7 @@ namespace Webshop.Models
         public int UserId { get; set; }
        
         public DateTime OrderDate { get; set; } = DateTime.Now;
+        public List<Product> Products { get; set; }
         public List<Status> statuslist { get; set; }
         public List<PaymentMethod> paymentMethodlist { get; set; } = new List<PaymentMethod>();
         public List<ShoppingCart> shoppinglist { get; set; }

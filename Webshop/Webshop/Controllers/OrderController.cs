@@ -25,18 +25,38 @@ namespace Webshop.Controllers
             this.UserMgr = userManager;
             this.databaseCRUD = new DatabaseCRUD(context);
         }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            // TODO: Get all products from cart and display all products user wants to by
+            // Also show what items are in stock and ask user how the sucker wants to proceed...
+
             if(User.Identity.IsAuthenticated)
             {
-                if (HttpContext.Session.GetString("CustomerCartSessionId") != null)
+                var cartId = HttpContext.Session.GetString("CustomerCartSessionId");
+                if (cartId != null)
                 {
                     //var cartid = Guid.Parse(HttpContext.Session.GetString("CustomerCartSessionId"));
                     //orderviewmodel.shoppinglist = context.ShoppingCart.Where(x => x.CartId == cartid).ToList();
                  
                     orderviewmodel.paymentMethodlist = context.PaymentMethods.ToList();
 
+                    orderviewmodel.Products = new List<Product>();
+                    var cartItems = context.ShoppingCart.Where(x => x.CartId == Guid.Parse(cartId)).ToList();
+                    foreach (var item in cartItems)
+                    {
+
+                        var product = context.Products.Find(item.ProductId);
+                        orderviewmodel.Products.Add(product);
+
+                        //foreach(var product in )
+                        //orderviewmodel.Products.Add( new Product
+                        //{
+                        //    Name = product.Product.Name,
+                        //    Quantity = product.Product.Quantity
+                        //});
+                    }
                   
                     User user = await UserMgr.GetUserAsync(HttpContext.User);
 
@@ -87,10 +107,18 @@ namespace Webshop.Controllers
             int output = 0;
             foreach (var item in query)
             {
-                var itemPrice = context.Products.Where(x => x.Id == item.ProductId).Select(x => x.Price);
-                foreach (var price in itemPrice)
+                //var itemPrice = context.Products.Where(x => x.Id == item.ProductId).Select(x => x.Price);
+                var productItems = context.Products.Where(x => x.Id == item.ProductId).ToList();
+
+                foreach (var product in productItems)
                 {
-                    productOrder.Amount = Convert.ToInt32(item.Amount * price);
+                    if (product.Quantity == 0)
+                    {
+                        // Do something here...
+
+                    }
+
+                    productOrder.Amount = Convert.ToInt32(item.Amount * product.Price);
                 }
               
                 productOrder.OrderId = order.Id;
