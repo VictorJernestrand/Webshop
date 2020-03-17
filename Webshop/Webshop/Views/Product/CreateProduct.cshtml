@@ -64,7 +64,7 @@
         <div class="form-group">
             <label asp-for="CategoryId" class="control-label">Kategori</label>
             <br />
-            <select asp-for="CategoryId">
+            <select asp-for="CategoryId" class="form-control">
                 <option>Välj</option>
                 @foreach (var item in Model.categoryVM)
                 {
@@ -77,7 +77,7 @@
         <div class="form-group">
             <label asp-for="BrandId" class="control-label">Märke</label>
             <br />
-            <select asp-for="BrandId">
+            <select asp-for="BrandId" class="form-control">
                 <option>Välj</option>
                 @foreach (var item in Model.brandVM)
                 {
@@ -104,7 +104,7 @@
         <div class="form-group">
             <a>FullBeskrivning</a>
             <textarea asp-for="FullDescription" id="editor" class="form-control"></textarea>
-            @*<input asp-for="Description" class="form-control" />*@
+          
             <span asp-validation-for="FullDescription" class="text-danger"></span>
             <script>
                 ClassicEditor
@@ -123,7 +123,7 @@
         <div class="form-group">
             <a>Specifikationer</a>
             <textarea asp-for="Specification" id="editor2" class="form-control"></textarea>
-            @*<input asp-for="Description" class="form-control" />*@
+          
             <span asp-validation-for="Specification" class="text-danger"></span>
             <script>
                 ClassicEditor

@@ -123,12 +123,21 @@ namespace Webshop.Context
                 new Product() { Id = 12, Name = "P-45", Price = 4900, Quantity = 3, CategoryId = 4, Description = "Our best keyboard", BrandId = 3, Photo = @"Keyboard\keyboard3.jpg" }
 
 
-                ); 
-
-
+                );
+            builder.Entity<PaymentMethod>().HasData(
+                new PaymentMethod() { Id = 1, Name = "Swish" },
+                new PaymentMethod() { Id = 2, Name = "Konto" }
+                );
+            builder.Entity<Status>().HasData(
+                new Status() { Id = 1, Name = "Postförskott" },
+                new Status() { Id = 2, Name = "Förpackning" },
+                new Status() { Id = 3, Name = "Skickad" },
+                new Status() { Id = 4, Name = "Levereras" }
+                );
 
 
         }        
+        
         
         
         
