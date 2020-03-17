@@ -17,16 +17,42 @@
     </div>
 }
 <hr />
+
+<table>
+    <tr>
+        <td colspan="2">Dina varor</td>
+        <td></td>
+    </tr>
+    @foreach (var product in Model.Products)
+    {
+    <tr>
+        <td><img src="@Url.Content("~/Image/" + @product.Photo)" style="height: 80px; width: auto" /></td>
+        <td>@product.Name</td>
+        <td>
+            @if (product.Quantity == 0)
+            {
+            <span><i class="fas fa-exclamation-triangle" style="color: yellow"></i></span>
+            }
+            else
+            {
+               <span><i class="far fa-check-square" style="color: green"></i></span>
+            }
+        </td>
+    </tr>
+    }
+</table>
+
+
 @*@if (TempData["Address Null"] == null)
 {*@
     <div class="row">
         <div class="col-md-4">
             <form asp-action="Index" method="post" asp-controller="Order">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
+                @*TODO.. check address*@
                 <div class="form-group">
                     <label asp-for="PaymentMethodId" class="control-label"></label>
-
+                    @*//TODO*@
                     <select asp-for="PaymentMethodId" class="form-control">
                         <option>Välj</option>
                         @foreach (var item in Model.paymentMethodlist)
