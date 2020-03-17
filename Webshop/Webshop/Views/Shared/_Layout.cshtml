@@ -1,16 +1,20 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Webshop</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-   
+
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-   
+
+    <script src="https://cdn.ckeditor.com/ckeditor5/17.0.0/classic/ckeditor.js"></script>
+
+
 
 </head>
 <body>
@@ -26,15 +30,15 @@
                 </div>
 
 
-                    <form  method="get" asp-controller="Search" asp-action="Index"class="col d-flex justify-content-center align-items-center">
-                        <div class="input-group" style="width: 80%">
-                            <input type="text" autofocus name="searchtext" class="form-control" placeholder="fan letar du efter?" aria-label="hitta våra prylar" aria-describedby="button-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-secondary"  type="submit" id="button-addon2"><i class="fas fa-search"></i></button>
-                            </div>
-
+                <form method="get" asp-controller="Search" asp-action="Index" class="col d-flex justify-content-center align-items-center">
+                    <div class="input-group" style="width: 80%">
+                        <input type="text" autofocus name="searchtext" class="form-control" placeholder="fan letar du efter?" aria-label="hitta våra prylar" aria-describedby="button-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary" type="submit" id="button-addon2"><i class="fas fa-search"></i></button>
                         </div>
-                    </form>
+
+                    </div>
+                </form>
 
 
                 <div class="col col-sm-3 d-flex justify-content-center align-items-center text-white">
@@ -42,7 +46,7 @@
 
                         <div class="d-inline" style="width: 90px; padding-right: 4px">
                             <div style="font-size: 0.8em">Varor: <span id="cartTotalItems"></span></div>
-                            <div style="font-weight: bold" id="cartTotalCost" ></div>
+                            <div style="font-weight: bold" id="cartTotalCost"></div>
                         </div>
 
                         <div class="d-inline; d-flex align-items-center">
@@ -101,10 +105,11 @@
     </div>
 
 
-    <footer class="container border-top footer text-dark col-lg-12 col-md-auto col-sm-auto" >
-    
-        &copy;rockstart.se @DateTime.Now.Year | <a asp-area="" asp-controller="Contact" asp-action="Index" >Kontakta Oss | </a>
-       <a>Adress: Liljeholmskajen 2 | 123 21 Stockholm | Tel: 08-12 34 52 | Email: info@rockstart.se</a>
+
+    <footer class="container border-top footer text-dark col-lg-12 col-md-auto col-sm-auto">
+
+        &copy;rockstart.se @DateTime.Now.Year | <a asp-area="" asp-controller="Contact" asp-action="Index">Kontakta Oss | </a>
+        <a>Adress: Liljeholmskajen 2 | 123 21 Stockholm | Tel: 08-12 34 52 | Email: info@rockstart.se</a>
 
     </footer>
 
@@ -112,6 +117,8 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://kit.fontawesome.com/a59e8a19b5.js" crossorigin="anonymous"></script>
+
+
     @RenderSection("Scripts", required: false)
 </body>
 

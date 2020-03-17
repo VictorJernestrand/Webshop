@@ -4,6 +4,13 @@
     ViewData["Title"] = "Kategori";
 }
 
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href='@Url.Action("AllProducts", "Product")'>AllProducts</a></li>
+            <li class="breadcrumb-item"><a href='@Url.Action("CreateProduct", "Product")'>Lägg till Ny Produkt</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Skapa NyKategori</li>
+        </ol>
+    </nav>
 <span asp-validation-for="Name" class="text-danger" style="margin-left: 30px"></span>
 <form asp-action="EditCategory" method="post" class="form-inline">
 
@@ -46,5 +53,6 @@
     </tbody>
 </table>
 <div>
-    <a asp-action="Index" asp-controller="Admin">Home(Admin)</a>
+    
+    <a href="#" onClick="history.go(-1); return false;">Tillbaka</a>
 </div>

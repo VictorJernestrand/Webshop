@@ -4,7 +4,7 @@
     ViewData["Title"] = "Rock★Start - Uppdatera";
 }
 
-    <h1>Redigera Produkten</h1>
+<h1>Redigera Produkten</h1>
 
 @if (TempData["Database error"] != null)
 {
@@ -20,7 +20,7 @@
 }
 <hr />
 
-<a asp-controller="Product" asp-action="EditSpecifications" asp-route-id="@Model.Id" class="btn btn-outline-dark">Uppdatera Specifikationer</a>
+@*<a asp-controller="Product" asp-action="EditSpecifications" asp-route-id="@Model.Id" class="btn btn-outline-dark">Uppdatera Specifikationer</a>*@
 
 <div class="row">
     <div class="">
@@ -44,7 +44,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="CategoryId" class="control-label">Kategori</label>
-                <select asp-for="CategoryId">
+                <select asp-for="CategoryId" class="form-control">
                     <option>Välj</option>
                     @foreach (var item in Model.categoryVM)
                     {
@@ -56,7 +56,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="BrandId" class="control-label">Märke</label>
-                <select asp-for="BrandId">
+                <select asp-for="BrandId" class="form-control">
                     <option>Välj</option>
                     @foreach (var item in Model.brandVM)
                     {
@@ -77,9 +77,38 @@
                 <input name="file" type="file" />
                 <span asp-validation-for="Photo" class="text-danger"></span>
             </div>
+            <a>FullBeskrivning</a>
+            <textarea asp-for="FullDescription" id="editor"></textarea>
+            <script>
+                ClassicEditor
+                    .create(document.querySelector('#editor'))
+                    .then(editor => {
+                        console.log(editor);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            </script>
+            <p>	&nbsp;</p>       
+            <a>Specifikationer</a>
+
+            <textarea asp-for="Specification" id="editor2"></textarea>
+            <script>
+                ClassicEditor
+                    .create(document.querySelector('#editor2'))
+                    .then(editor => {
+                        console.log(editor);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            </script>
+
+            <a>	&nbsp;</a>
             <div class="form-group">
-                <input type="submit"  value="Spara" class="btn btn-primary" />
+                <input type="submit" value="Spara" class="btn btn-primary" />
             </div>
+
         </form>
     </div>
 </div>
@@ -87,6 +116,7 @@
 <div>
     <a asp-action="AllProducts" class="btn btn-info">Tillbaka till alla produkter</a>
 </div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -27,7 +27,7 @@
                 {
                     <ul class="social">
                         <li><a class="" style="color:violet" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@Model.Id" data-tip="Visa detaljer"><i class="fa fa-eye"></i></a></li>
-                        <li><a class="" style="color:greenyellow" asp-action="EditProduct" asp-route-id="@Model.Id" data-tip="Ändra produkt"><i class="fa fa-edit"></i></a></li>
+                        <li><a class="" style="color:greenyellow" asp-controller="Product"asp-action="EditProduct" asp-route-id="@Model.Id" data-tip="Ändra produkt"><i class="fa fa-edit"></i></a></li>
                         <li><a class="" style="color:red;" asp-controller="Product" asp-action="DeleteProduct" asp-route-id="@Model.Id" data-tip="Ta bort"><i class="fa fa-trash"></i></a></li>
                     </ul>
                 }
