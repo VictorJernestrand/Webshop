@@ -92,15 +92,15 @@ namespace Webshop.Controllers
                 // Keep data consistant! Begin transaction!
                 using (var transaction = new System.Transactions.TransactionScope())
                 {
-                    try
-                    {
+                    //try
+                    //{
                         // Add order to Entity Framework
                         context.Orders.Add(order);
                         context.SaveChanges();
 
                         // Get productinformation from shoppingcart
                         var productOrders = context.ShoppingCart.Include(x => x.Product)
-                                                                .Where(x => x.CartId == cartId)
+                                                                .Where(x => x.CartId == cartId && x.Amount > 0)
                                                                 .Select(x => new ProductOrder
                                                                 {
                                                                     OrderId = order.Id,
@@ -129,15 +129,19 @@ namespace Webshop.Controllers
 
                         // Empty cart
                         List<ShoppingCart> cartProducts = context.ShoppingCart.Where(x => x.CartId == cartId).ToList();
+                        context.ShoppingCart.RemoveRange(cartProducts);
                         context.SaveChanges();
+
+                        // Empty shoppingcart
+                        HttpContext.Session.Remove(Common.CART_COOKIE_NAME);
 
                         transaction.Complete();
                         idOrderSuccesful = true;
-                    }
-                    catch (Exception)
-                    {
-                        // TODO: Transaction went wrong. Do something here...
-                    }
+                    //}
+                    //catch (Exception)
+                    //{
+                    //    // TODO: Transaction went wrong. Do something here...
+                    //}
 
                     // Seems like everything went ok, set flag to true!
                     idOrderSuccesful = true;
