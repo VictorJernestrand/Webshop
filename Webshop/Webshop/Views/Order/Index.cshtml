@@ -42,17 +42,16 @@
     }
 </table>
 
+@*TODO.... enable the paymethod option only when the address is updated*@
 
-@*@if (TempData["Address Null"] == null)
-{*@
     <div class="row">
         <div class="col-md-4">
             <form asp-action="Index" method="post" asp-controller="Order">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                @*TODO.. check address*@
+                
                 <div class="form-group">
-                    <label asp-for="PaymentMethodId" class="control-label"></label>
-                    @*//TODO*@
+                    <label asp-for="PaymentMethodId" class="control-label">Betalningssätt</label>
+                   
                     <select asp-for="PaymentMethodId" class="form-control">
                         <option>Välj</option>
                         @foreach (var item in Model.paymentMethodlist)
@@ -69,7 +68,7 @@
 
 
                 <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary" />
+                    <input type="submit" value="Checkout" class="btn btn-primary" />
                 </div>
             </form>
         </div>
@@ -77,7 +76,7 @@
 @*}*@
 
     <div>
-        <a asp-action="Index">Back to List</a>
+        <a onClick="history.go(-1); return false;">Tillbaka </a>
     </div>
 
     @section Scripts {

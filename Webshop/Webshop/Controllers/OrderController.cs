@@ -37,8 +37,12 @@ namespace Webshop.Controllers
                 if (cartId != null)
                 {
                     // Get all products from shopping cart
-                    var cartid = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
-                    orderviewmodel.Products = GetProductDetails(orderviewmodel, Guid.Parse(cartId));
+                    //var cartid = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
+                    //orderviewmodel.Products = GetProductDetails(orderviewmodel, Guid.Parse(cartId));
+
+                    var cartid = Guid.Parse(cartId);
+                    orderviewmodel.Products = GetProductDetails(orderviewmodel, cartid);
+
 
                     // Get all payment methods
                     orderviewmodel.paymentMethodlist = GetPaymentMethods();
@@ -92,31 +96,46 @@ namespace Webshop.Controllers
 
                 var query = context.ShoppingCart.Where(x => x.CartId == cartId).ToList();
 
+
+                Product product1 = new Product();
                 ProductOrder productOrder = new ProductOrder();
                 int output = 0;
                 foreach (var item in query)
                 {
-                    //var itemPrice = context.Products.Where(x => x.Id == item.ProductId).Select(x => x.Price);
+                   
                     var productItems = context.Products.Where(x => x.Id == item.ProductId).ToList();
 
                     foreach (var product in productItems)
-                    {
-                        if (product.Quantity == 0)
-                        {
-                            // Do something here...
+                    {                       
 
-                        }
-
-                        productOrder.Amount = Convert.ToInt32(item.Amount * product.Price);
+                        // productOrder.Amount = Convert.ToInt32(item.Amount * product.Price);
+                        productOrder.Amount = item.Amount;
+                        productOrder.ProductPris = product.Price;
+                        //product1.Quantity = product1.Quantity - item.Amount;
+                       
                     }
 
                     productOrder.OrderId = order.Id;
                     productOrder.ProductId = item.ProductId;
                     productOrder.Discount = 0;
                     output = await databaseCRUD.InsertAsync<ProductOrder>(productOrder);
+
+                    //Reduce the Product quantity from Product Table
+                    if (output > 0)
+                    {
+                        foreach (var amt in productItems)
+                        {
+                            product1.Quantity = amt.Quantity- item.Amount;
+
+                            context.SaveChanges(); //..How to update Product table in database??....
+
+                        }
+                                            
+                    }
+
                     productOrder.Id = 0;
 
-
+                   
                 }
 
                 if (result > 0 && output > 0)
@@ -161,6 +180,8 @@ namespace Webshop.Controllers
         {
             return orderviewmodel.paymentMethodlist = context.PaymentMethods.ToList();
         }
+
+        
 
 
         // Empty cart by session id
