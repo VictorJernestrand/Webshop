@@ -27,21 +27,20 @@ namespace Webshop.ViewComponents
         public async Task<IViewComponentResult> InvokeAsync(
         int maxPriority, bool isDone)
         {
-            var items = await GetAllCategoriesAsync();
+            var items = await GetAllCategoriesFromWebAPIAsync();
             return View(items);
         }
 
 
-        private async Task<IEnumerable<Category>> GetAllCategoriesAsync()
-            => await _context.Categories.ToListAsync();
+        //private async Task<IEnumerable<Category>> GetAllCategoriesAsync()
+        //    => await _context.Categories.ToListAsync();
 
 
-        // Get all categories from the WebAPI
-        //private async Task<IEnumerable<Category>> GetAllCategoriesFromWebAPIAsync()
-        //{
-        //    //WebAPIHandler<Category> webAPI = new WebAPIHandler<Category>(_clientFactory, "https://localhost:44305/api/categories");
-        //    return await webAPI.GetAllFromWebAPIAsync<Category>("https://localhost:44305/api/categories");
-        //}
+        //Get all categories from the WebAPI
+        private async Task<IEnumerable<Category>> GetAllCategoriesFromWebAPIAsync()
+        {
+            return await webAPI.GetAllAsync<Category>("https://localhost:44305/api/categories");
+        }
 
     }
 }

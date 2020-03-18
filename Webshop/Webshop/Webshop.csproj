@@ -33,6 +33,8 @@
     <Compile Remove="Migrations\20200302203526_rka.Designer.cs" />
     <Compile Remove="Migrations\20200310171350_1.cs" />
     <Compile Remove="Migrations\20200310171350_1.Designer.cs" />
+    <Compile Remove="Migrations\20200317180915_ProductOrderItemCost.cs" />
+    <Compile Remove="Migrations\20200317180915_ProductOrderItemCost.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

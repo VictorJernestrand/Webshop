@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Webshop.Context;
 using Webshop.Models;
+using Webshop.Services;
 
 namespace Webshop.Controllers
 {
@@ -14,26 +16,38 @@ namespace Webshop.Controllers
     public class BrandController : Controller
     {
         private readonly WebshopContext context;
+        private readonly WebAPIHandler webApi;
 
         EditBrandModel BrandModel = new EditBrandModel();
 
-        public BrandController(WebshopContext context)
+        public BrandController(WebshopContext context, IHttpClientFactory clientFactory)
         {
             this.context = context;
+            this.webApi = new WebAPIHandler(clientFactory);
         }
 
         
         [HttpGet]
-        public IActionResult Index(int? id)
+        public async Task<IActionResult> Index(int? id)
         {
+            //if (id != null)
+            //{
+            //    var brand = context.Brands.Where(x => x.Id == (int)id).FirstOrDefault();
+            //    BrandModel.Id = brand.Id;
+            //    BrandModel.Name = brand.Name;
+            //}
+
+            //BrandModel.BrandsCollection = context.Brands.ToList();
+
+            BrandModel.BrandsCollection = await webApi.GetAllAsync<Brand>("https://localhost:44305/api/brands");
+
             if (id != null)
             {
-                var brand = context.Brands.Where(x => x.Id == (int)id).FirstOrDefault();
+                var brand = BrandModel.BrandsCollection.Where(x => x.Id == (int)id).FirstOrDefault();
                 BrandModel.Id = brand.Id;
                 BrandModel.Name = brand.Name;
             }
-
-            BrandModel.BrandsCollection = context.Brands.ToList();
+            
             return View(BrandModel);
         }
 

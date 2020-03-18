@@ -11,17 +11,20 @@ namespace Webshop.Models
     {
       
         public int Id { get; set; }
-        public int StatusId { get; set; }
+        //public int StatusId { get; set; }
 
         [Required(ErrorMessage = "Välj Payment Method")]
         public int PaymentMethodId { get; set; }
         public int UserId { get; set; }
        
         public DateTime OrderDate { get; set; } = DateTime.Now;
-        public List<Product> Products { get; set; }
-        public List<Status> statuslist { get; set; }
+        public List<OrderItemsModel> Products { get; set; }
+        //public List<Status> statuslist { get; set; }
         public List<PaymentMethod> paymentMethodlist { get; set; } = new List<PaymentMethod>();
-        public List<ShoppingCart> shoppinglist { get; set; }
+        //public List<ShoppingCart> shoppinglist { get; set; }
+
+
+        public decimal OrderTotal { get; set; }
 
 
 

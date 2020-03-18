@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Context;
+using WebAPI.Models;
 using WebAPI.Models.Data;
 
 namespace WebAPI.Controllers
@@ -52,10 +53,11 @@ namespace WebAPI.Controllers
         // PUT: api/Brands/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBrand(int id, [FromBody]Brand brand)
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        [HttpPut]
+        public async Task<IActionResult> PutBrand([FromBody]Brand brand)
         {
-            if (id != brand.Id)
+            if (brand.Id < 0)
             {
                 return BadRequest();
             }
@@ -64,10 +66,11 @@ namespace WebAPI.Controllers
             {
                 _context.Entry(brand).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+                return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BrandExists(id))
+                if (!BrandExists(brand.Id))
                 {
                     return NotFound();
                 }
@@ -76,13 +79,12 @@ namespace WebAPI.Controllers
                     throw;
                 }
             }
-
-            return NoContent();
         }
 
         // POST: api/Brands
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Brand>> PostBrand(Brand brand)
         {
@@ -93,6 +95,7 @@ namespace WebAPI.Controllers
         }
 
         // DELETE: api/Brands/5
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Brand>> DeleteBrand(int id)
         {
