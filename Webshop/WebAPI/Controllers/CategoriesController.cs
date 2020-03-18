@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Context;
 using WebAPI.Models;
-using WebsAPI.Models;
+using WebAPI.Models.Data;
 
 namespace WebAPI.Controllers
 {
@@ -35,8 +35,9 @@ namespace WebAPI.Controllers
             //                                              InstrumentCount = x.Products.Count()
             //                                          })
             //                                          .ToListAsync();
-            var categories = await _context.Categories.ToListAsync();
 
+
+            var categories = await _context.Categories.ToListAsync();
             return Ok(categories);
         }
 

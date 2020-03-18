@@ -36,11 +36,10 @@ namespace Webshop.ViewComponents
             => await _context.Categories.ToListAsync();
 
 
-        // Get all categories from the WebAPI
+        //Get all categories from the WebAPI
         //private async Task<IEnumerable<Category>> GetAllCategoriesFromWebAPIAsync()
         //{
-        //    //WebAPIHandler<Category> webAPI = new WebAPIHandler<Category>(_clientFactory, "https://localhost:44305/api/categories");
-        //    return await webAPI.GetAllFromWebAPIAsync<Category>("https://localhost:44305/api/categories");
+        //    return await webAPI.GetAllAsync<Category>("https://localhost:44305/api/categories");
         //}
 
     }

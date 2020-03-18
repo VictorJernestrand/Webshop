@@ -113,12 +113,6 @@ namespace Webshop.Controllers
                 // Are there anything to be removed?
                 if (cartProductItem.Amount > 0)
                 {
-                    // Update database quantity
-                    var productInStock = _context.Products.Find(cartProductItem.ProductId);
-
-                    // Put item back
-                    productInStock.Quantity++;
-
                     // Remove item from cart
                     cartProductItem.Amount--;
 
