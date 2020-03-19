@@ -37,7 +37,29 @@
                 <h5 class="card-title">@Model.Name</h5>
                 <h6 class="card-subtitle mb-2 text-muted">@Model.BrandName - @Model.CategoryName</h6>
                 <a>&nbsp;</a>
-                <h5 class="card-title text-success">@Model.Price.ToString("C0")</h5>
+                @if (Model.Discount == 0)
+                {
+                    <h5 class="card-title text-success">@Model.Price.ToString("C0")</h5>
+                }
+                else
+                {
+                    <span style="font-size: small; text-decoration: line-through">@Model.Price.ToString("C0")</span>
+                    <h5 class="card-title text-success">
+                        @Model.DiscountPrice.ToString("C0")
+                        <span style="font-size: small">-@((int)(Model.Discount * 100))%</span>
+                    </h5>
+                }
+
+                <p>
+                    @if (@Model.Quantity == 0)
+                    {
+                        <i class="fas fa-skull-crossbones"></i> <span class="text-danger">Ej i lager</span>
+                    }
+                    else
+                    {
+                        <span>&nbsp;</span>
+                    }
+                </p>
             </div>
         </div>
     </div>
