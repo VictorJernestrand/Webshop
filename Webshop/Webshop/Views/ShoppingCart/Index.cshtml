@@ -33,7 +33,18 @@
                     </a>
                 </td>
                 <td>@product.Name</td>
-                <td>@product.Price.ToString("C0")</td>
+                <td>
+                    @if (product.Discount == 0)
+                    {
+                        @product.Price.ToString("C0")
+                    }
+                    else
+                    {
+                        <span style="text-decoration: line-through">@product.Price.ToString("C0")</span>
+                        <span>@product.DiscountPrice.ToString("C0")</span>
+                    }
+                </td>
+
                 <td><button class="btn btn-warning" onclick="RemoveCrapFromCart(@product.ShoppingCartId, @product.ProductId)" id="DecreaseBtn_@product.ProductId"><i class="fas fa-minus-square"></i></button></td>
                 <td><span id="cartProductId_@product.ProductId">@product.Amount</span></td>
                 <td><button class="btn btn-success" onclick="AddCrapToCart(@product.ProductId, null)" id="IncreaseBtn_@product.ProductId"><i class="fas fa-plus-square"></i></button></td>
