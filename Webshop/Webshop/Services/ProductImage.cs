@@ -59,8 +59,9 @@ namespace Webshop.Services
         {
             if (CategoryFolder(_categoryFolderPath))
             {
+
                 // Set name of file using productId.!
-                var fileName = idproductId + Path.GetExtension(_file.FileName);
+                var fileName = idproductId + "_" + Path.GetExtension(_file.FileName);
 
                 // Set full path to new image
                 var fullFilePath = Path.Combine(_categoryFolderPath, fileName);
