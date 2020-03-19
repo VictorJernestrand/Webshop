@@ -11,6 +11,8 @@ namespace Webshop.Models
         public int ProductId { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
+        public float Discount { get; set; }
+        public decimal DiscountPrice { get; set; }
         public string Photo { get; set; }
         public int Amount { get; set; }
     }

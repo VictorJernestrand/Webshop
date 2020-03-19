@@ -40,6 +40,8 @@ namespace Webshop.Controllers
                         ProductId = x.Product.Id,
                         Name = x.Product.Name,
                         Price = x.Product.Price,
+                        DiscountPrice = CalculateDiscount.NewPrice(x.Product.Price, (decimal)x.Product.Discount), //x.Product.Price - (x.Product.Price * (decimal)x.Product.Discount),
+                        Discount = x.Product.Discount,
                         Photo = x.Product.Photo,
                         Amount = x.Amount
                     })
