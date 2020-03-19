@@ -35,8 +35,9 @@ namespace WebAPI.Controllers
             //                                              InstrumentCount = x.Products.Count()
             //                                          })
             //                                          .ToListAsync();
-            var categories = await _context.Categories.ToListAsync();
 
+
+            var categories = await _context.Categories.ToListAsync();
             return Ok(categories);
         }
 

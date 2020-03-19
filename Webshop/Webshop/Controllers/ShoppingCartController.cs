@@ -113,12 +113,6 @@ namespace Webshop.Controllers
                 // Are there anything to be removed?
                 if (cartProductItem.Amount > 0)
                 {
-                    // Update database quantity
-                    var productInStock = _context.Products.Find(cartProductItem.ProductId);
-
-                    // Put item back
-                    productInStock.Quantity++;
-
                     // Remove item from cart
                     cartProductItem.Amount--;
 
@@ -145,7 +139,8 @@ namespace Webshop.Controllers
             if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) == null)
                 return new CartButtonInfoModel();
 
-            // Get cart contents
+            Guid cartId = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
+
             var cartContent = _context.ShoppingCart.Include(x => x.Product)
                 .Where(x => x.CartId == Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME)))
                 .ToList()
@@ -153,7 +148,9 @@ namespace Webshop.Controllers
                 .Select(x => new CartButtonInfoModel
                 {
                     TotalItems = x.Sum(x => x.Amount),
-                    TotalCost = x.Sum(a => a.Product.Price * a.Amount).ToString("C0")
+
+                    // Result = Total - (Discount * Total)
+                    TotalCost = x.Sum(a => (a.Product.Price * a.Amount) - ((decimal)a.Product.Discount * (a.Product.Price * a.Amount))).ToString("C0")
                 }).FirstOrDefault();
 
             // If cartContent is null return new CartButtonmodel with default values

@@ -69,7 +69,11 @@ namespace WebAPI.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        // Create and stores a new refresh token in database
+        /// <summary>
+        /// Create and stores a new refresh token in database
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         private string CreateRefreshToken(User user)
         {
             user.RefreshToken = Guid.NewGuid().ToString();

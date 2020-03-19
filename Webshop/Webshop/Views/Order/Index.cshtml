@@ -4,82 +4,117 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
-<h4>OrderViewModel</h4>
-
 @if (TempData["Address Null"] != null)
 
 {
     <div class="alert alert-warning" role="alert">
-        @TempData["Address Null"] Klick <a asp-action="EditUser" asp-controller="User"> här</a> för Uppdatera
-        
+        @TempData["Address Null"] Klicka <a asp-action="EditUser" asp-controller="User">här</a> för uppdatera
     </div>
 }
-<hr />
 
-<table>
-    <tr>
-        <td colspan="2">Dina varor</td>
-        <td></td>
-    </tr>
-    @foreach (var product in Model.Products)
-    {
-    <tr>
-        <td><img src="@Url.Content("~/Image/" + @product.Photo)" style="height: 80px; width: auto" /></td>
-        <td>@product.Name</td>
-        <td>
-            @if (product.Quantity == 0)
+
+@if (TempData["OrderError"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["OrderError"]
+    </div>
+}
+
+<h1>Kassan</h1>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Produkt</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col">Att Betala</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model.Products)
+        {
+        <tr>
+            <td><img src="@Url.Content("~/Image/" + @product.Photo)" style="height: 60px; width: auto" /></td>
+            <td><a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">@product.ProductName</a></td>
+            <td>
+                @product.Amount x @product.Price.ToString("C0")
+                @if (product.Discount > 0)
+                {
+                <p style="font-size: small; color: green">-@((int)(product.Discount * 100))% Rabatt!</p>
+                }
+            </td>
+            <td>
+            @if (product.Discount == 0)
             {
-            <span><i class="fas fa-exclamation-triangle" style="color: yellow"></i></span>
+                <p style="font-weight: bold">@product.TotalProductCost.ToString("C0")</p>
             }
             else
             {
-               <span><i class="far fa-check-square" style="color: green"></i></span>
+                <p style="font-weight: bold">@product.TotalProductCostDiscount.ToString("C0")</p>
             }
-        </td>
-    </tr>
-    }
-</table>
+            </td>
+            <td>
+                @if (product.QuantityInStock - product.Amount < 0)
+                {
+                    <span><i class="fas fa-exclamation-triangle" style="color: orange"></i></span>
+                    <span style="font-size: small">I lager: @product.QuantityInStock</span>
+                }
+                else
+                {
+                    <span><i class="fas fa-check" style="color: green"></i></span>
+                }
+            </td>
+        </tr>
 
+        }
+</table>
+<div class="row">
+    <div class="col ">
+        <div class="text-success float-right" style="margin: 4px, 20px, 4px, 20px; font-size: 2em">@Model.OrderTotal.ToString("C0")</div>
+    </div>
+</div>
 
 @*@if (TempData["Address Null"] == null)
-{*@
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="Index" method="post" asp-controller="Order">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                @*TODO.. check address*@
-                <div class="form-group">
-                    <label asp-for="PaymentMethodId" class="control-label"></label>
-                    @*//TODO*@
-                    <select asp-for="PaymentMethodId" class="form-control">
-                        <option>Välj</option>
-                        @foreach (var item in Model.paymentMethodlist)
-                        {
-                            <option value="@item.Id">@item.Name</option>
-                        }
-                    </select>
-                    <span asp-validation-for="PaymentMethodId" class="text-danger"></span>
-                </div>           
+    {*@
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Index" method="post" asp-controller="Order">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @*TODO.. check address*@
+            <div class="form-group">
+                <label asp-for="PaymentMethodId" class="control-label"></label>
+                @*//TODO*@
+                <select asp-for="PaymentMethodId" class="form-control">
+                    <option>Välj</option>
+                    @foreach (var item in Model.paymentMethodlist)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="PaymentMethodId" class="text-danger"></span>
+            </div>
 
 
 
 
 
 
-                <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary" />
-                </div>
-            </form>
-        </div>
+            <div class="form-group">             
+                    <button href="#" class="btn btn-warning" asp-action="Index" asp-controller="ShoppingCart">Gå tillbaka till kundkorgen</button>
+                @if (Model.Products.Count() != 0)
+                {
+                    <input type="submit" value="Pay us now!" class="btn btn-primary" />                  
+                }
+          
+            </div>
+        </form>
     </div>
-@*}*@
+</div>
 
-    <div>
-        <a asp-action="Index">Back to List</a>
-    </div>
 
-    @section Scripts {
-        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    }
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

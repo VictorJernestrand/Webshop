@@ -31,14 +31,23 @@ namespace Webshop.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) == null)
+            {
+                // Shoppingcart is empty, send user to start page
+                return RedirectToAction("Index", "Home");
+            }
+
             if(User.Identity.IsAuthenticated)
             {
-                var cartId = HttpContext.Session.GetString("CustomerCartSessionId");
+                var cartId = HttpContext.Session.GetString(Common.CART_COOKIE_NAME);
                 if (cartId != null)
                 {
-                    // Get all products from shopping cart
+                    // Calculate all items and discounts (if any) from shopping cart
                     var cartid = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
                     orderviewmodel.Products = GetProductDetails(orderviewmodel, Guid.Parse(cartId));
+
+                    // Calculate total cost of whole order
+                    orderviewmodel.OrderTotal = OrderTotal(orderviewmodel.Products);
 
                     // Get all payment methods
                     orderviewmodel.paymentMethodlist = GetPaymentMethods();
@@ -72,67 +81,89 @@ namespace Webshop.Controllers
             var cartId = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
 
             if (ModelState.IsValid)
-
             {
                 User user = await UserMgr.GetUserAsync(HttpContext.User);
 
-
-                //user id is not in Order table
+                // Create order
                 Order order = new Order()
                 {
                     UserId = user.Id,
                     PaymentMethodId = model.PaymentMethodId,
                     StatusId = 1
-
                 };
 
-                var result = await databaseCRUD.InsertAsync<Order>(order);
+                // Flag for checking if order was succesful or failed miserably...
+                bool idOrderSuccesful = false;
 
-                //orderviewmodel = GetOrderDetails(new OrderViewModel(), cartid);
-
-                var query = context.ShoppingCart.Where(x => x.CartId == cartId).ToList();
-
-                ProductOrder productOrder = new ProductOrder();
-                int output = 0;
-                foreach (var item in query)
+                // Keep data consistant! Begin transaction!
+                using (var transaction = new System.Transactions.TransactionScope())
                 {
-                    //var itemPrice = context.Products.Where(x => x.Id == item.ProductId).Select(x => x.Price);
-                    var productItems = context.Products.Where(x => x.Id == item.ProductId).ToList();
+                    //try
+                    //{
+                        // Add order to Entity Framework
+                        context.Orders.Add(order);
+                        context.SaveChanges();
 
-                    foreach (var product in productItems)
-                    {
-                        if (product.Quantity == 0)
+                        // Get productinformation from shoppingcart
+                        var productOrders = context.ShoppingCart.Include(x => x.Product)
+                                                                .Where(x => x.CartId == cartId && x.Amount > 0)
+                                                                .Select(x => new ProductOrder
+                                                                {
+                                                                    OrderId = order.Id,
+                                                                    Price = x.Product.Price,
+                                                                    Amount = x.Amount,
+                                                                    ProductId = x.Product.Id,
+                                                                    Discount = (decimal)x.Product.Discount,
+                                                                })
+                                                                .ToList();
+
+                        // Add all products to the ProductOrders-table
+                        context.ProductOrders.AddRange(productOrders);
+                        context.SaveChanges();
+
+                        // Update product stock/quanity in database
+                        var products = context.ShoppingCart.Include(x => x.Product)
+                                                           .Where(x => x.CartId == cartId).ToList();
+
+                        foreach (var product in products)
                         {
-                            // Do something here...
-
+                            product.Product.Quantity = (product.Product.Quantity - product.Amount >= 0) ?
+                                                        product.Product.Quantity -= product.Amount : 0;
+                            context.Products.Update(product.Product);
+                            context.SaveChanges();
                         }
 
-                        productOrder.Amount = Convert.ToInt32(item.Amount * product.Price);
-                    }
+                        // Empty cart
+                        List<ShoppingCart> cartProducts = context.ShoppingCart.Where(x => x.CartId == cartId).ToList();
+                        context.ShoppingCart.RemoveRange(cartProducts);
+                        context.SaveChanges();
 
-                    productOrder.OrderId = order.Id;
-                    productOrder.ProductId = item.ProductId;
-                    productOrder.Discount = 0;
-                    output = await databaseCRUD.InsertAsync<ProductOrder>(productOrder);
-                    productOrder.Id = 0;
+                        // Empty shoppingcart
+                        HttpContext.Session.Remove(Common.CART_COOKIE_NAME);
 
+                        transaction.Complete();
+                        idOrderSuccesful = true;
+                    //}
+                    //catch (Exception)
+                    //{
+                    //    // TODO: Transaction went wrong. Do something here...
+                    //}
 
+                    // Seems like everything went ok, set flag to true!
+                    idOrderSuccesful = true;
                 }
 
-                if (result > 0 && output > 0)
-                {
-                    TempData["OrderCreated"] = "Your order successfully created";
-                }
-
-                // Empty cart from all items
-                EmptyCart(cartId);
-
-
-                return RedirectToAction("AllProducts", "Product");
+                if (idOrderSuccesful)
+                    return RedirectToAction(nameof(ThankYou));
+                else
+                    TempData["OrderError"] = "Oops det här var pinsamt! Kunde inte skapa din order. Något sket sig, he hee....";
             }
 
             // Update model with product details from shopping cart
             model.Products = GetProductDetails(model, cartId);
+
+            // Calculate total cost of whole order
+            model.OrderTotal = OrderTotal(model.Products);
 
             // Update with payment methods
             model.paymentMethodlist = GetPaymentMethods();
@@ -141,19 +172,42 @@ namespace Webshop.Controllers
 
 
         // Get order details from current cart id
-        public List<Product> GetProductDetails(OrderViewModel orderviewmodel, Guid cartId)
+        public List<OrderItemsModel> GetProductDetails(OrderViewModel orderviewmodel, Guid cartId)
         {
-            orderviewmodel.Products = new List<Product>();
-            var cartItems = context.ShoppingCart.Where(x => x.CartId == cartId).ToList();
-            foreach (var item in cartItems)
-            {
+            var productOrders = context.ShoppingCart.Include(x => x.Product)
+                                        .Where(x => x.CartId == cartId && x.Amount > 0)
+                                        .Select(x => new OrderItemsModel
+                                        {
+                                            ProductId = x.Product.Id,
+                                            ProductName = x.Product.Name,
+                                            Photo = x.Product.Photo,
+                                            Amount = x.Amount,
+                                            QuantityInStock = x.Product.Quantity,
+                                            Price = x.Product.Price,
+                                            Discount = (decimal)x.Product.Discount,
+                                            UnitPriceWithDiscount = CostWithDiscount(x.Product.Price, (decimal)x.Product.Discount),
+                                            TotalProductCostDiscount = TotalCost(x.Amount, x.Product.Price, (decimal)x.Product.Discount),
+                                            TotalProductCost = x.Product.Price * x.Amount
+                                        })
+                                        .ToList();
 
-                var product = context.Products.Find(item.ProductId);
-                orderviewmodel.Products.Add(product);
-            }
 
+            orderviewmodel.Products = productOrders;
             return orderviewmodel.Products;
         }
+
+
+        // Caluclate discount
+        private static decimal CostWithDiscount(decimal price, decimal discount)
+            => price - (discount * price);
+
+        // Calculate total itemcost
+        private static decimal TotalCost(int quantity, decimal price, decimal discount)
+            => CostWithDiscount(price, discount) * quantity;
+
+        // Calculate total cost of whole order
+        private static decimal OrderTotal(IEnumerable<OrderItemsModel> order)
+            => order.Sum(x => x.TotalProductCostDiscount);
 
 
         // Get all available payment methods
@@ -163,19 +217,9 @@ namespace Webshop.Controllers
         }
 
 
-        // Empty cart by session id
-        public void EmptyCart(Guid cartId)
+        public IActionResult ThankYou()
         {
-            // TODO: Emppty cart in database based on the cartId
-
-            //List<ShoppingCart> items = context.ShoppingCart.Where(x => x.CartId == cartId).ToList();
-            //foreach(var item in items)
-            //{
-            //    context.Remove<ShoppingCart>(item);
-            //    context.SaveChanges();
-            //}
-
-            HttpContext.Session.Remove(Common.CART_COOKIE_NAME);
+            return View();
         }
 
     }
