@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Webshop.Context;
 using Webshop.Models;
@@ -46,7 +47,10 @@ namespace Webshop.Controllers
             //User = await UserMgr.GetUserAsync(HttpContext.User);
             //ViewData["UserName"] = User.FirstName;// HttpContext.Session.GetString(SessionCookies.USER_NAME);
             //var result = context.Categories.ToList();
-            return View(User);
+            //return View(User);
+            var products = context.Products.Include("Brand").Include("Category").ToList();
+            List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).Where(d => d.Discount > 0).ToList();
+            return View(allProducts);
         }
 
         public IActionResult Privacy()
