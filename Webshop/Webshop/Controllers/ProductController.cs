@@ -58,6 +58,26 @@ namespace Webshop.Controllers
             return View(createProductModel);           
         }
 
+        /*
+        [Authorize(Roles = "Admin")]
+        public IActionResult EditSpecifications(int id)
+        {
+            // Get product from database
+            var product = context.Products.Find(id);
+
+            productSpecification.Product = product;
+
+            // Are there any specifications?
+            if (product.Specification != null)
+            {
+                // Deserialize Json data from product specifications
+                productSpecification.SpecificationsList = JsonSerializer.Deserialize<List<SpecificationInfo>>(product.Specification);
+            }
+
+            return View(productSpecification);
+        }
+        */
+
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -93,8 +113,30 @@ namespace Webshop.Controllers
                         // Set category folder name
                         var folderName = databaseCRUD.GetCategoryName(model.CategoryId);
 
-                        ProductImage test = new ProductImage(environment.WebRootPath, folderName, file);
-                        newProduct.Photo = test.StoreImage(productId);
+                        // Create folder if doesn't exist
+                        if (!Directory.Exists(wwwRootImage + folderName))
+                            Directory.CreateDirectory(wwwRootImage + folderName);
+
+                        // Get file-extension from file
+                        //var fileExtension = Path.GetExtension(file.FileName);
+
+                        // Get name of file. Validate file before using it!
+                        var fileName = productId + "_" + file.FileName; // fileExtension; // ToString Path.GetFileName(file.FileName);
+
+                        // Set path to point to 
+                        var filePath = Path.Combine(folderName, fileName);
+
+                        //var fullfilepath = Path.Combine(wwwRoot, @"Image\" + folderName, fileName);
+                        var fullFilePath = Path.Combine(wwwRootImage + folderName, fileName);
+
+                        // Move file to new location (wwwroot) folder
+                        using (var fileStream = new FileStream(fullFilePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
+
+                        // Update newProduct with path to new photo
+                        newProduct.Photo = filePath;
 
                         // Update product in databse with path to product photo
                         await databaseCRUD.UpdateAsync<Product>(newProduct);
@@ -241,6 +283,10 @@ namespace Webshop.Controllers
                 // Get information about the stored info from database to compare with new info
                 var productInDB = await context.Products.AsNoTracking().FirstOrDefaultAsync(x => x.Id == model.Id);
 
+                // Get path to wwwroot folder
+                var wwwRoot = environment.WebRootPath;
+                string wwwRootImage = environment.WebRootPath + @"\Image\";
+
                 // Get folderName
                 var folderName = databaseCRUD.GetCategoryName(model.CategoryId);
 
@@ -260,22 +306,58 @@ namespace Webshop.Controllers
                         Specification = model.Specification
                     };
 
+                    // TODO: Add product-Id to the filename
+
                     // Update image
                     if (file != null)
                     {
-                        ProductImage image = new ProductImage(environment.WebRootPath, folderName, file);
-                        productInDB.Photo = image.StoreImage(productInDB.Id);
+                        // Create folder for storing product images if it doesn't exist
+                        if (!Directory.Exists(wwwRootImage + folderName))
+                            Directory.CreateDirectory(wwwRootImage + folderName);
+
+                        // Get file-extension from file
+                        var fileExtension = Path.GetExtension(file.FileName);
+
+                        // Get name of file. Validate file before using it!
+                        var fileName = model.Id + "_" + file.FileName; // fileExtension; // ToString Path.GetFileName(file.FileName);
+
+                        // Set path to point to 
+                        var filePath = Path.Combine(folderName, fileName);
+
+                        //var fullfilepath = Path.Combine(wwwRoot, @"Image\" + folderName, fileName);
+                        var fullfilepath = Path.Combine(wwwRootImage + folderName, fileName);
+
+                        // Move file to new location (wwwroot) folder
+                        using (var fileStream = new FileStream(fullfilepath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
+
+                        editproduct.Photo = filePath;
                     }
 
                     // If category was changed, move existing product photo to selected folder
                     else if(productInDB.CategoryId != model.CategoryId)
                     {
-                        ProductImage image = new ProductImage(environment.WebRootPath, folderName, productInDB.Photo);
-                        productInDB.Photo = image.MoveImage();
-                        productInDB.CategoryId = model.CategoryId;
+                        var newPath = folderName + @"\" + Path.GetFileName(productInDB.Photo);
+                        var fullPathToFile = wwwRootImage + newPath;
+
+                        // Check if folder exist
+                        try
+                        {
+                            if (!Directory.Exists(wwwRootImage + folderName))
+                                Directory.CreateDirectory(wwwRootImage + folderName);
+
+                            var currentPath = wwwRootImage + productInDB.Photo;
+                            System.IO.File.Move(currentPath, fullPathToFile);
+                            
+                        }
+                        catch { }
+
+                        editproduct.Photo = newPath;
                     }
 
-                    await databaseCRUD.UpdateAsync<Product>(productInDB);
+                    await databaseCRUD.UpdateAsync<Product>(editproduct);
                 }
 
                 else
@@ -310,5 +392,47 @@ namespace Webshop.Controllers
             }
         }
 
+        /*
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditSpecifications([Bind]SpecificationModel specificationModel)
+        {
+            // Get product from database
+            var product = context.Products.Find(specificationModel.Product.Id);
+
+            // Check if specifications exist
+            if (specificationModel.SpecificationsList != null)
+            {
+                // Loop through the specifications collection in the specs object
+                for (var i = 0; i < specificationModel.SpecificationsList.Count; i++)
+                {
+                    // If SpecInfo or SpecName is null or empty...
+                    if (string.IsNullOrEmpty(specificationModel.SpecificationsList[i].SpecInfo) || string.IsNullOrEmpty(specificationModel.SpecificationsList[i].SpecTitle))
+                    {
+                        // Remove current index from collection
+                        specificationModel.SpecificationsList.RemoveAt(i);
+
+                        // Counter must be reset since the collection will be re-indexed after an index has been removed
+                        i = 0;
+                    }
+                }
+            }
+
+            // If collection contains values, Serialize to Json, else set as null
+            product.Specification = (specificationModel.SpecificationsList != null && specificationModel.SpecificationsList.Count > 0)
+                ? JsonSerializer.Serialize(specificationModel.SpecificationsList)
+                : null;
+
+            // update product
+            context.Update<Product>(product);
+            context.SaveChanges();
+
+            // Temp message
+            TempData["SpecpsUpdated"] = "Specifikationerna har uppdaterats";
+
+            // Reload page
+            return RedirectToAction("EditSpecifications", "Product", new { id = product.Id });
+        }*/
     }
 }
