@@ -31,9 +31,15 @@ namespace Webshop.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) == null)
+            {
+                // Shoppingcart is empty, send user to start page
+                return RedirectToAction("Index", "Home");
+            }
+
             if(User.Identity.IsAuthenticated)
             {
-                var cartId = HttpContext.Session.GetString("CustomerCartSessionId");
+                var cartId = HttpContext.Session.GetString(Common.CART_COOKIE_NAME);
                 if (cartId != null)
                 {
                     // Calculate all items and discounts (if any) from shopping cart
