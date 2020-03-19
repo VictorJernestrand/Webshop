@@ -118,10 +118,10 @@ namespace Webshop.Controllers
                             Directory.CreateDirectory(wwwRootImage + folderName);
 
                         // Get file-extension from file
-                        var fileExtension = Path.GetExtension(file.FileName);
+                        //var fileExtension = Path.GetExtension(file.FileName);
 
                         // Get name of file. Validate file before using it!
-                        var fileName = productId + fileExtension; // ToString Path.GetFileName(file.FileName);
+                        var fileName = productId + "_" + file.FileName; // fileExtension; // ToString Path.GetFileName(file.FileName);
 
                         // Set path to point to 
                         var filePath = Path.Combine(folderName, fileName);
@@ -319,7 +319,7 @@ namespace Webshop.Controllers
                         var fileExtension = Path.GetExtension(file.FileName);
 
                         // Get name of file. Validate file before using it!
-                        var fileName = model.Id + fileExtension; // ToString Path.GetFileName(file.FileName);
+                        var fileName = model.Id + "_" + file.FileName; // fileExtension; // ToString Path.GetFileName(file.FileName);
 
                         // Set path to point to 
                         var filePath = Path.Combine(folderName, fileName);
