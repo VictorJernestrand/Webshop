@@ -52,9 +52,24 @@ namespace Webshop.Controllers
                     // Get all payment methods
                     orderviewmodel.paymentMethodlist = GetPaymentMethods();
 
+                    // Get user information from current logged in user
                     User user = await UserMgr.GetUserAsync(HttpContext.User);
+                    orderviewmodel.User = user;
 
-                    if(user.StreetAddress==null)
+                    // Check if user has a complete shipping address
+                    var addressComplete = false;
+                    if (user.StreetAddress != null &&
+                        user.PhoneNumber != null &&
+                        user.ZipCode != 0 &&
+                        user.City != null)
+                    {
+                        addressComplete = true;
+                    }
+
+                    orderviewmodel.AddressComplete = addressComplete;
+
+
+                    if (orderviewmodel.User.StreetAddress==null)
                     {
                         TempData["Address Null"] = "You haven't updated your Address book";
                     }                    
@@ -82,6 +97,7 @@ namespace Webshop.Controllers
 
             if (ModelState.IsValid)
             {
+                // Get current logged in user
                 User user = await UserMgr.GetUserAsync(HttpContext.User);
 
                 // Create order
