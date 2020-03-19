@@ -20,6 +20,8 @@ namespace Webshop.Models
             Id = product.Id;
             Name = product.Name;
             Price = product.Price;
+            Discount = product.Discount;
+            DiscountPrice = product.Price - (product.Price * (decimal)product.Discount); //product.DiscountPrice;
             Quantity = product.Quantity;
             CategoryId = product.CategoryId;
             BrandId = product.BrandId;
@@ -37,6 +39,8 @@ namespace Webshop.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
+        public float Discount { get; set; }
+        public decimal DiscountPrice { get; set; }
         public int Quantity { get; set; }
         public int CategoryId { get; set; }
         public int BrandId { get; set; }

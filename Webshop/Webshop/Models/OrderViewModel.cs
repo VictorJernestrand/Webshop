@@ -15,14 +15,17 @@ namespace Webshop.Models
 
         [Required(ErrorMessage = "Välj Payment Method")]
         public int PaymentMethodId { get; set; }
-        public int UserId { get; set; }
-       
-        public DateTime OrderDate { get; set; } = DateTime.Now;
-        public List<OrderItemsModel> Products { get; set; }
-        //public List<Status> statuslist { get; set; }
-        public List<PaymentMethod> paymentMethodlist { get; set; } = new List<PaymentMethod>();
-        //public List<ShoppingCart> shoppinglist { get; set; }
 
+        //public int UserId { get; set; }
+        public User User { get; set; }
+
+        public bool AddressComplete { get; set; }
+
+        public DateTime OrderDate { get; set; } = DateTime.Now;
+
+        public List<OrderItemsModel> Products { get; set; }
+
+        public List<PaymentMethod> paymentMethodlist { get; set; } = new List<PaymentMethod>();
 
         public decimal OrderTotal { get; set; }
 

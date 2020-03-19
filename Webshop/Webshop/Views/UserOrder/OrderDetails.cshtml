@@ -1,0 +1,48 @@
+﻿@model OrderViewModel
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<h3>Orderinformation</h3>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Produkt</th>
+            <th scope="col">Namn</th>
+            <th scope="col"></th>
+            <th scope="col">Pris</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model.Products)
+        {
+        <tr>
+            <td><img src="@Url.Content("~/Image/" + product.Photo)" alt="@product.ProductName" style="height: 60px; width: auto" /></td>
+            <td><a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">@product.ProductName</a></td>
+            <td>
+                @product.Amount x @product.Price.ToString("C0")
+                @if (product.Discount > 0)
+                {
+                    <p style="font-size: small; color: green">-@((int)(product.Discount * 100))% Rabatt!</p>
+                }
+            </td>
+            <td>
+                @if (product.Discount == 0)
+                {
+                    <p style="font-weight: bold">@product.TotalProductCost.ToString("C0")</p>
+                }
+                else
+                {
+                    <p style="font-weight: bold">@product.TotalProductCostDiscount.ToString("C0")</p>
+                }
+            </td>
+        </tr>
+        }
+</table>
+<div class="row">
+    <div class="col ">
+        <div class="text-success float-right" style="margin: 4px, 20px, 4px, 20px; font-size: 2em">@Model.OrderTotal.ToString("C0")</div>
+    </div>
+</div>
