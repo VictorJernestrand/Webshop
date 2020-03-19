@@ -21,6 +21,8 @@ namespace Webshop.Controllers
         private UserManager<User> UserMgr { get; }
        private DatabaseCRUD databaseCRUD { get; }
 
+        public LoggedInUserName loggedInUserName = new LoggedInUserName();
+
         public OrderController(WebshopContext context, UserManager<User> userManager)
         {
             this.context = context;          
@@ -233,9 +235,11 @@ namespace Webshop.Controllers
         }
 
 
-        public IActionResult ThankYou()
+        public async Task<IActionResult> ThankYou()
         {
-            return View();
+            User user = await UserMgr.GetUserAsync(HttpContext.User);
+            loggedInUserName.Name = user.FirstName;
+            return View(loggedInUserName);
         }
 
     }
