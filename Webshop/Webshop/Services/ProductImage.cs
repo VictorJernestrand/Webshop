@@ -18,7 +18,7 @@ namespace Webshop.Services
         private readonly string _oldFolderName;
         private readonly string _currentImage;
         private readonly IFormFile _file;
-
+        /*
         public ProductImage()
         {
             _categoryFolderPath = null;
@@ -27,7 +27,7 @@ namespace Webshop.Services
             _currentImage = null;
             _file = null;
         }
-
+        */
         public ProductImage(string pathToRoot, string newFolder, string currentImage)
         {
             _categoryFolderPath = pathToRoot + @"\image\";
@@ -61,7 +61,7 @@ namespace Webshop.Services
             {
 
                 // Set name of file using productId.!
-                var fileName = idproductId + "_" + Path.GetExtension(_file.FileName);
+                var fileName = idproductId + "_" + _file.FileName.Replace(" ", "_");
 
                 // Set full path to new image
                 var fullFilePath = Path.Combine(_categoryFolderPath, fileName);
