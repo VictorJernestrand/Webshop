@@ -104,21 +104,21 @@ body {
 
 
 
-    .footer {
+.footer {
     bottom: 0px;
     width: 100%;
     text-align: center;
     /*white-space: nowrap;*/
     line-height: 60px; /* Vertically center the text there */
     background-color: white;
-    
+   
 }
 
 
 
 
 
-/********************* Shopping Demo-2 **********************/
+/********************* Products view **********************/
 h3.h3 {
     text-align: center;
     margin: 1em;

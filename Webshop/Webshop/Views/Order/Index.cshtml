@@ -101,17 +101,19 @@
 
 
 
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="form-group">             
+                    <button href="#" class="btn btn-warning" asp-action="Index" asp-controller="ShoppingCart">Gå tillbaka till kundkorgen</button>
+                @if (Model.Products.Count() != 0)
+                {
+                    <input type="submit" value="Pay us now!" class="btn btn-primary" />                  
+                }
+          
             </div>
         </form>
     </div>
 </div>
-@*}*@
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
