@@ -129,7 +129,7 @@ namespace Webshop.Context
                 new PaymentMethod() { Id = 2, Name = "Konto" }
                 );
             builder.Entity<Status>().HasData(
-                new Status() { Id = 1, Name = "Postförskott" },
+                new Status() { Id = 1, Name = "Under behandling" },
                 new Status() { Id = 2, Name = "Förpackning" },
                 new Status() { Id = 3, Name = "Skickad" },
                 new Status() { Id = 4, Name = "Levereras" }
