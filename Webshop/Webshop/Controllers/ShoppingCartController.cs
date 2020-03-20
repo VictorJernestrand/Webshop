@@ -128,6 +128,7 @@ namespace Webshop.Controllers
         [ValidateAntiForgeryToken]
         public void DeleteItemFromCart(int id)
         {
+            // TODO: Disable "Till Kan
             var cartItem = _context.ShoppingCart.Find(id);
             _context.Remove(cartItem);
             _context.SaveChanges();

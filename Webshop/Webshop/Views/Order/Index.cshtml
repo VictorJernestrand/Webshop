@@ -14,9 +14,9 @@
 
 
 @if (TempData["QuantityOverload"] != null)
-{    <div class="alert alert-warning" role="alert">
-    <i class="fas fa-info-circle"></i> @TempData["QuantityOverload"]
-</div>
+{<div class="alert alert-warning" role="alert">
+        <i class="fas fa-info-circle"></i> @TempData["QuantityOverload"]
+    </div>
 }
 
 
@@ -24,6 +24,14 @@
 {
     <div class="alert alert-danger" role="alert">
         @TempData["OrderError"]
+    </div>
+}
+
+
+@if (TempData["PaymentMethodError"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["PaymentMethodError"]
     </div>
 }
 
