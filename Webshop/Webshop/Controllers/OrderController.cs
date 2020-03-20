@@ -185,14 +185,18 @@ namespace Webshop.Controllers
             }
 
             // Update model with product details from shopping cart
-            model.Products = GetProductDetails(model, cartId);
+            //model.Products = GetProductDetails(model, cartId);
 
-            // Calculate total cost of whole order
-            model.OrderTotal = OrderTotal(model.Products);
+            //// Calculate total cost of whole order
+            //model.OrderTotal = OrderTotal(model.Products);
 
-            // Update with payment methods
-            model.paymentMethodlist = GetPaymentMethods();
-            return View(model);
+            //// Update with payment methods
+            //model.paymentMethodlist = GetPaymentMethods();
+
+            TempData["PaymentMethodError"] = "Vänligen välj ett betalsätt";
+            return RedirectToAction("Index");
+
+            //return View(model);
         }
 
 
