@@ -102,27 +102,27 @@ namespace Webshop.Controllers
 
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public void RemoveFromCart(int id)
-        //{
-        //    // Is there a session cookie? Remove product from cart!!
-        //    if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) != null)
-        //    {
-        //        // Get item from shoppingcart to be removed
-        //        var cartProductItem = _context.ShoppingCart.Find(id);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public void RemoveFromCart(int id)
+        {
+            // Is there a session cookie? Remove product from cart!!
+            if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) != null)
+            {
+                // Get item from shoppingcart to be removed
+                var cartProductItem = _context.ShoppingCart.Find(id);
 
-        //        // Are there anything to be removed?
-        //        if (cartProductItem.Amount > 0)
-        //        {
-        //            // Remove item from cart
-        //            cartProductItem.Amount--;
+                // Are there anything to be removed?
+                if (cartProductItem.Amount > 0)
+                {
+                    // Remove item from cart
+                    cartProductItem.Amount--;
 
-        //            // Update database
-        //            _context.SaveChanges();
-        //        }
-        //    }
-        //}
+                    // Update database
+                    _context.SaveChanges();
+                }
+            }
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
