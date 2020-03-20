@@ -32,13 +32,16 @@ namespace Webshop.Controllers
 
             var activeOrders = context.Orders.Include(x => x.Status)
                 .Include(x => x.PaymentMethod)
-                .Where(x => x.UserId == user.Id && x.StatusId < 4)
-                .Select(x => new ActiveUserOrders
+                .Where(x => x.UserId == user.Id)
+                .Select(x => new AllUserOrders
                 {
                     OrderId = x.Id,
                     OrderDate = x.OrderDate,
                     OrderStatus = x.Status.Name,
-                    OrderPayment = x.PaymentMethod.Name
+                    OrderPayment = x.PaymentMethod.Name,
+                    StatusId = x.StatusId
+                    
+                    
                 })
                 .OrderByDescending(x => x.OrderDate)
                 .ToList();
