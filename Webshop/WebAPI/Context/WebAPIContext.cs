@@ -1,17 +1,19 @@
 ﻿//using Microsoft.AspNetCore.Identity;
 //using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebAPI.Models;
 using WebAPI.Models.Data;
 //using Webshop.Models;
 
 namespace WebAPI.Context
 {
-    public class WebAPIContext : DbContext
+    public class WebAPIContext : IdentityDbContext<User, AppRole, int>
     {
         public WebAPIContext()
         {
@@ -23,7 +25,7 @@ namespace WebAPI.Context
             // ...
         }
 
-        public DbSet<User> Users { get; set; }
+        //public DbSet<User> Users { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }

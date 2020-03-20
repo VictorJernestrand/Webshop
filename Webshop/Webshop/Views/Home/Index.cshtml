@@ -23,6 +23,11 @@
             ol.carousel-indicators li.active {
                 background: gainsboro;
             }
+            .carousel-item img{
+ width: auto;
+ margin: auto; 
+ display: block;
+ }
 </style>
 <h3>Startsidan</h3>
 
@@ -44,7 +49,7 @@
 
                 <div class="carousel-item active ">
                     <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@x.Id">
-                        <img class="d-block w-100" src="@Url.Content("~/Image/" + x.Photo)" style="width: 100px; height: 400px;" alt="First slide">
+                        <img src="@Url.Content("~/Image/" + x.Photo)" style="width: auto; height: 400px" alt="First slide">
                     </a>
                     <div class="carousel-caption">
                         <h5 style="color: black">@x.Name</h5>
@@ -68,7 +73,7 @@
             {
                 <div class="carousel-item ">
                     <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@x.Id">
-                        <img class="d-block w-100" src="@Url.Content("~/Image/" + x.Photo)" style="width: auto; height: 400px" alt="First slide">
+                        <img src="@Url.Content("~/Image/" + x.Photo)" style="width: auto; height: 400px" alt="First slide">
                     </a>
                     <div class="carousel-caption">
                         <h5 style="color: black">@x.Name</h5>
