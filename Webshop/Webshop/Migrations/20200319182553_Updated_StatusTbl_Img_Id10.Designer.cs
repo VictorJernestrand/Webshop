@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Webshop.Context;
 
 namespace Webshop.Migrations
 {
     [DbContext(typeof(WebshopContext))]
-    partial class WebshopContextModelSnapshot : ModelSnapshot
+    [Migration("20200319182553_Updated_StatusTbl_Img_Id10")]
+    partial class Updated_StatusTbl_Img_Id10
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -379,7 +381,7 @@ namespace Webshop.Migrations
                             Description = "Black and white",
                             Discount = 0f,
                             Name = "Stratocaster",
-                            Photo = "Guitar\\guitar1_original.jpg",
+                            Photo = "Guitar\\guitar1.jpg",
                             Price = 4000m,
                             Quantity = 4
                         },
@@ -391,7 +393,7 @@ namespace Webshop.Migrations
                             Description = "Smooth",
                             Discount = 0f,
                             Name = "Precision",
-                            Photo = "Piano\\piano1_original.jpg",
+                            Photo = "Piano\\piano1.jpg",
                             Price = 3000m,
                             Quantity = 5
                         },
@@ -403,7 +405,7 @@ namespace Webshop.Migrations
                             Description = "Blue bas",
                             Discount = 0f,
                             Name = "Vintera",
-                            Photo = "Piano\\piano2_original.jpg",
+                            Photo = "Piano\\piano2.jpg",
                             Price = 4000m,
                             Quantity = 2
                         },
@@ -415,7 +417,7 @@ namespace Webshop.Migrations
                             Description = "Advanced",
                             Discount = 0f,
                             Name = "Epiphone",
-                            Photo = "Piano\\piano3_original.jpg",
+                            Photo = "Piano\\piano3.jpg",
                             Price = 4000m,
                             Quantity = 2
                         },
@@ -427,7 +429,7 @@ namespace Webshop.Migrations
                             Description = "For kids",
                             Discount = 0f,
                             Name = "Youngster",
-                            Photo = "Bas\\bas1_original.jpg",
+                            Photo = "Bas\\bas1.jpg",
                             Price = 1100m,
                             Quantity = 8
                         },
@@ -439,7 +441,7 @@ namespace Webshop.Migrations
                             Description = "For good players",
                             Discount = 0f,
                             Name = "MPS-150X",
-                            Photo = "Bas\\bas2_original.jpg",
+                            Photo = "Bas\\bas2.jpg",
                             Price = 3200m,
                             Quantity = 4
                         },
@@ -451,7 +453,7 @@ namespace Webshop.Migrations
                             Description = "Nice set of drums",
                             Discount = 0f,
                             Name = "DTX­432K",
-                            Photo = "Drum set\\drum1_original.jpg",
+                            Photo = "Drum set\\drum1.jpg",
                             Price = 5600m,
                             Quantity = 2
                         },
@@ -463,7 +465,7 @@ namespace Webshop.Migrations
                             Description = "Black and black",
                             Discount = 0f,
                             Name = "P116M",
-                            Photo = "Keyboard\\keyboard1_original.jpg",
+                            Photo = "Keyboard\\keyboard1.jpg",
                             Price = 8000m,
                             Quantity = 1
                         },
@@ -475,7 +477,7 @@ namespace Webshop.Migrations
                             Description = "Old model",
                             Discount = 0f,
                             Name = "Calvinova",
-                            Photo = "Keyboard\\keyboard2_original.jpg",
+                            Photo = "Keyboard\\keyboard2.jpg",
                             Price = 8900m,
                             Quantity = 1
                         },
@@ -487,7 +489,7 @@ namespace Webshop.Migrations
                             Description = "Digitalpiano",
                             Discount = 0f,
                             Name = "B2SP",
-                            Photo = "Piano\\piano4_original.jpg",
+                            Photo = "Piano\\piano4_Original.jpg",
                             Price = 2300m,
                             Quantity = 6
                         },
@@ -499,7 +501,7 @@ namespace Webshop.Migrations
                             Description = "Traveling model",
                             Discount = 0f,
                             Name = "SP-280",
-                            Photo = "Guitar\\guitar2_original.jpg",
+                            Photo = "Guitar\\guitar2.jpg",
                             Price = 5300m,
                             Quantity = 3
                         },
@@ -511,7 +513,7 @@ namespace Webshop.Migrations
                             Description = "Our best keyboard",
                             Discount = 0f,
                             Name = "P-45",
-                            Photo = "Keyboard\\keyboard3_original.jpg",
+                            Photo = "Keyboard\\keyboard3.jpg",
                             Price = 4900m,
                             Quantity = 3
                         });
