@@ -42,7 +42,7 @@
 
 <div class="row">
 
-
+    
     <form asp-action="CreateProduct" method="post" enctype="multipart/form-data">
 
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -104,7 +104,7 @@
         <div class="form-group">
             <a>FullBeskrivning</a>
             <textarea asp-for="FullDescription" id="editor" class="form-control"></textarea>
-          
+
             <span asp-validation-for="FullDescription" class="text-danger"></span>
             <script>
                 ClassicEditor
@@ -123,7 +123,7 @@
         <div class="form-group">
             <a>Specifikationer</a>
             <textarea asp-for="Specification" id="editor2" class="form-control"></textarea>
-          
+
             <span asp-validation-for="Specification" class="text-danger"></span>
             <script>
                 ClassicEditor
