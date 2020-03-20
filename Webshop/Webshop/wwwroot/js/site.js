@@ -107,8 +107,12 @@ function DeleteCrapFromCart(cartId) {
     })
         .then((response) => {
             if (response.ok) {
-                document.getElementById("DumpCrap_" + cartId).style.display = "none";
+                //document.getElementById("DumpCrap_" + cartId).style.display = "none";
+                
+                // Remove <tr> element from table
+                document.getElementById("DumpCrap_" + cartId).remove();
                 UpdateCartButton();
+                UpdateBuyButton();
             } else {
                 alert("Skit också, något gick fel. Försök igen eller kontakta vår sketna support!");
             }
@@ -147,6 +151,31 @@ function UpdateCartButton() {
             document.getElementById('cartTotalItems').innerHTML = data.totalItems;
             document.getElementById('cartTotalCost').innerHTML = data.totalCost;
         });
+}
+
+
+
+function UpdateBuyButton() {
+
+    // Count <tr> elements
+    //document.getElementById('CashOutButton').disabled = true;
+
+    let productCount = document.querySelectorAll("tr").length;
+    //console.log(productCount);
+
+    document.getElementById('TestABC').disabled = true;
+
+    // Disable/Enable buy button if items > 0
+    //document.getElementById('CashOutButton').disabled = (productCount == 0) ? true : false;
+
+    //if (productCount == 0) {
+    //    console.log("Tomt ditt arsel!");
+    //    alert("rgadgrergg");
+    //    document.getElementById('CashOutButton').disabled = true;
+    //}
+        
+    //else
+    //    console.log("Varor finns!");
 }
 
 

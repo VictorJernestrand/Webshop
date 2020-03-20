@@ -17,7 +17,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using WebAPI.Context;
-
+using WebAPI.Models;
+using WebAPI.Models.Data;
 
 namespace WebAPI
 {
@@ -40,6 +41,13 @@ namespace WebAPI
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlDatabase"));
             });
+
+            // Set email to be unique for each user
+            services.AddIdentity<User, AppRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            }).AddRoles<AppRole>()
+              .AddEntityFrameworkStores<WebAPIContext>();
 
             services.AddCors(options =>
             {

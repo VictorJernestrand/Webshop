@@ -261,7 +261,8 @@ namespace Webshop.Controllers
                    CategoryId = x.CategoryId,
                    BrandId = x.BrandId,
                    FullDescription = x.FullDescription,
-                   Specification = x.Specification
+                   Specification = x.Specification,
+                 
                    
                 })
                 .FirstOrDefault(p => p.Id == id);
@@ -303,7 +304,12 @@ namespace Webshop.Controllers
                         Description = model.Description,
                         Photo = model.Photo,
                         FullDescription = model.FullDescription,
-                        Specification = model.Specification
+                        Specification = model.Specification,
+                        Discount = Convert.ToSingle(model.DiscountToConvert.ToString().Replace('.', ','))
+                       
+
+                       
+
                     };
 
                     // TODO: Add product-Id to the filename

@@ -11,19 +11,18 @@
 }
 
 
-
-
 @if (TempData["LoginNeeded"] != null)
 
 {
     <div class="alert alert-warning" role="alert">
-        @TempData["LoginNeeded"] Klick <a asp-action="Login" asp-controller="User"> här</a> för logga in
+        @TempData["LoginNeeded"] Klick <a asp-action="Login" asp-controller="User">här</a> för logga in
     </div>
 }
 
 @if (Model != null)
 {
-    <table class="table">
+
+    <table class="table" id="CartContent">
         @foreach (var product in Model)
         {
             <tr id="DumpCrap_@product.ShoppingCartId">
@@ -58,7 +57,7 @@
     </div>
 
     <a class="btn btn-warning" asp-controller="Product" asp-action="AllProducts">Fortsätt Shoppa snålis</a>
-    <a class="btn btn-success" asp-controller="Order" asp-action="Index">Gå till kassan</a>
+    <a class="btn btn-success" asp-controller="Order" asp-action="Index" id="TestABC">Gå till kassan</a>
 }
 else
 {

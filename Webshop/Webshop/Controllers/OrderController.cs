@@ -73,9 +73,16 @@ namespace Webshop.Controllers
 
                     if (orderviewmodel.User.StreetAddress==null)
                     {
-                        TempData["Address Null"] = "You haven't updated your Address book";
-                    }                    
-                    
+                        TempData["Address Null"] = "Vänligen ange din adressinformation";
+                    }
+
+                    // Check if order contains products out of stock
+                    if (orderviewmodel.Products.Any(x => x.QuantityInStock - x.Amount < 0))
+                    {
+                        TempData["QuantityOverload"] = "Din order innehåller ett större antal produkter än vad vi har på lager vilket påverkar leveranstiden.";
+                    }
+
+
                 }
                 else
                 {
@@ -174,18 +181,22 @@ namespace Webshop.Controllers
                 if (idOrderSuccesful)
                     return RedirectToAction(nameof(ThankYou));
                 else
-                    TempData["OrderError"] = "Oops det här var pinsamt! Kunde inte skapa din order. Något sket sig, he hee....";
+                    TempData["OrderError"] = "Oops det här var pinsamt! Kunde inte skapa din order. Något sket sig, eh he hee....";
             }
 
             // Update model with product details from shopping cart
-            model.Products = GetProductDetails(model, cartId);
+            //model.Products = GetProductDetails(model, cartId);
 
-            // Calculate total cost of whole order
-            model.OrderTotal = OrderTotal(model.Products);
+            //// Calculate total cost of whole order
+            //model.OrderTotal = OrderTotal(model.Products);
 
-            // Update with payment methods
-            model.paymentMethodlist = GetPaymentMethods();
-            return View(model);
+            //// Update with payment methods
+            //model.paymentMethodlist = GetPaymentMethods();
+
+            TempData["PaymentMethodError"] = "Vänligen välj ett betalsätt";
+            return RedirectToAction("Index");
+
+            //return View(model);
         }
 
 

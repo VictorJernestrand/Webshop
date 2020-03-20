@@ -18,6 +18,8 @@ namespace Webshop.Models
 
         [Required(ErrorMessage = "Ange Antal")]
         public int Quantity { get; set; }
+           
+        public float Discount { get; set; }
 
         [Required(ErrorMessage = "Ange Kategori Id")]
         public int CategoryId { get; set; }
@@ -32,5 +34,8 @@ namespace Webshop.Models
         public List<Brand> brandVM { get; set; } = new List<Brand>();
         public string Specification { get; set; }
         public string PriceToConvert { get; set; }
+
+        [Required(ErrorMessage = "Ange rabatten i decimalform")]
+        public string DiscountToConvert { get; set; }
      }
 }
