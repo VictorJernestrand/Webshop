@@ -66,9 +66,16 @@
     </div>
 
     <a class="btn btn-warning" asp-controller="Product" asp-action="AllProducts">Fortsätt Shoppa snålis</a>
-    <button class="btn btn-success" id="CashOut" onclick="location.href = '/order'" >Gå till kassan</button>
+    @if (Model.Any(x => x.Amount > 0))
+    {
+        <button class="btn btn-success" id="CashOut" onclick="location.href = '/order'">Gå till kassan</button>
+    }
+    else
+    {
+        <button class="btn btn-success" id="CashOut" onclick="location.href = '/order'" disabled>Gå till kassan</button>
+        }
 
-}
+    }
 else
 {
     <div class="alert alert-warning" role="alert">
