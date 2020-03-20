@@ -321,6 +321,9 @@ namespace Webshop.Controllers
 
         public IActionResult LogOut()
         {
+            // Remove shoppingcart session cookie!
+            HttpContext.Session.Remove(Common.CART_COOKIE_NAME);
+
             SignMgr.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
