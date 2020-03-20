@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -26,14 +27,18 @@ namespace Webshop.Controllers
         private SignInManager<User> SignMgr { get; }
         private RoleManager<AppRole> RoleMgr { get; }
 
+        private WebAPIHandler webAPI;
 
-        public UserController(WebshopContext context, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<AppRole> roleManager)
+        public UserController(WebshopContext context, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<AppRole> roleManager, IHttpClientFactory clientFactory)
         {
             // Get database context and connection
             this.context = context;
 
             // Instantiate a new CRUD-object
             db = new DatabaseCRUD(context);
+
+            // Instantiate a new WebAPIHandler object
+            this.webAPI = new WebAPIHandler(clientFactory);
 
             // Instantiate Auth-services for managing User authorization
             UserMgr = userManager;
@@ -111,6 +116,15 @@ namespace Webshop.Controllers
         {
             try
             {
+
+                // TODO: Request a Web API token
+                //// Send a login request to API
+                ////var ApiResult = webAPI.PostAsync<LoginModel>(model, "https://localhost:44305/api/UserTest");
+
+                //// Receive response status code
+                //var statusCode = ApiResult.Result.Status.StatusCode;
+
+
                 // First, validate the form. Did the user provide expected data such as email and password?
                 if (ModelState.IsValid)
                 {
@@ -123,8 +137,17 @@ namespace Webshop.Controllers
                         // Get user information from database
                         User user = await db.GetUserByUserEmail(model.UserEmail);
 
+                        // TODO: Create a cookie containing the auth-token from API
+                        // Store a Web API cookie 
+                        //var options = new CookieOptions() { HttpOnly = false, Secure = true };
+                        //options.Expires = DateTime.UtcNow.AddMonths(1);
+                        //options.Secure = true;
+                        //options.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
+                        //Response.Cookies.Append(Common.TOKEN_COOKIE, ApiResult.Result.ResponseContent, options);
+
                         // Is user admin?
                         bool isAdmin = await UserMgr.IsInRoleAsync(user, "Admin");
+
                         if (isAdmin)
                         {
                             // Login succesfull! Redirect to main page :)

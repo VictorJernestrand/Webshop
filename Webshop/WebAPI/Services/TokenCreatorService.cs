@@ -61,7 +61,7 @@ namespace WebAPI.Services
                 issuer: _configure["JWT:Issuer"],
                 audience: _configure["JWT:Issuer"],
                 claims,
-                expires: DateTime.UtcNow.AddSeconds(30),
+                expires: DateTime.UtcNow.AddSeconds(double.Parse(_configure["JWT:TokenExpireSeconds"])),
                 signingCredentials: credentials
             );
 
