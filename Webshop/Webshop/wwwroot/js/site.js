@@ -51,9 +51,6 @@ function AddCrapToCart(productId, name) {
         // Handle response
         .then((response) => {
 
-
-            console.log(response);
-
             // If response was ok, update cart and display a message with the product name telling it was added to cart.
             if (response.ok) {
                 UpdateCartButton();
@@ -66,7 +63,7 @@ function AddCrapToCart(productId, name) {
 }
 
 
-
+// Remove 1 in quantity from selected product
 function RemoveCrapFromCart(cartItemId, productId) {
 
     // Declare new FormData object
@@ -82,8 +79,9 @@ function RemoveCrapFromCart(cartItemId, productId) {
     })
         .then((response) => {
             if (response.ok) {
-                UpdateCartButton();
-                DecreaseSingleProductInCart(productId);
+                UpdateCartButton();                         // Update Cartbutton with total products and cost
+                DecreaseSingleProductInCart(productId);     // Remove 1 from selected product from cart
+                DisableBuyButton();                         // Disable "Buy" button
             } else {
                 alert("Skit också, något gick fel. Försök igen eller kontakta vår sketna support!");
             }
@@ -91,7 +89,7 @@ function RemoveCrapFromCart(cartItemId, productId) {
 }
 
 
-
+// Delete selected product from cart completely!
 function DeleteCrapFromCart(cartId) {
 
     // Declare new FormData object
@@ -107,8 +105,7 @@ function DeleteCrapFromCart(cartId) {
     })
         .then((response) => {
             if (response.ok) {
-                //document.getElementById("DumpCrap_" + cartId).style.display = "none";
-                
+
                 // Remove <tr> element from table
                 document.getElementById("DumpCrap_" + cartId).remove();
                 UpdateCartButton();
@@ -155,9 +152,16 @@ function UpdateCartButton() {
 
 
 
+// Update cartbutton information
 function UpdateBuyButton() {
     let productCount = document.querySelectorAll("tr").length;
-    document.getElementById('CashOutButton').disabled = (productCount == 0) ? true : false;
+
+    // If cart is empty, reload cart and display a "Cart empty" message!
+    if (productCount == 0) {
+        console.log(productCount);
+        location.reload(true);
+    }
+
 }
 
 
@@ -168,6 +172,7 @@ function IncreaseSingleProductInCart(productId) {
 
     if (total > 0) {
         document.getElementById('DecreaseBtn_' + productId).disabled = false;
+        document.getElementById('CashOut').disabled = false;
     }
 
     if (total >= 50) {
@@ -201,6 +206,19 @@ function GetAntiForgerytoken() {
     return document.getElementById('AntiForgeryToken').innerHTML;
 }
 
+
+// Disable "Buy" button
+function DisableBuyButton() {
+    let elements = document.querySelectorAll(".productCounter");
+
+    for (let i = 0; i < elements.length; i++) {
+        if (elements[i].innerHTML != 0) 
+            return;
+    }
+
+    // Disable "Buy" button!
+    document.getElementById('CashOut').disabled = true;
+}
 
 
 // Invoke UpdateCartButton() as soon as page has loaded

@@ -33,66 +33,67 @@ namespace Webshop.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) == null)
+            var cartId = HttpContext.Session.GetString(Common.CART_COOKIE_NAME);
+
+            // Does user have a shoppingcart Id?
+            if (cartId == null)
             {
-                // Shoppingcart is empty, send user to start page
                 return RedirectToAction("Index", "Home");
             }
-
-            if(User.Identity.IsAuthenticated)
-            {
-                var cartId = HttpContext.Session.GetString(Common.CART_COOKIE_NAME);
-                if (cartId != null)
+            else
+            {   
+                // Are there any products in the cart??
+                var content = context.ShoppingCart.Where(x => x.CartId == Guid.Parse(cartId) && x.Amount > 0).ToList();
+                if (content.Count == 0)
                 {
-                    // Calculate all items and discounts (if any) from shopping cart
-                    var cartid = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
-                    orderviewmodel.Products = GetProductDetails(orderviewmodel, Guid.Parse(cartId));
-
-                    // Calculate total cost of whole order
-                    orderviewmodel.OrderTotal = OrderTotal(orderviewmodel.Products);
-
-                    // Get all payment methods
-                    orderviewmodel.paymentMethodlist = GetPaymentMethods();
-
-                    // Get user information from current logged in user
-                    User user = await UserMgr.GetUserAsync(HttpContext.User);
-                    orderviewmodel.User = user;
-
-                    // Check if user has a complete shipping address
-                    var addressComplete = false;
-                    if (user.StreetAddress != null &&
-                        user.PhoneNumber != null &&
-                        user.ZipCode != 0 &&
-                        user.City != null)
-                    {
-                        addressComplete = true;
-                    }
-
-                    orderviewmodel.AddressComplete = addressComplete;
-
-
-                    if (orderviewmodel.User.StreetAddress==null)
-                    {
-                        TempData["Address Null"] = "Vänligen ange din adressinformation";
-                    }
-
-                    // Check if order contains products out of stock
-                    if (orderviewmodel.Products.Any(x => x.QuantityInStock - x.Amount < 0))
-                    {
-                        TempData["QuantityOverload"] = "Din order innehåller ett större antal produkter än vad vi har på lager vilket påverkar leveranstiden.";
-                    }
-
-
+                    return RedirectToAction("Index", "ShoppingCart");
                 }
-                else
+            }
+
+            // IS user logged in?
+            if (User.Identity.IsAuthenticated)
+            {
+                // Calculate all items and discounts (if any) from shopping cart
+                orderviewmodel.Products = GetProductDetails(orderviewmodel, Guid.Parse(cartId));
+
+                // Calculate total cost of whole order
+                orderviewmodel.OrderTotal = OrderTotal(orderviewmodel.Products);
+
+                // Get all payment methods
+                orderviewmodel.paymentMethodlist = GetPaymentMethods();
+
+                // Get user information from current logged in user
+                User user = await UserMgr.GetUserAsync(HttpContext.User);
+                orderviewmodel.User = user;
+
+                // Check if user has a complete shipping address
+                var addressComplete = false;
+                if (user.StreetAddress != null &&
+                    user.PhoneNumber != null &&
+                    user.ZipCode != 0 &&
+                    user.City != null)
                 {
-                    //shoppingcart is empty
+                    addressComplete = true;
+                }
+
+                // Does user have a complete shippingaddress?
+                orderviewmodel.AddressComplete = addressComplete;
+
+                if (orderviewmodel.User.StreetAddress==null)
+                {
+                    TempData["Address Null"] = "Vänligen ange din adressinformation";
+                }
+
+                // Check if order contains products out of stock
+                if (orderviewmodel.Products.Any(x => x.QuantityInStock - x.Amount < 0))
+                {
+                    TempData["QuantityOverload"] = "Din order innehåller ett större antal produkter än vad vi har på lager vilket påverkar leveranstiden.";
                 }
 
             }
             else
             {
-                TempData["LoginNeeded"] = "You need to Login,before continue shopping...";
+                TempData["LoginNeeded"] = "Du måste vara inloggad för att kunna handla...";
                 return RedirectToAction("Index", "ShoppingCart");
             }
             return View(orderviewmodel);
