@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Webshop.Context;
+using Webshop.Domain;
 using Webshop.Models;
 using Webshop.Services;
 
@@ -28,8 +29,9 @@ namespace Webshop.Controllers
         private RoleManager<AppRole> RoleMgr { get; }
 
         private WebAPIHandler webAPI;
+        private TokenRequest tokenRequest;
 
-        public UserController(WebshopContext context, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<AppRole> roleManager, IHttpClientFactory clientFactory)
+        public UserController(WebshopContext context, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<AppRole> roleManager, IHttpClientFactory clientFactory, TokenRequest tokenRequest, WebAPIHandler webAPIHandler)
         {
             // Get database context and connection
             this.context = context;
@@ -38,7 +40,8 @@ namespace Webshop.Controllers
             db = new DatabaseCRUD(context);
 
             // Instantiate a new WebAPIHandler object
-            this.webAPI = new WebAPIHandler(clientFactory);
+            this.webAPI = webAPIHandler;
+            this.tokenRequest = tokenRequest;
 
             // Instantiate Auth-services for managing User authorization
             UserMgr = userManager;
@@ -114,19 +117,23 @@ namespace Webshop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login([Bind]LoginModel model)
         {
-            try
-            {
-
-                // TODO: Request a Web API token
-                //// Send a login request to API
-                ////var ApiResult = webAPI.PostAsync<LoginModel>(model, "https://localhost:44305/api/UserTest");
-
-                //// Receive response status code
-                //var statusCode = ApiResult.Result.Status.StatusCode;
+            //try
+            //{
 
 
-                // First, validate the form. Did the user provide expected data such as email and password?
-                if (ModelState.IsValid)
+            // TODO: Request a Web API token
+            // Send a login request to API
+            // var apiResult = await webAPI.PostAsync<LoginModel>(model, "https://localhost:44305/api/UserTest");
+            // tokenRequest.TokenRefreshCookie = apiResult.ResponseContent;
+
+
+            //var argarg = tokenRequest.New();
+            //// Receive response status code
+            // var statusCode = ApiResult.Result.Status.StatusCode;
+
+
+            // First, validate the form. Did the user provide expected data such as email and password?
+            if (ModelState.IsValid)
                 {
                     // Make a sign-in request!
                     Microsoft.AspNetCore.Identity.SignInResult signInResult = await SignMgr.PasswordSignInAsync(model.UserEmail, model.UserPassword, model.RememberUser, false);
@@ -136,14 +143,6 @@ namespace Webshop.Controllers
                     {
                         // Get user information from database
                         User user = await db.GetUserByUserEmail(model.UserEmail);
-
-                        // TODO: Create a cookie containing the auth-token from API
-                        // Store a Web API cookie 
-                        //var options = new CookieOptions() { HttpOnly = false, Secure = true };
-                        //options.Expires = DateTime.UtcNow.AddMonths(1);
-                        //options.Secure = true;
-                        //options.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
-                        //Response.Cookies.Append(Common.TOKEN_COOKIE, ApiResult.Result.ResponseContent, options);
 
                         // Is user admin?
                         bool isAdmin = await UserMgr.IsInRoleAsync(user, "Admin");
@@ -165,11 +164,11 @@ namespace Webshop.Controllers
                 }
 
                 return View(model);
-            }
+            /*}
             catch
             {
                 return View(model);
-            }
+            }*/
         }
 
 
@@ -321,6 +320,9 @@ namespace Webshop.Controllers
 
         public IActionResult LogOut()
         {
+            // Remove shoppingcart session cookie!
+            HttpContext.Session.Remove(Common.CART_COOKIE_NAME);
+
             SignMgr.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }

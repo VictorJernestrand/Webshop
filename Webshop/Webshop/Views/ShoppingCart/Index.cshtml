@@ -19,7 +19,7 @@
     </div>
 }
 
-@if (Model != null)
+@if (Model != null && Model.Count() > 0)
 {
 
     <table class="table" id="CartContent">
@@ -44,8 +44,17 @@
                     }
                 </td>
 
-                <td><button class="btn btn-warning" onclick="RemoveCrapFromCart(@product.ShoppingCartId, @product.ProductId)" id="DecreaseBtn_@product.ProductId"><i class="fas fa-minus-square"></i></button></td>
-                <td><span id="cartProductId_@product.ProductId">@product.Amount</span></td>
+                <td>
+                    @if (@product.Amount == 0)
+                    {
+                        <button class="btn btn-warning" onclick="RemoveCrapFromCart(@product.ShoppingCartId, @product.ProductId)" id="DecreaseBtn_@product.ProductId" disabled><i class="fas fa-minus-square"></i></button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-warning" onclick="RemoveCrapFromCart(@product.ShoppingCartId, @product.ProductId)" id="DecreaseBtn_@product.ProductId"><i class="fas fa-minus-square"></i></button>
+                    }
+                </td>
+                <td class="productCounter" id="cartProductId_@product.ProductId">@product.Amount</td>
                 <td><button class="btn btn-success" onclick="AddCrapToCart(@product.ProductId, null)" id="IncreaseBtn_@product.ProductId"><i class="fas fa-plus-square"></i></button></td>
                 <td><button class="btn btn-outline-danger" onclick="DeleteCrapFromCart(@product.ShoppingCartId)"><i class="fas fa-dumpster-fire"></i></button></td>
             </tr>
@@ -57,9 +66,18 @@
     </div>
 
     <a class="btn btn-warning" asp-controller="Product" asp-action="AllProducts">Fortsätt Shoppa snålis</a>
-    <a class="btn btn-success" asp-controller="Order" asp-action="Index" id="CashOutButton">Gå till kassan</a>
-}
+    @if (Model.Any(x => x.Amount > 0))
+    {
+        <button class="btn btn-success" id="CashOut" onclick="location.href = '/order'">Gå till kassan</button>
+    }
+    else
+    {
+        <button class="btn btn-success" id="CashOut" onclick="location.href = '/order'" disabled>Gå till kassan</button>
+        }
+    }
 else
 {
-    <span>Fjant!</span>
+    <div class="alert alert-warning" role="alert">
+        Din varuvagn är tom
+    </div>
 }
