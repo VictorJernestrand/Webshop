@@ -97,7 +97,8 @@ namespace Webshop.Controllers
                         BrandId = model.BrandId,
                         Description = model.Description,
                         FullDescription = model.FullDescription,
-                        Specification = model.Specification
+                        Specification = model.Specification,
+                        Discount = Convert.ToSingle(model.DiscountToConvert.ToString().Replace('.', ','))
                     };
 
                     // Insert new product in database
@@ -262,6 +263,7 @@ namespace Webshop.Controllers
                    BrandId = x.BrandId,
                    FullDescription = x.FullDescription,
                    Specification = x.Specification,
+                   DiscountToConvert = x.Discount.ToString()
                  
                    
                 })
