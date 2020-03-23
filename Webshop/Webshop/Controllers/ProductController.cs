@@ -39,9 +39,7 @@ namespace Webshop.Controllers
         //This mtd display the Products based on Passed in CategoryId
         public IActionResult Index(int catid)
         {
-
            List<Product> categoryList = context.Products.Include(x => x.Brand).Include(x=> x.Category).ToList();
-
 
            List<AllProductsViewModel> categoryViewList = categoryList.Select(x => new AllProductsViewModel(x))
                                    .Where(x => x.CategoryId == catid).OrderBy(c => c.Name).ToList();
@@ -57,26 +55,6 @@ namespace Webshop.Controllers
 
             return View(createProductModel);           
         }
-
-        /*
-        [Authorize(Roles = "Admin")]
-        public IActionResult EditSpecifications(int id)
-        {
-            // Get product from database
-            var product = context.Products.Find(id);
-
-            productSpecification.Product = product;
-
-            // Are there any specifications?
-            if (product.Specification != null)
-            {
-                // Deserialize Json data from product specifications
-                productSpecification.SpecificationsList = JsonSerializer.Deserialize<List<SpecificationInfo>>(product.Specification);
-            }
-
-            return View(productSpecification);
-        }
-        */
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
@@ -106,43 +84,18 @@ namespace Webshop.Controllers
 
                     if (file != null)
                     {
-                        string wwwRootImage = environment.WebRootPath + @"\Image\";
-
-                        // Get Id from product database insert
-                        int productId = newProduct.Id;
-
                         // Set category folder name
                         var folderName = databaseCRUD.GetCategoryName(model.CategoryId);
 
-                        // Create folder if doesn't exist
-                        if (!Directory.Exists(wwwRootImage + folderName))
-                            Directory.CreateDirectory(wwwRootImage + folderName);
-
-                        // Get file-extension from file
-                        //var fileExtension = Path.GetExtension(file.FileName);
-
-                        // Get name of file. Validate file before using it!
-                        var fileName = productId + "_" + file.FileName; // fileExtension; // ToString Path.GetFileName(file.FileName);
-
-                        // Set path to point to 
-                        var filePath = Path.Combine(folderName, fileName);
-
-                        //var fullfilepath = Path.Combine(wwwRoot, @"Image\" + folderName, fileName);
-                        var fullFilePath = Path.Combine(wwwRootImage + folderName, fileName);
-
-                        // Move file to new location (wwwroot) folder
-                        using (var fileStream = new FileStream(fullFilePath, FileMode.Create))
-                        {
-                            await file.CopyToAsync(fileStream);
-                        }
+                        // Store new image
+                        ProductImage productImage = new ProductImage(environment.WebRootPath, folderName, file);
 
                         // Update newProduct with path to new photo
-                        newProduct.Photo = filePath;
+                        newProduct.Photo = productImage.StoreImage(newProduct.Id); ;
 
                         // Update product in databse with path to product photo
                         await databaseCRUD.UpdateAsync<Product>(newProduct);
                     }
-
                 }               
 
                else
@@ -224,24 +177,20 @@ namespace Webshop.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult DeleteProduct(int Id)
         {
-
             var query = context.Products.Include(x => x.Brand).Include(x => x.Category).FirstOrDefault(p => p.Id == Id);
 
             if (query == null)
                 return NotFound();
 
             return View(query);
-
         }
 
         public IActionResult ProductDetail(int Id)
         {
-
             var query = context.Products.Include(x=> x.Brand).Include(x => x.Category).FirstOrDefault(p => p.Id == Id);
             if (query == null)
                 return NotFound();          
             return View(query);
-
         }
 
         [Authorize(Roles = "Admin")]
@@ -263,9 +212,11 @@ namespace Webshop.Controllers
                    BrandId = x.BrandId,
                    FullDescription = x.FullDescription,
                    Specification = x.Specification,
+
                    DiscountToConvert = x.Discount.ToString()
                  
                    
+
                 })
                 .FirstOrDefault(p => p.Id == id);
 
@@ -286,13 +237,6 @@ namespace Webshop.Controllers
                 // Get information about the stored info from database to compare with new info
                 var productInDB = await context.Products.AsNoTracking().FirstOrDefaultAsync(x => x.Id == model.Id);
 
-                // Get path to wwwroot folder
-                var wwwRoot = environment.WebRootPath;
-                string wwwRootImage = environment.WebRootPath + @"\Image\";
-
-                // Get folderName
-                var folderName = databaseCRUD.GetCategoryName(model.CategoryId);
-
                 if (ModelState.IsValid)
                 {
                     Product editproduct = new Product()
@@ -308,63 +252,32 @@ namespace Webshop.Controllers
                         FullDescription = model.FullDescription,
                         Specification = model.Specification,
                         Discount = Convert.ToSingle(model.DiscountToConvert.ToString().Replace('.', ','))
-                       
-
-                       
-
                     };
-
-                    // TODO: Add product-Id to the filename
 
                     // Update image
                     if (file != null)
                     {
-                        // Create folder for storing product images if it doesn't exist
-                        if (!Directory.Exists(wwwRootImage + folderName))
-                            Directory.CreateDirectory(wwwRootImage + folderName);
+                        // Set category folder name
+                        var folderName = databaseCRUD.GetCategoryName(model.CategoryId);
 
-                        // Get file-extension from file
-                        var fileExtension = Path.GetExtension(file.FileName);
-
-                        // Get name of file. Validate file before using it!
-                        var fileName = model.Id + "_" + file.FileName; // fileExtension; // ToString Path.GetFileName(file.FileName);
-
-                        // Set path to point to 
-                        var filePath = Path.Combine(folderName, fileName);
-
-                        //var fullfilepath = Path.Combine(wwwRoot, @"Image\" + folderName, fileName);
-                        var fullfilepath = Path.Combine(wwwRootImage + folderName, fileName);
-
-                        // Move file to new location (wwwroot) folder
-                        using (var fileStream = new FileStream(fullfilepath, FileMode.Create))
-                        {
-                            await file.CopyToAsync(fileStream);
-                        }
-
-                        editproduct.Photo = filePath;
+                        // Remove old image and store new image
+                        ProductImage productImage = new ProductImage(environment.WebRootPath, folderName, file);
+                        productImage.RemoveImage(editproduct.Photo);
+                        editproduct.Photo = productImage.StoreImage(editproduct.Id);
                     }
 
                     // If category was changed, move existing product photo to selected folder
                     else if(productInDB.CategoryId != model.CategoryId)
                     {
-                        var newPath = folderName + @"\" + Path.GetFileName(productInDB.Photo);
-                        var fullPathToFile = wwwRootImage + newPath;
+                        // Set category folder name
+                        var newFolderName = databaseCRUD.GetCategoryName(model.CategoryId);
 
-                        // Check if folder exist
-                        try
-                        {
-                            if (!Directory.Exists(wwwRootImage + folderName))
-                                Directory.CreateDirectory(wwwRootImage + folderName);
-
-                            var currentPath = wwwRootImage + productInDB.Photo;
-                            System.IO.File.Move(currentPath, fullPathToFile);
-                            
-                        }
-                        catch { }
-
-                        editproduct.Photo = newPath;
+                        // Move image to new location
+                        ProductImage productImage = new ProductImage(environment.WebRootPath, newFolderName, editproduct.Photo);
+                        editproduct.Photo = productImage.MoveImage();
                     }
 
+                    // save
                     await databaseCRUD.UpdateAsync<Product>(editproduct);
                 }
 
@@ -399,48 +312,5 @@ namespace Webshop.Controllers
                 return RedirectToAction("EditProduct", "Product");
             }
         }
-
-        /*
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult EditSpecifications([Bind]SpecificationModel specificationModel)
-        {
-            // Get product from database
-            var product = context.Products.Find(specificationModel.Product.Id);
-
-            // Check if specifications exist
-            if (specificationModel.SpecificationsList != null)
-            {
-                // Loop through the specifications collection in the specs object
-                for (var i = 0; i < specificationModel.SpecificationsList.Count; i++)
-                {
-                    // If SpecInfo or SpecName is null or empty...
-                    if (string.IsNullOrEmpty(specificationModel.SpecificationsList[i].SpecInfo) || string.IsNullOrEmpty(specificationModel.SpecificationsList[i].SpecTitle))
-                    {
-                        // Remove current index from collection
-                        specificationModel.SpecificationsList.RemoveAt(i);
-
-                        // Counter must be reset since the collection will be re-indexed after an index has been removed
-                        i = 0;
-                    }
-                }
-            }
-
-            // If collection contains values, Serialize to Json, else set as null
-            product.Specification = (specificationModel.SpecificationsList != null && specificationModel.SpecificationsList.Count > 0)
-                ? JsonSerializer.Serialize(specificationModel.SpecificationsList)
-                : null;
-
-            // update product
-            context.Update<Product>(product);
-            context.SaveChanges();
-
-            // Temp message
-            TempData["SpecpsUpdated"] = "Specifikationerna har uppdaterats";
-
-            // Reload page
-            return RedirectToAction("EditSpecifications", "Product", new { id = product.Id });
-        }*/
     }
 }

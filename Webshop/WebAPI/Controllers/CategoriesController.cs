@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Context;
-using WebAPI.Models;
 using WebAPI.Models.Data;
 
 namespace WebAPI.Controllers
@@ -24,21 +23,9 @@ namespace WebAPI.Controllers
 
         // GET: api/Categories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryProductCountModel>>> GetCategories()
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
-            // Get categories and count total instruments in each category
-            //var categories = await _context.Categories.Include(x => x.Products)
-            //                                          .Select(x => new CategoryProductCountModel
-            //                                          {
-            //                                              Id = x.Id,
-            //                                              Name = x.Name,
-            //                                              InstrumentCount = x.Products.Count()
-            //                                          })
-            //                                          .ToListAsync();
-
-
-            var categories = await _context.Categories.ToListAsync();
-            return Ok(categories);
+            return await _context.Categories.ToListAsync();
         }
 
         // GET: api/Categories/5
@@ -48,11 +35,12 @@ namespace WebAPI.Controllers
             var category = await _context.Categories.FindAsync(id);
 
             if (category == null)
+            {
                 return NotFound();
+            }
 
-            return Ok(category);
+            return category;
         }
-
 
         // PUT: api/Categories/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for

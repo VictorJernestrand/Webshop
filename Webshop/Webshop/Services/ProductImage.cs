@@ -61,7 +61,7 @@ namespace Webshop.Services
             {
 
                 // Set name of file using productId.!
-                var fileName = idproductId + "_" + Path.GetExtension(_file.FileName);
+                var fileName = idproductId + "_" + _file.FileName;
 
                 // Set full path to new image
                 var fullFilePath = Path.Combine(_categoryFolderPath, fileName);
@@ -104,9 +104,15 @@ namespace Webshop.Services
 
         public bool RemoveImage(string imageInCategoryFolder)
         {
+
+            var folder = _categoryFolderPath;
+            var file = Path.GetFileName(imageInCategoryFolder);
+
+            var fileToDelete = Path.Combine(_categoryFolderPath, Path.GetFileName(imageInCategoryFolder));
+
             // Delete file. If file does not exist.
             // If the file to be deleted does not exist, no exception is thrown.
-            File.Delete(_categoryFolderPath + imageInCategoryFolder);
+            File.Delete(fileToDelete);
 
             // Check if file still exist
             return ImageExist(imageInCategoryFolder);

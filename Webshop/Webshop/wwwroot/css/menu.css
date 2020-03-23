@@ -1,0 +1,57 @@
+﻿header {
+    background-image: url('../image/bgnavbar.png');
+    background-repeat: no-repeat;
+    background-position: top;
+}
+
+#headertop {
+    height: 130px;
+    padding-top: 10px;
+}
+
+#searcher {
+    max-width: 80%;
+}
+
+#cartcontent {
+    padding: 0px;
+}
+
+#shoppingcart {
+    background-color: #262b2e;
+    border-radius: 4px;
+    display: flex;
+    padding: 4px;
+    padding-left: 4px;
+    padding-right: 4px;
+    margin: 10px;
+}
+
+#cartitems {
+    width: 70px;
+    padding-right: 4px;
+}
+
+#cartitems:first-child {
+    font-size: 0.8em;
+}
+
+#cartTotalCost {
+    font-weight: bold;
+}
+
+#logo {
+    max-width: 217px;
+    height: auto;
+}
+
+/* Override bootstraps navbar backgorund-color */
+.navbar {
+    background-color: #262b2e;
+}
+
+/* Override fontawesome's hamburger icon */
+.fa-hamburger {
+    color: #fff;
+    font-size: 28px;
+}
