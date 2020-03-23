@@ -189,7 +189,9 @@ namespace Webshop.Controllers
         {
             var query = context.Products.Include(x=> x.Brand).Include(x => x.Category).FirstOrDefault(p => p.Id == Id);
             if (query == null)
-                return NotFound();          
+                return NotFound();
+
+            query.DiscountPrice = query.Price - (query.Price * (decimal)query.Discount);
             return View(query);
         }
 
