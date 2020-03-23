@@ -84,7 +84,7 @@ namespace WebAPI.Controllers
         // POST: api/Brands
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        // [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Brand>> PostBrand(Brand brand)
         {

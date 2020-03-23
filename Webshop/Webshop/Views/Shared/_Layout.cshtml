@@ -7,46 +7,41 @@
     <title>@ViewData["Title"] - Webshop</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/menu.css" />
 
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
     <script src="https://cdn.ckeditor.com/ckeditor5/17.0.0/classic/ckeditor.js"></script>
-
-
 
 </head>
 <body>
-    <header style="background-image: url('@Url.Content("~/Image/bgnavbar.png")')">
+    <header>
 
-        <div class="container" style="height: 130px">
-            <div class="row" style="height: inherit">
+        <div class="container">
+            <div class="row" id="headertop">
 
                 <div class="col-md-4 d-flex justify-content-center align-items-center text-white">
                     <a asp-area="" asp-controller="Home" asp-action="Index">
-                        <img src="~/Image/logo.png" style="max-width: 217px; height: auto" />
+                        <img src="~/Image/logo.png" id="logo" alt="RockStart logo" />
                     </a>
                 </div>
 
-
                 <form method="get" asp-controller="Search" asp-action="Index" class="col d-flex justify-content-center align-items-center">
-                    <div class="input-group" style="width: 80%">
-                        <input type="text" autofocus name="searchtext" class="form-control" placeholder="fan letar du efter?" aria-label="hitta våra prylar" aria-describedby="button-addon2">
+                    <div class="input-group">
+                        <input type="text" autofocus name="searchtext" class="form-control" placeholder="fan letar du efter?" aria-label="fan letar du efter?" aria-describedby="button-addon2" id="searcher" />
                         <div class="input-group-append">
                             <button class="btn btn-secondary" type="submit" id="button-addon2"><i class="fas fa-search"></i></button>
                         </div>
-
                     </div>
                 </form>
 
+                <div class="col d-flex justify-content-center align-items-center text-white" id="cartcontent">
+                    <div id="shoppingcart">
 
-                <div class="col col-sm-3 d-flex justify-content-center align-items-center text-white">
-                    <div style="background-color: #262b2e; border-radius: 4px; display: flex; padding: 4px; padding-left: 4px; padding-right: 4px; margin: 10px">
-
-                        <div class="d-inline" style="width: 90px; padding-right: 4px">
-                            <div style="font-size: 0.8em">Varor: <span id="cartTotalItems"></span></div>
-                            <div style="font-weight: bold" id="cartTotalCost"></div>
+                        <div class="d-inline" id="cartitems">
+                            <div>Varor: <span id="cartTotalItems"></span></div>
+                            <div id="cartTotalCost"></div>
                         </div>
 
                         <div class="d-inline; d-flex align-items-center">
@@ -61,14 +56,14 @@
             </div>
         </div>
 
-        <nav class="navbar navbar-expand-md navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background-color: #262b2e">
+        <nav class="navbar navbar-expand-md navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
             <div class="container">
 
                 <span></span>
 
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="fas fa-hamburger" style="color: #fff; font-size: 28px"></i>
+                    <i class="fas fa-hamburger"></i>
                 </button>
 
                 <div class="navbar-collapse collapse">
@@ -81,7 +76,7 @@
                             @await Component.InvokeAsync("CategoryMenuList")
                         </li>
                         <li>
-                            <a class="nav-link text-white" asp-area="" asp-controller="QandA" asp-action="Index"><i class="far fa-question-circle"></i> Vanliga Frågor</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="QandA" asp-action="Index"><i class="far fa-question-circle"></i> Fråga Oss</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Contact" asp-action="Index"><i class="far fa-comments"></i> Kontakt</a>
@@ -108,8 +103,8 @@
 
     <footer class="container border-top footer text-dark col-lg-12 col-md-auto col-sm-auto">
 
-        &copy;rockstart.se @DateTime.Now.Year | <a asp-area="" asp-controller="Contact" asp-action="Index">Kontakta Oss | </a>
-        <a>Adress: Liljeholmskajen 2 | 123 21 Stockholm | Tel: 08-12 34 52 | Email: info@rockstart.se</a>
+        &copy;rockstart.se @DateTime.Now.Year | <a asp-area="" asp-controller="Contact" asp-action="Index">Kontakta Oss </a>
+        <a>| Adress: Liljeholmskajen 2 | 123 21 Stockholm | Tel: 08-12 34 52 | Email: info@rockstart.se</a>
 
     </footer>
 

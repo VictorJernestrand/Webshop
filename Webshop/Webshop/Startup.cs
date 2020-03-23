@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Rewrite;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Webshop.Context;
 using Webshop.Models;
+using Webshop.Services;
 
 namespace Webshop
 {
@@ -37,7 +39,13 @@ namespace Webshop
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlDatabase"));
             });
-            
+
+            services.AddControllersWithViews();
+            services.AddHttpContextAccessor();
+            services.AddTransient<TokenRequest>();
+            services.AddSingleton<WebAPIHandler>();
+
+
             // Set email to be unique for each user
             services.AddIdentity<User, AppRole>(options =>
             {
