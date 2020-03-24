@@ -54,7 +54,7 @@ namespace Webshop.Models
         public Brand Brand { get; set; }
         public string Specification { get; set; }
 
-        public List<Product> productsDiscountlist { get; set; } = new List<Product>();
+       // public List<Product> productsDiscountlist { get; set; } = new List<Product>();
 
     }
 }

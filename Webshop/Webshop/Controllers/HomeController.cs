@@ -44,21 +44,13 @@ namespace Webshop.Controllers
 
         public IActionResult Index()
         {
-            AllProductsViewModel allProducts = new AllProductsViewModel();
-            List<AllProductsViewModel> allproductslist = new List<AllProductsViewModel>();
-
-
-            //User = await UserMgr.GetUserAsync(HttpContext.User);
-            //ViewData["UserName"] = User.FirstName;// HttpContext.Session.GetString(SessionCookies.USER_NAME);
-            //var result = context.Categories.ToList();
-            //return View(User);
+            List<AllProductsViewModel> allproductslist = new List<AllProductsViewModel>();            
 
 
             // var products = context.Products.Include(x => x.Brand).Include(x => x.Category).ToList();
             //  List<AllProductsViewModel> allProductswithDiscount = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).Where(d => d.Discount > 0).ToList();
           
             
-            allProducts.productsDiscountlist = context.Products.Where(x => x.Discount > 0).Select(x => new Product()).ToList();
 
             allproductslist = context.Products.Include(x => x.Brand).Include(x => x.Category)
                                   .Select(x => new AllProductsViewModel()
@@ -79,7 +71,7 @@ namespace Webshop.Controllers
                                         Brand = x.Brand,
                                         FullDescription = x.FullDescription,
                                         Specification = x.Specification,
-                                       productsDiscountlist=allProducts.productsDiscountlist
+                                      
                                   }
                                   ).ToList();
 
