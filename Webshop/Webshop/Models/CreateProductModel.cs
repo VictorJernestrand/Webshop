@@ -37,6 +37,9 @@ namespace Webshop.Models
         [Required(ErrorMessage = "Ange Pris")]
         public string PriceToConvert { get; set; }
 
+        [Required(ErrorMessage = "Ange rabatt i decimalform")]
+        public string DiscountToConvert { get; set; }
+
         public string Specification { get; set; }
 
         internal Task CopyToAsync(FileStream fileStream)

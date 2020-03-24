@@ -15,7 +15,6 @@ namespace Webshop.Models
 
         [NotMapped]
         public decimal DiscountPrice { get; set; }
-
         public int Quantity { get; set; }
         public int CategoryId { get; set; }
         public int BrandId { get; set; }

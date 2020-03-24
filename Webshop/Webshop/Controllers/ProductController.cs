@@ -72,7 +72,8 @@ namespace Webshop.Controllers
                         BrandId = model.BrandId,
                         Description = model.Description,
                         FullDescription = model.FullDescription,
-                        Specification = model.Specification
+                        Specification = model.Specification,
+                        Discount = Convert.ToSingle(model.DiscountToConvert.ToString().Replace('.', ','))
                     };
 
                     // Insert new product in database
@@ -175,7 +176,9 @@ namespace Webshop.Controllers
         {
             var query = context.Products.Include(x=> x.Brand).Include(x => x.Category).FirstOrDefault(p => p.Id == Id);
             if (query == null)
-                return NotFound();          
+                return NotFound();
+
+            query.DiscountPrice = query.Price - (query.Price * (decimal)query.Discount);
             return View(query);
         }
 
@@ -198,6 +201,11 @@ namespace Webshop.Controllers
                    BrandId = x.BrandId,
                    FullDescription = x.FullDescription,
                    Specification = x.Specification,
+
+                   DiscountToConvert = x.Discount.ToString()
+                 
+                   
+
                 })
                 .FirstOrDefault(p => p.Id == id);
 

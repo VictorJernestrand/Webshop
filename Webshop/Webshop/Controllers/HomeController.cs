@@ -26,8 +26,13 @@ namespace Webshop.Controllers
 
         public IActionResult Index()
         {
-            var products = context.Products.Include("Brand").Include("Category").Where(d => d.Discount > 0).ToList();
-            List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).ToList();
+            //User = await UserMgr.GetUserAsync(HttpContext.User);
+            //ViewData["UserName"] = User.FirstName;// HttpContext.Session.GetString(SessionCookies.USER_NAME);
+            //var result = context.Categories.ToList();
+            //return View(User);
+            var products = context.Products.Include(x => x.Brand).Include(x => x.Category).ToList();
+            List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).Where(d => d.Discount > 0).ToList();
+
             return View(allProducts);
         }
 
