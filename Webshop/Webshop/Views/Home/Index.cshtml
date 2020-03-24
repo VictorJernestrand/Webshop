@@ -1,7 +1,16 @@
 ﻿@model List<AllProductsViewModel>
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions{
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
+
 @{
     ViewData["Title"] = "Rock★Start";
 }
+
 @{
     int i = 0;
 }
@@ -10,24 +19,26 @@
 }
 <style>
     .carousel-caption {
-    position: relative;
-    left: auto;
-    right: auto;
-}
-        ol.carousel-indicators li,
+        position: relative;
+        left: auto;
+        right: auto;
+    }
+
+    ol.carousel-indicators li,
+    ol.carousel-indicators li.active {
+        border-radius: 50%;
+        background: grey;
+    }
+
         ol.carousel-indicators li.active {
-            border-radius: 50%;
-            background: grey;
+            background: gainsboro;
         }
 
-            ol.carousel-indicators li.active {
-                background: gainsboro;
-            }
-            .carousel-item img{
- width: auto;
- margin: auto; 
- display: block;
- }
+    .carousel-item img {
+        width: auto;
+        margin: auto;
+        display: block;
+    }
 </style>
 <h3>Startsidan</h3>
 
@@ -35,10 +46,12 @@
     <ol class="carousel-indicators">
 
         @foreach (var x in Model)
-        {
+        {           
+
             <li data-target="#carouselExampleIndicators" data-slide-to="@i" class="@(i == 0 ? "active" : string.Empty)"></li>
-            i++;
-        }
+                 i++;               
+
+            }
 
     </ol>
     <div class="carousel-inner">
@@ -107,10 +120,21 @@
 </div>
 
 <script>
-    function Multiply()
-{
+    function Multiply() {
         let num1 = document.getElementById("discount").value;
         let num2 = 10;
         document.getElementById("result").innerHTML = num1 * num2;
-}
+    }
 </script>
+
+<partial name="_AddToCartMessagePartial" />
+<div class="container">
+    <div class=" row justify-content-center">
+
+        @foreach (var item in Model)
+        {
+            <partial name="_Productpartial" model="item" />
+        }
+    </div>
+    <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
+</div>

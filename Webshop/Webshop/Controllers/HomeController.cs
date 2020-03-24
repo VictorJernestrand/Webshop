@@ -44,13 +44,46 @@ namespace Webshop.Controllers
 
         public IActionResult Index()
         {
+            AllProductsViewModel allProducts = new AllProductsViewModel();
+            List<AllProductsViewModel> allproductslist = new List<AllProductsViewModel>();
+
+
             //User = await UserMgr.GetUserAsync(HttpContext.User);
             //ViewData["UserName"] = User.FirstName;// HttpContext.Session.GetString(SessionCookies.USER_NAME);
             //var result = context.Categories.ToList();
             //return View(User);
-            var products = context.Products.Include(x => x.Brand).Include(x => x.Category).ToList();
-            List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).Where(d => d.Discount > 0).ToList();
-            return View(allProducts);
+
+
+            // var products = context.Products.Include(x => x.Brand).Include(x => x.Category).ToList();
+            //  List<AllProductsViewModel> allProductswithDiscount = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).Where(d => d.Discount > 0).ToList();
+          
+            
+            allProducts.productsDiscountlist = context.Products.Where(x => x.Discount > 0).Select(x => new Product()).ToList();
+
+            allproductslist = context.Products.Include(x => x.Brand).Include(x => x.Category)
+                                  .Select(x => new AllProductsViewModel()
+                                  {
+                                        Id = x.Id,
+                                        Name = x.Name,
+                                        Price = x.Price,
+                                        Discount = x.Discount,
+                                        DiscountPrice = x.Price - (x.Price * (decimal)x.Discount),//product.DiscountPrice;
+                                        Quantity = x.Quantity,
+                                        CategoryId = x.CategoryId,
+                                        BrandId = x.BrandId,
+                                        Description = x.Description,
+                                        Photo = x.Photo != null ? x.Photo : "",
+                                        BrandName = x.Brand.Name,
+                                        CategoryName = x.Category.Name,
+                                        Category = x.Category,
+                                        Brand = x.Brand,
+                                        FullDescription = x.FullDescription,
+                                        Specification = x.Specification,
+                                       productsDiscountlist=allProducts.productsDiscountlist
+                                  }
+                                  ).ToList();
+
+            return View(allproductslist);
         }
 
         public IActionResult Privacy()
