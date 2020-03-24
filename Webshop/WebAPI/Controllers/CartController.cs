@@ -27,6 +27,8 @@ namespace WebAPI.Controllers
         [HttpGet("{id}")]
         public ActionResult<CartButtonInfoModel> GetShoppingCart(string id)
         {
+            // TODO: Validate cart Id here and return an error code if id is not valid.
+
             Guid cartId = Guid.Parse(id);
 
             var cartContent = _context.ShoppingCart.Include(x => x.Product)
@@ -47,6 +49,8 @@ namespace WebAPI.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<CartButtonInfoModel>> Renew(string customerCartId)
         {
+            // TODO: Validate cart Id here and return an error code if id is not valid.
+
             Guid cartId = Guid.Parse(customerCartId);
 
             var cartContent = _context.ShoppingCart.Include(x => x.Product)

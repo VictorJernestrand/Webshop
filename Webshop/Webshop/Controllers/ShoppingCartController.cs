@@ -61,7 +61,7 @@ namespace Webshop.Controllers
         [ValidateAntiForgeryToken]
         public async Task RemoveFromCart(int id)
         {
-            // Is there a session cookie? Remove product from cart!!
+            // Remove product from cart!!
             if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) != null)
                 await webAPI.PostAsync<int>(id, "https://localhost:44305/api/cart/remove/product");
         }
