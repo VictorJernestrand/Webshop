@@ -15,19 +15,16 @@ namespace Webshop.Controllers
 {
     public class OrderController : Controller
     {
-        private readonly WebshopContext context;      
-        
+        private readonly WebshopContext context;
         public OrderViewModel orderviewmodel = new OrderViewModel();
         private UserManager<User> UserMgr { get; }
-       private DatabaseCRUD databaseCRUD { get; }
 
         public LoggedInUserName loggedInUserName = new LoggedInUserName();
 
         public OrderController(WebshopContext context, UserManager<User> userManager)
         {
-            this.context = context;          
+            this.context = context;
             this.UserMgr = userManager;
-            this.databaseCRUD = new DatabaseCRUD(context);
         }
 
         [HttpGet]
@@ -185,19 +182,8 @@ namespace Webshop.Controllers
                     TempData["OrderError"] = "Oops det här var pinsamt! Kunde inte skapa din order. Något sket sig, eh he hee....";
             }
 
-            // Update model with product details from shopping cart
-            //model.Products = GetProductDetails(model, cartId);
-
-            //// Calculate total cost of whole order
-            //model.OrderTotal = OrderTotal(model.Products);
-
-            //// Update with payment methods
-            //model.paymentMethodlist = GetPaymentMethods();
-
             TempData["PaymentMethodError"] = "Vänligen välj ett betalsätt";
             return RedirectToAction("Index");
-
-            //return View(model);
         }
 
 

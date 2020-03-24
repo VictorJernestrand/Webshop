@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Webshop.Context;
 using Webshop.Domain;
 using Webshop.Models;
@@ -18,7 +19,6 @@ namespace Webshop.Controllers
     public class UserController : Controller
     {
         private readonly WebshopContext context;
-        private readonly DatabaseCRUD db;
 
         public RegisterUserModel RegisterUserModel { get; set; }
         public LoginModel LoginModel { get; set; }
@@ -31,13 +31,10 @@ namespace Webshop.Controllers
         private WebAPIHandler webAPI;
         private TokenRequest tokenRequest;
 
-        public UserController(WebshopContext context, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<AppRole> roleManager, IHttpClientFactory clientFactory, TokenRequest tokenRequest, WebAPIHandler webAPIHandler)
+        public UserController(WebshopContext context, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<AppRole> roleManager, TokenRequest tokenRequest, WebAPIHandler webAPIHandler)
         {
             // Get database context and connection
             this.context = context;
-
-            // Instantiate a new CRUD-object
-            db = new DatabaseCRUD(context);
 
             // Instantiate a new WebAPIHandler object
             this.webAPI = webAPIHandler;
@@ -49,27 +46,23 @@ namespace Webshop.Controllers
             RoleMgr = roleManager;
         }
 
-
         // GET: User
         public ActionResult Index()
         {
             return View();
         }
 
-        
         // Register new customer
         public ActionResult Register()
         {
             return View(RegisterUserModel);
         }
         
-
         // Login view
         public ActionResult Login()
         {
             return View(LoginModel);
         }
-
 
         // View Orders
         [Authorize]
@@ -78,7 +71,6 @@ namespace Webshop.Controllers
         {
             return View();
         }
-
 
         // Login view
         [Authorize]
@@ -134,41 +126,37 @@ namespace Webshop.Controllers
 
             // First, validate the form. Did the user provide expected data such as email and password?
             if (ModelState.IsValid)
+            {
+                // Make a sign-in request!
+                Microsoft.AspNetCore.Identity.SignInResult signInResult = await SignMgr.PasswordSignInAsync(model.UserEmail, model.UserPassword, model.RememberUser, false);
+
+                // Did the user submit correct email and password?
+                if (signInResult.Succeeded)
                 {
-                    // Make a sign-in request!
-                    Microsoft.AspNetCore.Identity.SignInResult signInResult = await SignMgr.PasswordSignInAsync(model.UserEmail, model.UserPassword, model.RememberUser, false);
+                    // Get user information from database
+                    User user = await context.Users.Where(x => x.Email == model.UserEmail).FirstOrDefaultAsync();
 
-                    // Did the user submit correct email and password?
-                    if (signInResult.Succeeded)
+                    // Is user admin?
+                    bool isAdmin = await UserMgr.IsInRoleAsync(user, "Admin");
+
+                    if (isAdmin)
                     {
-                        // Get user information from database
-                        User user = await db.GetUserByUserEmail(model.UserEmail);
-
-                        // Is user admin?
-                        bool isAdmin = await UserMgr.IsInRoleAsync(user, "Admin");
-
-                        if (isAdmin)
-                        {
-                            // Login succesfull! Redirect to main page :)
-                            return RedirectToAction("Index", "Admin");
-                        }
-
-                        // Bake a new session-cookie with the User's name as the main ingredient ;)
-                        HttpContext.Session.SetString(Common.USER_NAME, user.FirstName + " " + user.LastName);
-
                         // Login succesfull! Redirect to main page :)
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "Admin");
                     }
 
-                    ViewBag.LoginResult = "Felaktiga inloggningsuppgifter! Försök igen!";
+                    // Bake a new session-cookie with the User's name as the main ingredient ;)
+                    HttpContext.Session.SetString(Common.USER_NAME, user.FirstName + " " + user.LastName);
+
+                    // Login succesfull! Redirect to main page :)
+                    return RedirectToAction("Index", "Home");
                 }
 
-                return View(model);
-            /*}
-            catch
-            {
-                return View(model);
-            }*/
+                ViewBag.LoginResult = "Felaktiga inloggningsuppgifter! Försök igen!";
+            }
+
+            return View(model);
+
         }
 
 

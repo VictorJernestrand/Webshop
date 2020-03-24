@@ -32,7 +32,6 @@ namespace WebAPI.Controllers
         private readonly IConfiguration _configure;
 
         public UserTestController(WebAPIContext context, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<AppRole> roleManager, IConfiguration configure)
-        //public UserTestController(WebAPIContext context, IConfiguration configure)
         {
             _context = context;
             this.userManager = userManager;
@@ -147,7 +146,6 @@ namespace WebAPI.Controllers
 
             else
                 return Unauthorized();
-            return Ok();
         }
 
 

@@ -8,6 +8,7 @@ using Webshop.Context;
 using Webshop.Models;
 using Webshop.Services;
 using Webshop.Models.Data;
+using System.Threading.Tasks;
 
 namespace Webshop.Controllers
 {
@@ -15,39 +16,21 @@ namespace Webshop.Controllers
     {
         // SQL connection
         private readonly WebshopContext _context;
+        private readonly WebAPIHandler webAPI;
 
-        AllProductsViewModel allProducts;
-
-        public ShoppingCartController(WebshopContext context)
+        public ShoppingCartController(WebshopContext context, WebAPIHandler webAPI)
         {
-            this.allProducts = new AllProductsViewModel();
             this._context = context;
+            this.webAPI = webAPI;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            if (HttpContext.Session.GetString("CustomerCartSessionId") != null)
+            if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) != null)
             {
-                // Parse session cookie to Guid
-                Guid cartId = Guid.Parse(HttpContext.Session.GetString("CustomerCartSessionId"));
-
-                // Get cart contents from database
-                var cartContent = _context.ShoppingCart.Include(x => x.Product)
-                    .Where(x => x.CartId == cartId)
-                    .Select(x => new ShoppingCartModel
-                    {
-                        ShoppingCartId = x.Id,
-                        ProductId = x.Product.Id,
-                        Name = x.Product.Name,
-                        Price = x.Product.Price,
-                        DiscountPrice = CalculateDiscount.NewPrice(x.Product.Price, (decimal)x.Product.Discount), //x.Product.Price - (x.Product.Price * (decimal)x.Product.Discount),
-                        Discount = x.Product.Discount,
-                        Photo = x.Product.Photo,
-                        Amount = x.Amount
-                    })
-                    .ToList();
-
-                return View(cartContent);
+                var cartId = HttpContext.Session.GetString(Common.CART_COOKIE_NAME);
+                var result = await webAPI.GetAllAsync<ShoppingCartModel>("https://localhost:44305/api/cart/content/" + cartId);
+                return View(result);
             }
 
             return View();
@@ -55,109 +38,47 @@ namespace Webshop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public void AddToCart(int id)
+        public async Task AddToCart(int id)
         {
             // Generate a unique id
             Guid guid = Guid.NewGuid();
 
-            // Check if session cookie exist
+            // Does session cookie exist? If not, bake one!
             if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) == null)
-            {
-                // Set session cookie with Guid Id
                 HttpContext.Session.SetString(Common.CART_COOKIE_NAME, guid.ToString());
-            }
 
-            // Get product form database
-            Product product = _context.Products.Find(id);
-
-            // Cart Id
-            Guid cartId = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
-
-            // Does product allready exist in shoppingcart??
-            var cartItem = _context.ShoppingCart.Where(x => x.CartId == cartId && x.ProductId == id).FirstOrDefault();
-            if (cartItem != null)
+            ShoppingCart shoppingCart = new ShoppingCart()
             {
-                cartItem.Amount++; // add one more
-            }
-            else
-            {
-                // Instantiate a new schoppingcart SQ:-model with the selected prodcut id
-                ShoppingCart shoppingCart = new ShoppingCart()
-                {
-                    CartId = cartId,
-                    ProductId = id,
-                    Amount = 1
-                };
+                CartId = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME)),
+                ProductId = id,
+                Amount = 1
+            };
 
-                // All good, put item in shoppingcart
-                _context.Add<ShoppingCart>(shoppingCart);
-            }
-
-            // Update timestamp 
-            List<ShoppingCart> carts = _context.ShoppingCart.Where(x => x.CartId == cartId).ToList();
-            carts.ForEach(x => x.TimeStamp = DateTime.Now);
-
-            // save, fool!
-            _context.SaveChanges();
-
+            await webAPI.PostAsync<ShoppingCart>(shoppingCart, "https://localhost:44305/api/cart");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public void RemoveFromCart(int id)
+        public async Task RemoveFromCart(int id)
         {
             // Is there a session cookie? Remove product from cart!!
             if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) != null)
-            {
-                // Get item from shoppingcart to be removed
-                var cartProductItem = _context.ShoppingCart.Find(id);
-
-                // Are there anything to be removed?
-                if (cartProductItem.Amount > 0)
-                {
-                    // Remove item from cart
-                    cartProductItem.Amount--;
-
-                    // Update database
-                    _context.SaveChanges();
-                }
-            }
+                await webAPI.PostAsync<int>(id, "https://localhost:44305/api/cart/remove/product");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public void DeleteItemFromCart(int id)
+        public async Task DeleteItemFromCart(int id)
         {
-            // TODO: Disable "Till Kan
-            var cartItem = _context.ShoppingCart.Find(id);
-            _context.Remove(cartItem);
-            _context.SaveChanges();
+            await webAPI.DeleteAsync("https://localhost:44305/api/cart/delete/" + id);
         }
 
         [HttpGet]
         [Produces("application/json")]
-        public CartButtonInfoModel GetCartContent()
+        public async Task<CartButtonInfoModel> GetCartContent()
         {
-            // Is there a session cookie?
-            if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) == null)
-                return new CartButtonInfoModel();
-
-            Guid cartId = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
-
-            var cartContent = _context.ShoppingCart.Include(x => x.Product)
-                .Where(x => x.CartId == Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME)))
-                .ToList()
-                .GroupBy(x => new { x.CartId })
-                .Select(x => new CartButtonInfoModel
-                {
-                    TotalItems = x.Sum(x => x.Amount),
-
-                    // Result = Total - (Discount * Total)
-                    TotalCost = x.Sum(a => (a.Product.Price * a.Amount) - ((decimal)a.Product.Discount * (a.Product.Price * a.Amount))).ToString("C0")
-                }).FirstOrDefault();
-
-            // If cartContent is null return new CartButtonmodel with default values
-            return (cartContent != null) ? cartContent : new CartButtonInfoModel();
+            var result = await webAPI.GetOneAsync<CartButtonInfoModel>("https://localhost:44305/api/cart/" + HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
+            return (result != null) ? result : new CartButtonInfoModel();
         }
     }
 }

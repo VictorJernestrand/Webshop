@@ -129,12 +129,14 @@ namespace Webshop.Services
         /// <param name="webApiPath"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<bool> DeleteAsync<T>(string webApiPath, string token)
+        public async Task<bool> DeleteAsync(string webApiPath, string token = null)
         {
             HttpResponseMessage response = null;
             using (var request = new HttpRequestMessage(HttpMethod.Delete, webApiPath))
             {
+                if (token != null)
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
                 response = await _clientFactory.SendAsync(request);
             }
 

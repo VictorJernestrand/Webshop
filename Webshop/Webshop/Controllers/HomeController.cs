@@ -14,42 +14,20 @@ namespace Webshop.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        private readonly DatabaseCRUD db;
         private readonly WebshopContext context;
-
-        public new User User { get; set; }
 
         private UserManager<User> UserMgr { get; }
 
-        public HomeController(WebshopContext context, UserManager<User> userManager, ILogger<HomeController> logger)
+        public HomeController(WebshopContext context, UserManager<User> userManager)
         {
             this.context = context;
-            db = new DatabaseCRUD(context);
             UserMgr = userManager;
-            _logger = logger;
         }
-
-        private void GetLoggedInUserAsync()
-        {
-            
-            //User = db.GetByIdAsync<User>(UserMgr.GetUserId(HttpContext.User));
-        }
-
-        /*public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }*/
 
         public IActionResult Index()
         {
-            //User = await UserMgr.GetUserAsync(HttpContext.User);
-            //ViewData["UserName"] = User.FirstName;// HttpContext.Session.GetString(SessionCookies.USER_NAME);
-            //var result = context.Categories.ToList();
-            //return View(User);
-            var products = context.Products.Include("Brand").Include("Category").ToList();
-            List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).Where(d => d.Discount > 0).ToList();
+            var products = context.Products.Include("Brand").Include("Category").Where(d => d.Discount > 0).ToList();
+            List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).ToList();
             return View(allProducts);
         }
 
@@ -63,7 +41,6 @@ namespace Webshop.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        
-       
+
     }
 }
