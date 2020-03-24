@@ -25,29 +25,41 @@
         </div>
     <div class="col-xs-6 col-sm-6">
 
-            <div class="container" style="text-align: center;">
-                <h5 class="card-title">@Model.Name</h5>
-                <h5 class="card-title text-success" style="margin-bottom: 30px">@Model.Price.ToString("C0")</h5>
-                <p> </p>
-                <p>@Model.Description</p>
-                <p><b>Kategori </b>@Model.Category.Name</p>
-                <p><b>Tillverkare </b>@Model.Brand.Name</p>
-                <p><b>Antal i lager </b>@Model.Quantity</p>
+        <div class="container" style="text-align: center;">
+            <h5 class="card-title">@Model.Name</h5>
+            @*<h5 class="card-title text-success" style="margin-bottom: 30px">@Model.Price.ToString("C0")</h5>*@
+            @if (Model.Discount == 0)
+            {
+                <h5 class="card-title text-success">@Model.Price.ToString("C0")</h5>
+            }
+            else
+            {
+                <span style="font-size: small; text-decoration: line-through">@Model.Price.ToString("C0")</span>
+                <h5 class="card-title text-success">
+                    @Model.DiscountPrice.ToString("C0")
+                    <span style="font-size: small">-@((int)(Model.Discount * 100))%</span>
+                </h5>
+            }
+            <p> </p>
+            <p>@Model.Description</p>
+            <p><b>Kategori </b>@Model.Category.Name</p>
+            <p><b>Tillverkare </b>@Model.Brand.Name</p>
+            <p><b>Antal i lager </b>@Model.Quantity</p>
 
-                <div class="d-inline">
-                    <a asp-action="AllProducts" class="btn btn-info mb-2 mr-2">Tillbaka till produkter</a>
-                    <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <a asp-action="EditProduct" class="btn btn-primary mb-2 mr-2" asp-route-id="@Model.Id">Redigera</a>
-                        <a asp-action="DeleteProduct" asp-route-id="@Model.Id" asp-controller="Product" class="btn btn-danger mb-2 mr-2">Radera</a>
-                    }
-                    else
-                    {
-                        <a class="btn btn-success mb-2 mr-2 text-white" style="font-weight: bold" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Lägg i kundvagn</a>
-                    }
-                </div>
+            <div class="d-inline">
+                <a asp-action="AllProducts" class="btn btn-info mb-2 mr-2">Tillbaka till produkter</a>
+                <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="EditProduct" class="btn btn-primary mb-2 mr-2" asp-route-id="@Model.Id">Redigera</a>
+                    <a asp-action="DeleteProduct" asp-route-id="@Model.Id" asp-controller="Product" class="btn btn-danger mb-2 mr-2">Radera</a>
+                }
+                else
+                {
+                    <a class="btn btn-success mb-2 mr-2 text-white" style="font-weight: bold" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Lägg i kundvagn</a>
+                }
             </div>
+        </div>
 
 
         </div>
