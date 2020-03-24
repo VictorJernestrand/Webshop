@@ -21,8 +21,6 @@ namespace Webshop.Services
         const string USER_AGENT_VALUE   = "WebshopProject";
         const string ACCEPT_VALUE       = "application/json";
 
-
-
         /// <summary>
         /// Instantiate a new WebAPIHandler with a IHttpClientFactory parameter.
         /// The IHttpClientFactory object is required for communicating with the API
