@@ -26,12 +26,15 @@ namespace Webshop.Controllers
         public SpecificationModel productSpecification = new SpecificationModel();
         private IWebHostEnvironment environment;
 
+        private readonly WebAPIHandler webAPI;
+
         public EditProductModel EditProductModel { get; set; }
 
-        public ProductController(WebshopContext context, IWebHostEnvironment env)
+        public ProductController(WebshopContext context, IWebHostEnvironment env, WebAPIHandler webAPI)
         {
             this.context = context;
             this.environment = env;
+            this.webAPI = webAPI;
         }
 
         //This mtd display the Products based on Passed in CategoryId
@@ -128,10 +131,9 @@ namespace Webshop.Controllers
             }
         }
         
-        public IActionResult AllProducts()
+        public async Task<ActionResult<IEnumerable<AllProductsViewModel>>> AllProducts()
         {
-            var products = context.Products.Include(x => x.Brand).Include(x => x.Category).ToList();
-            var allProducts = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).ToList();
+            var allProducts = await webAPI.GetAllAsync<AllProductsViewModel>("https://localhost:44305/api/products/");
             return View(allProducts);
         }
 
@@ -172,14 +174,16 @@ namespace Webshop.Controllers
             return View(query);
         }
 
-        public IActionResult ProductDetail(int Id)
+        public async Task<IActionResult> ProductDetail(int id)
         {
-            var query = context.Products.Include(x=> x.Brand).Include(x => x.Category).FirstOrDefault(p => p.Id == Id);
-            if (query == null)
-                return NotFound();
+            //var query = context.Products.Include(x => x.Brand).Include(x => x.Category).FirstOrDefault(p => p.Id == Id);
+            //if (query == null)
+            //    return NotFound();
 
-            query.DiscountPrice = query.Price - (query.Price * (decimal)query.Discount);
-            return View(query);
+            //query.DiscountPrice = query.Price - (query.Price * (decimal)query.Discount);
+            //return View(query);
+           var prod = await webAPI.GetOneAsync<AllProductsViewModel>("https://localhost:44305/api/products/" + id);
+            return View(prod);
         }
 
         [Authorize(Roles = "Admin")]

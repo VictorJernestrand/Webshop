@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using WebAPI.Models.Data;
 
-namespace Webshop.Models
+namespace WebAPI.Models
 {
     [NotMapped]
     public class AllProductsViewModel
@@ -29,11 +30,10 @@ namespace Webshop.Models
             Photo = product.Photo != null ? product.Photo : "";
             BrandName = product.Brand.Name;
             CategoryName = product.Category.Name;
-            Category = product.Category;
-            Brand = product.Brand;
+            //Category = product.Category;
+            //Brand = product.Brand;
             FullDescription = product.FullDescription;
             Specification = product.Specification;
-        
             
         }
 
@@ -53,8 +53,6 @@ namespace Webshop.Models
         public Category Category { get; set; }
         public Brand Brand { get; set; }
         public string Specification { get; set; }
-
-       // public List<Product> productsDiscountlist { get; set; } = new List<Product>();
 
     }
 }
