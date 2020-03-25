@@ -8,7 +8,7 @@ using Webshop.Models;
 namespace Webshop.Context
 {
     // User-roles
-    enum role { Admin, Manager }
+    enum role { Admin, Manager, User }
 
     public class AdminAccountAndRoles
     {
@@ -30,6 +30,10 @@ namespace Webshop.Context
             if (await roleManager.FindByNameAsync(managerRole) == null)
                 await roleManager.CreateAsync(new AppRole(managerRole));
 
+            // User
+            string userRole = Enum.GetName(typeof(role), role.User);
+            if (await roleManager.FindByNameAsync(userRole) == null)
+                await roleManager.CreateAsync(new AppRole(userRole));
 
             // Create Admin!
             if (await userManager.FindByEmailAsync(adminEmail) == null)
@@ -37,6 +41,8 @@ namespace Webshop.Context
                 // Create User with admin-email and password
                 User adminUser = new User()
                 {
+                    FirstName = "RockStart",
+                    LastName = "Administrator",
                     UserName = adminEmail,
                     Email = adminEmail,
                     Password = password,

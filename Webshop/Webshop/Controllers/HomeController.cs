@@ -18,10 +18,10 @@ namespace Webshop.Controllers
 
         private UserManager<User> UserMgr { get; }
 
-        public HomeController(WebshopContext context, UserManager<User> userManager)
+        public HomeController(WebshopContext context)
         {
             this.context = context;
-            UserMgr = userManager;
+            //UserMgr = userManager;
         }
 
         public IActionResult Index()

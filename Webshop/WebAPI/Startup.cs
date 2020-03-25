@@ -101,7 +101,7 @@ namespace WebAPI
 
             app.UseCors(_corsePolicyString);
 
-            app.UseAuthorization();
+            app.UseAuthentication();    // Identifies who is who. For Identity features. Must be added BEFORE Authorization!!!
 
             app.UseAuthorization();
 

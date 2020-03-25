@@ -46,15 +46,16 @@ namespace WebAPI.Services
             {
                     //new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                     //new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim("Name", user.FirstName + " " + user.LastName),
+                    new Claim("Name", user.FirstName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim("UserEmail", user.Email),
-                    new Claim("RefreshToken", newRefreshToken)
+                    new Claim("RefreshToken", newRefreshToken),
+                    new Claim(ClaimTypes.Role, (hasRole != null) ? hasRole : "User")
             };
 
             // If user has a role, add it to list of claims
-            if (hasRole != null)
-                claims.Add(new Claim(ClaimTypes.Role, hasRole));
+            /*if (hasRole != null)
+                claims.Add(new Claim(ClaimTypes.Role, hasRole));*/
 
             // Set token settings
             var token = new JwtSecurityToken(

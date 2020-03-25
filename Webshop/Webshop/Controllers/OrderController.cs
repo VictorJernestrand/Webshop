@@ -21,10 +21,15 @@ namespace Webshop.Controllers
 
         public LoggedInUserName loggedInUserName = new LoggedInUserName();
 
-        public OrderController(WebshopContext context, UserManager<User> userManager)
+        //public OrderController(WebshopContext context, UserManager<User> userManager)
+        //{
+        //    this.context = context;
+        //    this.UserMgr = userManager;
+        //}
+
+        public OrderController(WebshopContext context)
         {
             this.context = context;
-            this.UserMgr = userManager;
         }
 
         [HttpGet]

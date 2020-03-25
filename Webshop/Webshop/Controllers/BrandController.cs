@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Webshop.Context;
 using Webshop.Models;
 using Webshop.Services;
@@ -32,12 +33,12 @@ namespace Webshop.Controllers
         {
             if (id != null)
             {
-                var brand = context.Brands.Where(x => x.Id == (int)id).FirstOrDefault();
+                var brand = await context.Brands.Where(x => x.Id == (int)id).FirstOrDefaultAsync();
                 BrandModel.Id = brand.Id;
                 BrandModel.Name = brand.Name;
             }
 
-            BrandModel.BrandsCollection = context.Brands.ToList();
+            BrandModel.BrandsCollection = await context.Brands.ToListAsync();
 
             //BrandModel.BrandsCollection = await webApi.GetAllAsync<Brand>("https://localhost:44305/api/brands");
 

@@ -18,12 +18,16 @@ namespace Webshop.Controllers
         OrderItemsModel orderItemsModel = new OrderItemsModel();
         OrderViewModel orderViewModel = new OrderViewModel();
 
-        public UserOrderController(WebshopContext context, UserManager<User> userManager)
+        //public UserOrderController(WebshopContext context, UserManager<User> userManager)
+        //{
+        //    this.context = context;
+        //    this.userManager = userManager;
+        //}
+
+        public UserOrderController(WebshopContext context)
         {
             this.context = context;
-            this.userManager = userManager;
         }
-
 
         public async Task<IActionResult> Index()
         {

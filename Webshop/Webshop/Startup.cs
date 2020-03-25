@@ -45,7 +45,7 @@ namespace Webshop
             services.AddTransient<TokenRequest>();
             services.AddSingleton<WebAPIHandler>();
 
-
+            /*
             // Set email to be unique for each user
             services.AddIdentity<User, AppRole>(options =>
             {
@@ -60,12 +60,14 @@ namespace Webshop
                 options.ExpireTimeSpan = TimeSpan.FromDays(365);
                 options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
                 options.SlidingExpiration = true;
-            });
+            });*/
 
             // Needed for IHttpClientFactory to work and accessing our WebAPI
             services.AddHttpClient();
 
-            services.AddMvcCore().AddAuthorization(); // Note - this is on the IMvcBuilder, not the service collection
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+
+            services.AddMvcCore();//.AddAuthorization(); // Note - this is on the IMvcBuilder, not the service collection
 
             services.AddSession(); // Enable session cookies
             services.AddControllersWithViews();
@@ -74,7 +76,7 @@ namespace Webshop
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, WebshopContext context, UserManager<User> userManager, RoleManager<AppRole> roleManager)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, WebshopContext context)
         {
             if (env.IsDevelopment())
             {
@@ -118,7 +120,7 @@ namespace Webshop
             app.UseRewriter(new RewriteOptions().AddRedirectToHttpsPermanent());
 
             // Add a default Admin account and Roles!
-            AdminAccountAndRoles.Initialize(context, userManager, roleManager).Wait();
+            //AdminAccountAndRoles.Initialize(context, userManager, roleManager).Wait();
         }
     }
 }

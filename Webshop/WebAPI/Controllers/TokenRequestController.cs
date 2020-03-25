@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using WebAPI.Context;
@@ -51,7 +52,7 @@ namespace WebAPI.Controllers
                     var email = validToken.FindFirst("UserEmail")?.Value;
 
                     // Get user from database based on email and refresh token
-                    var user = _context.Users.Where(x => x.Email == email && x.RefreshToken == refreshToken).FirstOrDefault();
+                    var user = await _context.Users.Where(x => x.Email == email && x.RefreshToken == refreshToken).FirstOrDefaultAsync();
 
                     // User has a role?
                     bool isAdmin = await userManager.IsInRoleAsync(user, "Admin");

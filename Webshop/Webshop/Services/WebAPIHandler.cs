@@ -105,21 +105,25 @@ namespace Webshop.Services
         /// <param name="webApiPath"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> UpdateAsync<T>(T obj, string webApiPath, string token)
+        public async Task<APIResponseData> UpdateAsync<T>(T obj, string webApiPath, string token = null)
         {
             HttpResponseMessage response = null;
             using (var request = new HttpRequestMessage(HttpMethod.Put, webApiPath))
             {
                 // Send JWT authentication token
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                if(token != null)
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var serialized = JsonSerializer.Serialize(obj);
                 request.Content = new StringContent(serialized, Encoding.UTF8, ACCEPT_VALUE);
 
                 response = await _clientFactory.SendAsync(request);
+
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                return new APIResponseData() { Status = response, ResponseContent = responseString };
             }
 
-            return response;
         }
 
         /// <summary>
