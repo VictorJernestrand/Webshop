@@ -16,8 +16,9 @@ namespace Webshop.Controllers
     public class OrderController : Controller
     {
         private readonly WebshopContext context;
+        private readonly WebAPIHandler webAPI;
         public OrderViewModel orderviewmodel = new OrderViewModel();
-        private UserManager<User> UserMgr { get; }
+        //private UserManager<User> UserMgr { get; }
 
         public LoggedInUserName loggedInUserName = new LoggedInUserName();
 
@@ -27,9 +28,10 @@ namespace Webshop.Controllers
         //    this.UserMgr = userManager;
         //}
 
-        public OrderController(WebshopContext context)
+        public OrderController(WebshopContext context, WebAPIHandler webAPI)
         {
             this.context = context;
+            this.webAPI = webAPI;
         }
 
         [HttpGet]
@@ -65,7 +67,7 @@ namespace Webshop.Controllers
                 orderviewmodel.paymentMethodlist = GetPaymentMethods();
 
                 // Get user information from current logged in user
-                User user = await UserMgr.GetUserAsync(HttpContext.User);
+                User user = await webAPI.GetOneAsync<User>("https://localhost:44305/api/User/" + User.Identity.Name);// await UserMgr.GetUserAsync(HttpContext.User);
                 orderviewmodel.User = user;
 
                 // Check if user has a complete shipping address
@@ -110,7 +112,7 @@ namespace Webshop.Controllers
             if (ModelState.IsValid)
             {
                 // Get current logged in user
-                User user = await UserMgr.GetUserAsync(HttpContext.User);
+                User user = await webAPI.GetOneAsync<User>("https://localhost:44305/api/User/" + User.Identity.Name); //await UserMgr.GetUserAsync(HttpContext.User);
 
                 // Create order
                 Order order = new Order()
@@ -240,7 +242,7 @@ namespace Webshop.Controllers
 
         public async Task<IActionResult> ThankYou()
         {
-            User user = await UserMgr.GetUserAsync(HttpContext.User);
+            User user = await webAPI.GetOneAsync<User>("https://localhost:44305/api/User/" + User.Identity.Name);// await UserMgr.GetUserAsync(HttpContext.User);
             loggedInUserName.Name = user.FirstName;
             return View(loggedInUserName);
         }

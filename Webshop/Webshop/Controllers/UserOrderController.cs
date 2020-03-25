@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,9 +12,11 @@ using Webshop.Services;
 
 namespace Webshop.Controllers
 {
+    [Authorize]
     public class UserOrderController : Controller
     {
         private readonly WebshopContext context;
+        private readonly WebAPIHandler webAPI;
         private readonly UserManager<User> userManager;
         OrderItemsModel orderItemsModel = new OrderItemsModel();
         OrderViewModel orderViewModel = new OrderViewModel();
@@ -24,15 +27,20 @@ namespace Webshop.Controllers
         //    this.userManager = userManager;
         //}
 
-        public UserOrderController(WebshopContext context)
+        public UserOrderController(WebshopContext context, WebAPIHandler webAPI)
         {
             this.context = context;
+            this.webAPI = webAPI;
         }
 
         public async Task<IActionResult> Index()
         {
+            var ewtwt = User.Identity.Name;
+
             // Get current logged in user
-            User user = await userManager.GetUserAsync(HttpContext.User);
+            //User user = await context.Users.Where(x => x.Email == User.Identity.Name).FirstOrDefaultAsync();// await userManager.GetUserAsync(HttpContext.User);
+
+            User user = await webAPI.GetOneAsync<User>("https://localhost:44305/api/User/" + User.Identity.Name);
 
             var activeOrders = context.Orders.Include(x => x.Status)
                 .Include(x => x.PaymentMethod)
@@ -44,8 +52,6 @@ namespace Webshop.Controllers
                     OrderStatus = x.Status.Name,
                     OrderPayment = x.PaymentMethod.Name,
                     StatusId = x.StatusId
-                    
-                    
                 })
                 .OrderByDescending(x => x.OrderDate)
                 .ToList();
