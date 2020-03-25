@@ -1,4 +1,4 @@
-﻿@model Product
+﻿@model AllProductsViewModel
 @using System.Web;
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @functions{
@@ -42,8 +42,8 @@
             }
             <p> </p>
             <p>@Model.Description</p>
-            <p><b>Kategori </b>@Model.Category.Name</p>
-            <p><b>Tillverkare </b>@Model.Brand.Name</p>
+            <p><b>Kategori </b>@Model.CategoryName</p>
+            <p><b>Tillverkare </b>@Model.BrandName</p>
             <p><b>Antal i lager </b>@Model.Quantity</p>
 
             <div class="d-inline">

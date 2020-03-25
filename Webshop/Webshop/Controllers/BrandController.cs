@@ -31,16 +31,17 @@ namespace Webshop.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int? id)
         {
-            if (id != null)
-            {
-                var brand = await context.Brands.Where(x => x.Id == (int)id).FirstOrDefaultAsync();
-                BrandModel.Id = brand.Id;
-                BrandModel.Name = brand.Name;
-            }
 
-            BrandModel.BrandsCollection = await context.Brands.ToListAsync();
+            //if (id != null)
+            //{
+            //    var brand = context.Brands.Where(x => x.Id == (int)id).FirstOrDefault();
+            //    BrandModel.Id = brand.Id;
+            //    BrandModel.Name = brand.Name;
+            //}
 
-            //BrandModel.BrandsCollection = await webApi.GetAllAsync<Brand>("https://localhost:44305/api/brands");
+           // BrandModel.BrandsCollection = context.Brands.ToList();
+
+            BrandModel.BrandsCollection = await webApi.GetAllAsync<Brand>("https://localhost:44305/api/brands");
 
             if (id != null)
             {
