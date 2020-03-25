@@ -33,6 +33,7 @@ namespace Webshop.Models
             Brand = product.Brand;
             FullDescription = product.FullDescription;
             Specification = product.Specification;
+        
             
         }
 
@@ -52,6 +53,8 @@ namespace Webshop.Models
         public Category Category { get; set; }
         public Brand Brand { get; set; }
         public string Specification { get; set; }
+
+       // public List<Product> productsDiscountlist { get; set; } = new List<Product>();
 
     }
 }
