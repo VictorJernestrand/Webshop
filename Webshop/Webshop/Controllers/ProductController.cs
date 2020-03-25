@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,14 +26,16 @@ namespace Webshop.Controllers
         public SpecificationModel productSpecification = new SpecificationModel();
         private IWebHostEnvironment environment;
         private DatabaseCRUD databaseCRUD;
+        private WebAPIHandler webApi;
 
         public EditProductModel EditProductModel { get; set; }
 
-        public ProductController(WebshopContext context, IWebHostEnvironment env)
+        public ProductController(WebshopContext context, IWebHostEnvironment env,WebAPIHandler webApi)
         {
             this.context = context;
             databaseCRUD = new DatabaseCRUD(context);
             this.environment = env;
+            this.webApi = webApi;
         }
 
         //This mtd display the Products based on Passed in CategoryId
@@ -131,12 +133,14 @@ namespace Webshop.Controllers
             }
         }
         
-        public IActionResult AllProducts()
+        public async Task<IActionResult> AllProducts()
         {
 
-            var products = context.Products.Include(x => x.Brand).Include(x => x.Category).ToList();
+            //var products = context.Products.Include(x => x.Brand).Include(x => x.Category).ToList();
 
-            List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).ToList();
+            //List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).ToList();
+
+          var allProducts= await webApi.GetAllAsync<AllProductsViewModel>("https://localhost:44305/api/products");
 
             return View(allProducts);
         }
