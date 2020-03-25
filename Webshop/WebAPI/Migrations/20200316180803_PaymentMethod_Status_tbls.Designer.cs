@@ -9,7 +9,7 @@ using WebAPI.Context;
 
 namespace WebAPI.Migrations
 {
-    [DbContext(typeof(Context.WebAPIContext))]
+    [DbContext(typeof(WebAPIContext))]
     [Migration("20200316180803_PaymentMethod_Status_tbls")]
     partial class PaymentMethod_Status_tbls
     {

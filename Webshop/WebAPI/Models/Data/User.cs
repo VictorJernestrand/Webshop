@@ -20,14 +20,12 @@ namespace WebAPI.Models.Data
 
         public string City { get; set; }
 
+        public Guid RefreshToken { get; set; }
+
+        public DateTime RefreshTokenExpire { get; set; }
+
         [NotMapped]
         public string Password { get; set; }
-
-        [NotMapped]
-        public string RefreshToken { get; set; }
-
-        [NotMapped]
-        public DateTime RefreshTokenExpire { get; set; }
 
         public List<Order> Orders { get; set; }
 

@@ -48,7 +48,7 @@ namespace WebAPI.Controllers
                 var validToken = ValidateToken(jwtToken.Token);
                 if (validToken.Identity.IsAuthenticated)
                 {
-                    var refreshToken = validToken.FindFirst("RefreshToken")?.Value;
+                    var refreshToken = Guid.Parse(validToken.FindFirst("RefreshToken")?.Value);
                     var email = validToken.FindFirst("UserEmail")?.Value;
 
                     // Get user from database based on email and refresh token

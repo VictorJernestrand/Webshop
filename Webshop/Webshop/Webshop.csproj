@@ -40,6 +40,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20200217084017_Product_Data.cs" />
     <Compile Remove="Migrations\20200217084017_Product_Data.Designer.cs" />
+    <Compile Remove="Migrations\20200325225435_RefreshToken.cs" />
+    <Compile Remove="Migrations\20200325225435_RefreshToken.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,6 +60,10 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\Image\Elgitarr\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebAPI\WebAPI.csproj" />
   </ItemGroup>
 
 

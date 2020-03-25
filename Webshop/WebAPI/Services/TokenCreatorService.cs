@@ -49,7 +49,7 @@ namespace WebAPI.Services
                     new Claim("Name", user.FirstName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim("UserEmail", user.Email),
-                    new Claim("RefreshToken", newRefreshToken),
+                    new Claim("RefreshToken", newRefreshToken.ToString()),
                     new Claim(ClaimTypes.Role, (hasRole != null) ? hasRole : "User")
             };
 
@@ -75,9 +75,9 @@ namespace WebAPI.Services
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        private string CreateRefreshToken(User user)
+        private Guid CreateRefreshToken(User user)
         {
-            user.RefreshToken = Guid.NewGuid().ToString();
+            user.RefreshToken = Guid.NewGuid();
             user.RefreshTokenExpire = DateTime.UtcNow.AddMonths(6);
 
             _context.Update<User>(user);

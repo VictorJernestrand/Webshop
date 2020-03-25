@@ -9,7 +9,7 @@ using WebAPI.Context;
 
 namespace WebAPI.Migrations
 {
-    [DbContext(typeof(Context.WebAPIContext))]
+    [DbContext(typeof(WebAPIContext))]
     [Migration("20200217082223_Category_Brand_Data")]
     partial class Category_Brand_Data
     {
@@ -21,7 +21,7 @@ namespace WebAPI.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Webshop.Models.Admin", b =>
+            modelBuilder.Entity("WebAPI.Models.Admin", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -39,7 +39,7 @@ namespace WebAPI.Migrations
                     b.ToTable("Admins");
                 });
 
-            modelBuilder.Entity("Webshop.Models.Brand", b =>
+            modelBuilder.Entity("WebAPI.Models.Brand", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -82,7 +82,7 @@ namespace WebAPI.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Webshop.Models.Category", b =>
+            modelBuilder.Entity("WebAPI.Models.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -120,7 +120,7 @@ namespace WebAPI.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Webshop.Models.Order", b =>
+            modelBuilder.Entity("WebAPI.Models.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -150,7 +150,7 @@ namespace WebAPI.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("Webshop.Models.PaymentMethod", b =>
+            modelBuilder.Entity("WebAPI.Models.PaymentMethod", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -165,7 +165,7 @@ namespace WebAPI.Migrations
                     b.ToTable("PaymentMethods");
                 });
 
-            modelBuilder.Entity("Webshop.Models.Product", b =>
+            modelBuilder.Entity("WebAPI.Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -200,7 +200,7 @@ namespace WebAPI.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("Webshop.Models.ProductOrder", b =>
+            modelBuilder.Entity("WebAPI.Models.ProductOrder", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -227,7 +227,7 @@ namespace WebAPI.Migrations
                     b.ToTable("ProductOrders");
                 });
 
-            modelBuilder.Entity("Webshop.Models.Status", b =>
+            modelBuilder.Entity("WebAPI.Models.Status", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -242,7 +242,7 @@ namespace WebAPI.Migrations
                     b.ToTable("Statuses");
                 });
 
-            modelBuilder.Entity("Webshop.Models.User", b =>
+            modelBuilder.Entity("WebAPI.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -286,51 +286,51 @@ namespace WebAPI.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Webshop.Models.Order", b =>
+            modelBuilder.Entity("WebAPI.Models.Order", b =>
                 {
-                    b.HasOne("Webshop.Models.PaymentMethod", "PaymentMethod")
+                    b.HasOne("WebAPI.Models.PaymentMethod", "PaymentMethod")
                         .WithMany()
                         .HasForeignKey("PaymentMethodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Webshop.Models.Status", "Status")
+                    b.HasOne("WebAPI.Models.Status", "Status")
                         .WithMany()
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Webshop.Models.User", "User")
+                    b.HasOne("WebAPI.Models.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Webshop.Models.Product", b =>
+            modelBuilder.Entity("WebAPI.Models.Product", b =>
                 {
-                    b.HasOne("Webshop.Models.Brand", "Brand")
+                    b.HasOne("WebAPI.Models.Brand", "Brand")
                         .WithMany("Products")
                         .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Webshop.Models.Category", "Category")
+                    b.HasOne("WebAPI.Models.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Webshop.Models.ProductOrder", b =>
+            modelBuilder.Entity("WebAPI.Models.ProductOrder", b =>
                 {
-                    b.HasOne("Webshop.Models.Order", "Order")
+                    b.HasOne("WebAPI.Models.Order", "Order")
                         .WithMany()
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Webshop.Models.Product", "Product")
+                    b.HasOne("WebAPI.Models.Product", "Product")
                         .WithMany("ProductOrders")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
