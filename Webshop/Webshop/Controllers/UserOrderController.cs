@@ -64,27 +64,28 @@ namespace Webshop.Controllers
 
         public async Task<ActionResult> OrderDetails(int id)
         {
-            var orderItems = context.ProductOrders.Include(x => x.Product)
-                .Where(x => x.OrderId == id)
-                .Select(x => new OrderItemsModel
-                {
-                    ProductId = x.Product.Id,
-                    ProductName = x.Product.Name,
-                    Photo = x.Product.Photo,
-                    Price = x.Price,
-                    Amount = x.Amount,
-                    Discount = x.Discount,
-                    TotalProductCost = (x.Product.Price * x.Amount),
-                    TotalProductCostDiscount = CalculateDiscount.NewPrice((x.Product.Price * x.Amount), (decimal)x.Product.Discount)
-                })
-                .ToList();
+            //var orderItems = context.ProductOrders.Include(x => x.Product)
+            //    .Where(x => x.OrderId == id)
+            //    .Select(x => new OrderItemsModel
+            //    {
+            //        ProductId = x.Product.Id,
+            //        ProductName = x.Product.Name,
+            //        Photo = x.Product.Photo,
+            //        Price = x.Price,
+            //        Amount = x.Amount,
+            //        Discount = x.Discount,
+            //        TotalProductCost = (x.Product.Price * x.Amount),
+            //        TotalProductCostDiscount = CalculateDiscount.NewPrice((x.Product.Price * x.Amount), (decimal)x.Product.Discount)
+            //    })
+            //    .ToList();
 
-            orderViewModel.Products = orderItems;
-            orderViewModel.OrderTotal = orderItems.Sum(x => x.TotalProductCostDiscount);
+            //orderViewModel.Products = orderItems;
+            //orderViewModel.OrderTotal = orderItems.Sum(x => x.TotalProductCostDiscount);
 
-            var orderDetails = await webAPI.GetOneAsync<OrderItemsModel>("https://localhost:44305/api/orders/" + id);
+            var orderDetails = await webAPI.GetOneAsync<OrderViewModel>("https://localhost:44305/api/orders/" + id);
 
             return View(orderDetails);
+            //return View(orderViewModel);
         }
     }
 }

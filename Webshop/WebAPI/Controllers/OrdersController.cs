@@ -17,8 +17,8 @@ namespace WebAPI.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly WebAPIContext _context;
-        private object orderViewModel;
-
+        //private object orderViewModel;
+        readonly OrderViewModel orderViewModel = new OrderViewModel();
         public OrdersController(WebAPIContext context)
         {
             _context = context;
@@ -42,7 +42,7 @@ namespace WebAPI.Controllers
             //    return NotFound();
             //}
 
-            var orderItems = _context.ProductOrders.Include(x => x.Product)
+            var orderItems = await _context.ProductOrders.Include(x => x.Product)
                 .Where(x => x.OrderId == id)
                 .Select(x => new OrderItemsModel
                 {
@@ -55,13 +55,13 @@ namespace WebAPI.Controllers
                     TotalProductCost = (x.Product.Price * x.Amount),
                     TotalProductCostDiscount = CalculateDiscount.NewPrice((x.Product.Price * x.Amount), (decimal)x.Product.Discount)
                 })
-                .ToList();
+                .ToListAsync();
 
             orderViewModel.Products = orderItems;
             orderViewModel.OrderTotal = orderItems.Sum(x => x.TotalProductCostDiscount);
 
 
-            return order;
+            return orderViewModel;
         }
 
         // PUT: api/Orders/5
