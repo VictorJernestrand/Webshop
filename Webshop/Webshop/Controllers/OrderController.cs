@@ -111,8 +111,9 @@ namespace Webshop.Controllers
 
             if (ModelState.IsValid)
             {
+
                 // Get current logged in user
-                User user = await webAPI.GetOneAsync<User>("https://localhost:44305/api/User/" + User.Identity.Name); //await UserMgr.GetUserAsync(HttpContext.User);
+                User user = context.Users.Where(x => x.Email == User.Identity.Name).FirstOrDefault();
 
                 // Create order
                 Order order = new Order()
