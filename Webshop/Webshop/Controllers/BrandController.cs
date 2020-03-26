@@ -49,45 +49,51 @@ namespace Webshop.Controllers
 
             if (ModelState.IsValid)
             {
-                // If Brand contains an Id, update it, else create new brand!
-                if (model.Id > 0)
-                {
-                    var brand = model.BrandsCollection.Where(x => x.Id == model.Id).FirstOrDefault();
-                    brand.Name = model.Name;
-
-                    var token = await webAPIToken.New();
-                    var response = await webAPI.UpdateAsync(brand, "https://localhost:44305/api/brands/", token);
-
-                    TempData["BrandUpdate"] = "Tillverkaren har uppdaterats!";
-                }
-                else
-                {
-                    // Does brand already exist?
-                    if (model.BrandsCollection.Any(x => x.Name == model.Name))
+                //try
+                //{
+                    // If Brand contains an Id, update it, else create new brand!
+                    if (model.Id > 0)
                     {
-                        ModelState.AddModelError("Name", "Tillverkaren finns redan registrerad!");
-                        return View("index", model);
+                        var brand = model.BrandsCollection.Where(x => x.Id == model.Id).FirstOrDefault();
+                        brand.Name = model.Name;
+
+                        var token = await webAPIToken.New();
+                        var response = await webAPI.UpdateAsync(brand, "https://localhost:44305/api/brands/", token);
                     }
+                    else
+                    {
+                        // Does brand already exist?
+                        if (model.BrandsCollection.Any(x => x.Name == model.Name))
+                        {
+                            ModelState.AddModelError("Name", "Tillverkaren finns redan registrerad!");
+                            return View("index", model);
+                        }
 
-                    // Create new brand
-                    var brand = new Brand() { Name = model.Name };
+                        // Create new brand
+                        var brand = new Brand() { Name = model.Name };
 
-                    // Post to API
-                    var token = await webAPIToken.New();
-                    var response = await webAPI.PostAsync(brand, "https://localhost:44305/api/brands/", token);
+                        // Post to API
+                        var token = await webAPIToken.New();
+                        var response = await webAPI.PostAsync(brand, "https://localhost:44305/api/brands/", token);
 
-                    TempData["NewBrand"] = "Ny tillverkare har skapats!";
-                }
-                    
+                        TempData["NewBrand"] = "Ny tillverkare har skapats!";
+                    }
+                //}
+                //catch (ArgumentNullException)
+                //{
+                //    TempData["TokenError"] = "Shit! Autensieringen misslyckades!";
+                //}
+
                 return RedirectToAction("index", "Brand");
             }
             else
             {
                 return View("index", model);
             }
+
         }
 
-      
+
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {

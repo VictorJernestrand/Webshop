@@ -54,6 +54,9 @@ namespace Webshop.Services
             // The API will validate the old JWT-token and return a new token if old JWT wasn't tampered with.
             var token = await webAPI.PostAsync<APIPayload>(payload, "https://localhost:44305/api/tokenrequest/new");
 
+            if (token.ResponseContent == null)
+                throw new ArgumentNullException("Token was null!");
+
             // Store new token in local cookie
             TokenRefreshCookie = token.ResponseContent;
 

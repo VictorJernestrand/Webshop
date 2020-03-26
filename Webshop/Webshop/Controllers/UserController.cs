@@ -25,12 +25,14 @@ namespace Webshop.Controllers
         public EditUserInfoModel EditUserInfoModel { get; set; }
 
         private WebAPIHandler webAPI;
+        private readonly IConfiguration config;
         private WebAPIToken webAPIToken;
 
         public UserController(WebAPIToken webAPIToken, WebAPIHandler webAPIHandler, IConfiguration config)
         {
             // Instantiate a new WebAPIHandler object
             this.webAPI = webAPIHandler;
+            this.config = config;
             this.webAPIToken = webAPIToken;
         }
 
@@ -49,6 +51,9 @@ namespace Webshop.Controllers
         // Login view
         public ActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+                return RedirectToAction("index", "Home");
+
             return View(LoginModel);
         }
 
@@ -216,6 +221,9 @@ namespace Webshop.Controllers
         {
             // Remove shoppingcart session cookie!
             HttpContext.Session.Remove(Common.CART_COOKIE_NAME);
+
+            // Remove TokenCookie
+            Response.Cookies.Delete(config["RefreshToken:Name"]);
 
             // SignMgr.SignOutAsync();
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
