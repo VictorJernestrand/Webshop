@@ -253,7 +253,7 @@ namespace WebAPI.Migrations
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -501,13 +501,16 @@ namespace WebAPI.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<float>("Discount")
+                    b.Property<decimal>("Discount")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("real")
-                        .HasDefaultValue(0f);
+                        .HasColumnType("decimal(3,2)")
+                        .HasDefaultValue(0m);
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -746,7 +749,9 @@ namespace WebAPI.Migrations
 
                     b.HasOne("WebAPI.Models.Data.User", "User")
                         .WithMany("Orders")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WebAPI.Models.Data.Product", b =>

@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebAPI.Models;
 using WebAPI.Models.Data;
-//using Webshop.Models;
 
 namespace WebAPI.Context
 {
@@ -41,7 +40,8 @@ namespace WebAPI.Context
 
             builder.Entity<ProductOrder>(entity =>
             {
-                entity.Property(x => x.Discount).HasDefaultValue(0);
+                entity.Property(x => x.Discount).HasDefaultValue(0).HasColumnType("decimal(3,2)");
+                entity.Property(x => x.Price).IsRequired().HasColumnType("decimal(18,2)");
                 entity.Property(x => x.Amount).IsRequired();
                 entity.Property(x => x.OrderId).IsRequired();
                 entity.Property(x => x.ProductId).IsRequired();
@@ -60,7 +60,7 @@ namespace WebAPI.Context
             builder.Entity<Product>(entity =>
             {
                 entity.Property(x => x.Name).IsRequired().HasMaxLength(50);
-                entity.Property(x => x.Price).IsRequired();
+                entity.Property(x => x.Price).IsRequired().HasColumnType("decimal(18,2)");
                 entity.Property(x => x.Quantity).IsRequired();
                 entity.Property(x => x.FullDescription).HasMaxLength(10000);
             });

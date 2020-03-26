@@ -5,8 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200325225619_RefreshToken.cs" />
+    <Compile Remove="Migrations\20200325225619_RefreshToken.Designer.cs" />
     <Compile Remove="Migrations\20200325230418_ProductDiscountDefault.cs" />
     <Compile Remove="Migrations\20200325230418_ProductDiscountDefault.Designer.cs" />
+    <Compile Remove="Migrations\20200326184807_RefreshToken.cs" />
+    <Compile Remove="Migrations\20200326184807_RefreshToken.Designer.cs" />
+    <Compile Remove="Migrations\20200326191118_AddRefreshToken.cs" />
+    <Compile Remove="Migrations\20200326191118_AddRefreshToken.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
