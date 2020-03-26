@@ -13,6 +13,8 @@
     <Compile Remove="Migrations\20200326184807_RefreshToken.Designer.cs" />
     <Compile Remove="Migrations\20200326191118_AddRefreshToken.cs" />
     <Compile Remove="Migrations\20200326191118_AddRefreshToken.Designer.cs" />
+    <Compile Remove="Migrations\20200326202516_OrderTest.cs" />
+    <Compile Remove="Migrations\20200326202516_OrderTest.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
