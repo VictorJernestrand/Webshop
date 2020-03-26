@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Context;
+using WebAPI.Models;
 using WebAPI.Models.Data;
 
 namespace WebAPI.Controllers
@@ -30,16 +31,35 @@ namespace WebAPI.Controllers
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategory(int id)
+        public async Task<ActionResult<List<AllProductsViewModel>>> GetCategory(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            //var category = await _context.Categories.FindAsync(id);
 
-            if (category == null)
+
+            // List<Product> categoryList = _context.Products.Include(x => x.Brand).Include(x => x.Category).ToList();
+
+            // List<AllProductsViewModel> categoryViewList = categoryList.Select(x => new AllProductsViewModel(x))
+            //                         .Where(x => x.CategoryId == id).OrderBy(c => c.Name).ToList();
+
+
+            //List<AllProductsViewModel> categoryViewList = await _context.Products.Include(x => x.Brand).Include(x => x.Category)
+            //                                             .Select(x => new AllProductsViewModel(x))
+            //                                               .Where(x => x.Category.Id == id)
+            //                                            .OrderBy(c => c.Name)
+            //                                           .ToListAsync();
+
+            var product = await _context.Products.Include(x=>x.Brand).Include(x => x.Category)
+                                .Where(x => x.Category.Id == id)
+                                .Select(x => new AllProductsViewModel(x))                                 
+                                .ToListAsync();
+
+
+            if (product == null)
             {
                 return NotFound();
             }
 
-            return category;
+            return product;
         }
 
         // PUT: api/Categories/5

@@ -39,12 +39,14 @@ namespace Webshop.Controllers
         }
 
         //This mtd display the Products based on Passed in CategoryId
-        public IActionResult Index(int catid)
+        public async Task<ActionResult<List<AllProductsViewModel>>> Index(int catid)
         {
-           List<Product> categoryList = context.Products.Include(x => x.Brand).Include(x=> x.Category).ToList();
+            //List<Product> categoryList = context.Products.Include(x => x.Brand).Include(x=> x.Category).ToList();
 
-           List<AllProductsViewModel> categoryViewList = categoryList.Select(x => new AllProductsViewModel(x))
-                                   .Where(x => x.CategoryId == catid).OrderBy(c => c.Name).ToList();
+            //List<AllProductsViewModel> categoryViewList = categoryList.Select(x => new AllProductsViewModel(x))
+            //                        .Where(x => x.CategoryId == catid).OrderBy(c => c.Name).ToList();
+
+            List<AllProductsViewModel> categoryViewList = await webAPI.GetAllAsync<AllProductsViewModel>("https://localhost:44305/api/Categories/" + catid);
 
             return View(categoryViewList);                
         }

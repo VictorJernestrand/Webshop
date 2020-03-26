@@ -61,7 +61,7 @@ namespace Webshop.Services
         /// Get a collection of T from API
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<T>> GetAllAsync<T>(string webApiPath, string token = null)
+        public async Task<List<T>> GetAllAsync<T>(string webApiPath, string token = null)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, webApiPath);   
 
@@ -77,6 +77,9 @@ namespace Webshop.Services
 
             return null;
         }
+               
+
+
 
         /// <summary>
         /// Request a single object of T from API
