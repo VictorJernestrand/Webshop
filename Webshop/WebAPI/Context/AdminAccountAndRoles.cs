@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,8 @@ namespace WebAPI.Context
 
             string adminEmail = "admin@webshop.se";
             string password = "Test123!";
+            string firstName = "RockStart";
+            string lastName = "Administrator";
 
             // Admin
 
@@ -36,14 +39,17 @@ namespace WebAPI.Context
             if (await roleManager.FindByNameAsync(userRole) == null)
                 await roleManager.CreateAsync(new AppRole(userRole));
 
+
+            var admin = await userManager.FindByEmailAsync(adminEmail);
+
             // Create Admin!
-            if (await userManager.FindByEmailAsync(adminEmail) == null)
+            if (admin == null)
             {
                 // Create User with admin-email and password
                 User adminUser = new User()
                 {
-                    FirstName = "RockStart",
-                    LastName = "Administrator",
+                    FirstName = firstName,
+                    LastName = lastName,
                     UserName = adminEmail,
                     Email = adminEmail,
                     Password = password,
@@ -57,6 +63,16 @@ namespace WebAPI.Context
                 {
                     await userManager.AddToRoleAsync(adminUser, adminRole);
                 }
+            }
+            else if(admin.FirstName == null || admin.LastName == null)
+            {
+                admin = await context.Users.Where(x => x.Email == adminEmail).FirstOrDefaultAsync();
+
+                admin.FirstName = firstName;
+                admin.LastName = lastName;
+
+                // Store user in database
+                var result = await userManager.UpdateAsync(admin);
             }
 
         }
