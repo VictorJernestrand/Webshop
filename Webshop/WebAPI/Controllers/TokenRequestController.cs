@@ -37,7 +37,7 @@ namespace WebAPI.Controllers
 
         // api/renewtoken
         [AllowAnonymous]
-        [Route("renew")]
+        [Route("new")]
         [HttpPost]
         [Produces("text/plain")]
         public async Task<IActionResult> RenewToken(APIPayload jwtToken)
@@ -56,11 +56,10 @@ namespace WebAPI.Controllers
 
                     // User has a role?
                     bool isAdmin = await userManager.IsInRoleAsync(user, "Admin");
-                    var role = (isAdmin) ? "Admin" : "";
 
                     // Create token and store new refreshtoken in database
                     TokenCreatorService tokenService = new TokenCreatorService(_context, _config);
-                    var token = tokenService.CreateToken(user, role);
+                    var token = tokenService.CreateToken(user, isAdmin);
 
                     return Ok(token);
                 }

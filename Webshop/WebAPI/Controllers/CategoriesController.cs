@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,7 @@ namespace WebAPI.Controllers
         // PUT: api/Categories/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(int id, Category category)
         {
@@ -77,6 +79,7 @@ namespace WebAPI.Controllers
         // POST: api/Categories
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
@@ -87,6 +90,7 @@ namespace WebAPI.Controllers
         }
 
         // DELETE: api/Categories/5
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Category>> DeleteCategory(int id)
         {

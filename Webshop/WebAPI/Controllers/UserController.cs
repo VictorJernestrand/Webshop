@@ -104,7 +104,9 @@ namespace WebAPI.Controllers
             if (result.Succeeded)
             {
                 TokenCreatorService tokenService = new TokenCreatorService(_context, _configure);
-                var newToken = tokenService.CreateToken(updateUser, "User");
+
+                var isAdmin = false;
+                var newToken = tokenService.CreateToken(updateUser, isAdmin);
                 return Ok(newToken);
             }
             else
@@ -127,7 +129,9 @@ namespace WebAPI.Controllers
                     User updatedUser = await userManager.FindByEmailAsync(email);
 
                     TokenCreatorService tokenService = new TokenCreatorService(_context, _configure);
-                    var newToken = tokenService.CreateToken(updatedUser, "User");
+
+                    var isAdmin = false;
+                    var newToken = tokenService.CreateToken(updatedUser, isAdmin);
                     return Ok(newToken);
                 }
             }
@@ -157,15 +161,9 @@ namespace WebAPI.Controllers
                 // Is user Admin?
                 bool isAdmin = await userManager.IsInRoleAsync(user, "Admin");
 
-                string admin = (isAdmin) ? "Admin" : null;
-
                 // Construct JWT token
                 TokenCreatorService tokenService = new TokenCreatorService(_context, _configure);
-                var result = tokenService.CreateToken(user, admin);
-                //AuthenticationCredentials token = new AuthenticationCredentials()
-                //{
-                //    Token = result,
-                //};
+                var result = tokenService.CreateToken(user, isAdmin);
 
                 return Ok(result);
             }

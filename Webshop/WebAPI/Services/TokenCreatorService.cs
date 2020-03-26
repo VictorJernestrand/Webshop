@@ -32,7 +32,7 @@ namespace WebAPI.Services
         /// <param name="user"></param>
         /// <param name="hasRole"></param>
         /// <returns></returns>
-        public string CreateToken(User user, string hasRole = null)
+        public string CreateToken(User user, bool isAdmin)
         {
             // Set up a security key based on the key in appsettings.json
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configure["JWT:Key"]));
@@ -50,19 +50,15 @@ namespace WebAPI.Services
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim("UserEmail", user.Email),
                     new Claim("RefreshToken", newRefreshToken.ToString()),
-                    new Claim(ClaimTypes.Role, (hasRole != null) ? hasRole : "User")
+                    new Claim(ClaimTypes.Role, (isAdmin) ? "Admin" : "User")
             };
-
-            // If user has a role, add it to list of claims
-            /*if (hasRole != null)
-                claims.Add(new Claim(ClaimTypes.Role, hasRole));*/
 
             // Set token settings
             var token = new JwtSecurityToken(
                 issuer: _configure["JWT:Issuer"],
                 audience: _configure["JWT:Issuer"],
                 claims,
-                expires: DateTime.UtcNow.AddSeconds(double.Parse(_configure["JWT:TokenExpireSeconds"])),
+                expires: DateTime.UtcNow.AddSeconds(int.Parse(_configure["JWT:TokenExpireSeconds"])),
                 signingCredentials: credentials
             );
 

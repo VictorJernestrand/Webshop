@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
@@ -86,7 +87,7 @@ namespace WebAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, WebAPIContext context, UserManager<User> userManager, RoleManager<AppRole> roleManager)
         {
             if (env.IsDevelopment())
             {
@@ -112,6 +113,9 @@ namespace WebAPI
 
             // Activate SSL
             app.UseRewriter(new RewriteOptions().AddRedirectToHttpsPermanent());
+
+            // Add a default Admin account and Roles!
+            AdminAccountAndRoles.Initialize(context, userManager, roleManager).Wait();
         }
     }
 }

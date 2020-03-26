@@ -42,7 +42,7 @@ namespace Webshop
 
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
-            services.AddTransient<TokenRequest>();
+            services.AddTransient<WebAPIToken>();
             services.AddSingleton<WebAPIHandler>();
 
             /*

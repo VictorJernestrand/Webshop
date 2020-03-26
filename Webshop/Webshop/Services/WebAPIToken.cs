@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,17 +10,31 @@ using Webshop.Domain;
 
 namespace Webshop.Services
 {
-    public class TokenRequest
+    public class WebAPIToken
     {
         private readonly WebAPIHandler webAPI;
         private readonly IHttpContextAccessor accessor;
-        private readonly IHttpClientFactory clientFactory;
+        //private readonly IHttpClientFactory clientFactory;
+        //private readonly IConfiguration config;
 
-        public TokenRequest(IHttpContextAccessor accessor, IHttpClientFactory clientFactory)
+        private readonly string _tokenCookie;
+        private readonly int _expireMonths;
+
+        /// <summary>
+        /// Request a new JWT-token from WebAPI by providing old JWT-token stored in local token cookie
+        /// </summary>
+        /// <param name="webAPI"></param>
+        /// <param name="accessor"></param>
+        /// <param name="clientFactory"></param>
+        /// <param name="config"></param>
+        public WebAPIToken(WebAPIHandler webAPI, IHttpContextAccessor accessor, IHttpClientFactory clientFactory, IConfiguration config)
         {
+            this.webAPI = webAPI;
             this.accessor = accessor;
-            this.clientFactory = clientFactory;
-            this.webAPI = new WebAPIHandler(clientFactory);
+            //this.clientFactory = clientFactory;
+            //this.config = config;
+            this._tokenCookie = config["RefreshToken:Name"];
+            this._expireMonths = int.Parse(config["RefreshToken:Expire"]);
         }
 
         /// <summary>
@@ -35,11 +50,11 @@ namespace Webshop.Services
                 Token = TokenRefreshCookie // Get old JWT token from cookie
             };
 
-            // Post payload object to API and request a new toke
+            // Post payload object to API and request a new token.
             // The API will validate the old JWT-token and return a new token if old JWT wasn't tampered with.
-            var token = await webAPI.PostAsync<APIPayload>(payload, "https://localhost:44305/api/token/renew");
+            var token = await webAPI.PostAsync<APIPayload>(payload, "https://localhost:44305/api/tokenrequest/new");
 
-            // Store new token in cookie
+            // Store new token in local cookie
             TokenRefreshCookie = token.ResponseContent;
 
             return token.ResponseContent;
@@ -50,8 +65,8 @@ namespace Webshop.Services
         /// </summary>
         public string TokenRefreshCookie
         {
-            get { return accessor.HttpContext.Request.Cookies["TastyCookie"]; }
-            set { accessor.HttpContext.Response.Cookies.Append("TastyCookie", value, Options(6)); }
+            get { return accessor.HttpContext.Request.Cookies[_tokenCookie]; }
+            set { accessor.HttpContext.Response.Cookies.Append(_tokenCookie, value, Options(_expireMonths)); }
         }
 
         /// <summary>

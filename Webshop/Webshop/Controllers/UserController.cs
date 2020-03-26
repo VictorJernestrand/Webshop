@@ -25,13 +25,13 @@ namespace Webshop.Controllers
         public EditUserInfoModel EditUserInfoModel { get; set; }
 
         private WebAPIHandler webAPI;
-        private TokenRequest tokenRequest;
+        private WebAPIToken webAPIToken;
 
-        public UserController(TokenRequest tokenRequest, WebAPIHandler webAPIHandler, IConfiguration config)
+        public UserController(WebAPIToken webAPIToken, WebAPIHandler webAPIHandler, IConfiguration config)
         {
             // Instantiate a new WebAPIHandler object
             this.webAPI = webAPIHandler;
-            this.tokenRequest = tokenRequest;
+            this.webAPIToken = webAPIToken;
         }
 
         // GET: User
@@ -99,7 +99,7 @@ namespace Webshop.Controllers
             {
                 var apiResult = await webAPI.PostAsync<LoginModel>(model, "https://localhost:44305/api/user/login");
 
-                if (apiResult.Status.StatusCode == System.Net.HttpStatusCode.OK)
+                if (apiResult.Status.IsSuccessStatusCode)
                 {
                     await SetAuthCookie(apiResult.ResponseContent, model.RememberUser);
                     return RedirectToAction("Index", "Home");
@@ -225,8 +225,10 @@ namespace Webshop.Controllers
 
         public async Task SetAuthCookie(string tokenString, bool persistent = true)
         {
-            tokenRequest.TokenRefreshCookie = tokenString;
+            // Create local token cookie
+            webAPIToken.TokenRefreshCookie = tokenString;
 
+            // Extract payload from token cookie
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(tokenString);
 
@@ -245,6 +247,7 @@ namespace Webshop.Controllers
                 .FirstOrDefault()
                 .ToString();
 
+            // Set up Claims for ASP authentication cookie
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, userEmail),
@@ -253,12 +256,14 @@ namespace Webshop.Controllers
                 new Claim(ClaimTypes.Role, userRole)
             };
 
+            // Does user want to be remembered?
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var authProperties = new AuthenticationProperties
             {
                 IsPersistent = persistent
             };
 
+            // Bake cookie!
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
         }
 
