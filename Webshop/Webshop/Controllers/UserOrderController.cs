@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,24 +18,27 @@ namespace Webshop.Controllers
         private readonly UserManager<User> userManager;
         OrderItemsModel orderItemsModel = new OrderItemsModel();
         OrderViewModel orderViewModel = new OrderViewModel();
+        private readonly WebAPIHandler webAPI;
 
+        //<<<<<<< HEAD
         //public UserOrderController(WebshopContext context, UserManager<User> userManager)
         //{
         //    this.context = context;
         //    this.userManager = userManager;
         //}
 
-        public UserOrderController(WebshopContext context)
+        public UserOrderController(WebshopContext context, WebAPIHandler webAPI)
         {
             this.context = context;
+            this.webAPI = webAPI;
         }
 
         public async Task<IActionResult> Index()
         {
             // Get current logged in user
-            User user = await userManager.GetUserAsync(HttpContext.User);
+            User user = await context.Users.Where(x => x.Email == User.Identity.Name).FirstOrDefaultAsync();// userManager.GetUserAsync(HttpContext.User);
 
-            var activeOrders = context.Orders.Include(x => x.Status)
+            var allOrders = context.Orders.Include(x => x.Status)
                 .Include(x => x.PaymentMethod)
                 .Where(x => x.UserId == user.Id)
                 .Select(x => new AllUserOrders
@@ -51,52 +55,37 @@ namespace Webshop.Controllers
                 .ToList();
 
 
-            //// Get all orders from user
-            //var productOrders = context.ProductOrders.Include(x => x.Order)
-            //    .Include(x => x.Product)
-            //    .Where(x => x.Order.UserId == user.Id)
-            //    .ToList();
-            //                //.Where(x => x.CartId == cartId && x.Amount > 0)
-            //                //.Select(x => new OrderItemsModel
-            //                //{
-            //                //    ProductId = x.Product.Id,
-            //                //    ProductName = x.Product.Name,
-            //                //    Photo = x.Product.Photo,
-            //                //    Amount = x.Amount,
-            //                //    QuantityInStock = x.Product.Quantity,
-            //                //    Price = x.Product.Price,
-            //                //    Discount = (decimal)x.Product.Discount,
-            //                //    UnitPriceWithDiscount = CostWithDiscount(x.Product.Price, (decimal)x.Product.Discount),
-            //                //    TotalProductCostDiscount = TotalCost(x.Amount, x.Product.Price, (decimal)x.Product.Discount),
-            //                //    TotalProductCost = x.Product.Price * x.Amount
-            //                //})
-            //                //.ToList();
+        
 
-            return View(activeOrders);
+            return View(allOrders);
 
 
         }
 
-        public IActionResult OrderDetails(int id)
+        public async Task<ActionResult> OrderDetails(int id)
         {
-            var orderItems = context.ProductOrders.Include(x => x.Product)
-                .Where(x => x.OrderId == id)
-                .Select(x => new OrderItemsModel
-                {
-                    ProductId = x.Product.Id,
-                    ProductName = x.Product.Name,
-                    Photo = x.Product.Photo,
-                    Price = x.Price,
-                    Amount = x.Amount,
-                    Discount = x.Discount,
-                    TotalProductCost = (x.Product.Price * x.Amount),
-                    TotalProductCostDiscount = CalculateDiscount.NewPrice((x.Product.Price * x.Amount), (decimal)x.Product.Discount)
-                })
-                .ToList();
+            //var orderItems = context.ProductOrders.Include(x => x.Product)
+            //    .Where(x => x.OrderId == id)
+            //    .Select(x => new OrderItemsModel
+            //    {
+            //        ProductId = x.Product.Id,
+            //        ProductName = x.Product.Name,
+            //        Photo = x.Product.Photo,
+            //        Price = x.Price,
+            //        Amount = x.Amount,
+            //        Discount = x.Discount,
+            //        TotalProductCost = (x.Product.Price * x.Amount),
+            //        TotalProductCostDiscount = CalculateDiscount.NewPrice((x.Product.Price * x.Amount), (decimal)x.Product.Discount)
+            //    })
+            //    .ToList();
 
-            orderViewModel.Products = orderItems;
-            orderViewModel.OrderTotal = orderItems.Sum(x => x.TotalProductCostDiscount);
-            return View(orderViewModel);
+            //orderViewModel.Products = orderItems;
+            //orderViewModel.OrderTotal = orderItems.Sum(x => x.TotalProductCostDiscount);
+
+            var orderDetails = await webAPI.GetOneAsync<OrderViewModel>("https://localhost:44305/api/orders/" + id);
+
+            return View(orderDetails);
+            //return View(orderViewModel);
         }
     }
 }
