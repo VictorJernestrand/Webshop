@@ -53,7 +53,7 @@ namespace WebAPI.Controllers
                     Amount = x.Amount,
                     Discount = x.Discount,
                     TotalProductCost = (x.Product.Price * x.Amount),
-                    TotalProductCostDiscount = CalculateDiscount.NewPrice((x.Product.Price * x.Amount), (decimal)x.Product.Discount)
+                    TotalProductCostDiscount = CalculateDiscount.NewPrice((x.Price * x.Amount), x.Discount)
                 })
                 .ToListAsync();
 
