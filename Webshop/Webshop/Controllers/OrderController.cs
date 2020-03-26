@@ -11,7 +11,7 @@ using Webshop.Models;
 using Webshop.Models.Data;
 using Webshop.Services;
 
-namespace Webshop.Controllers
+namespace WebAPI.Controllers
 {
     public class OrderController : Controller
     {
@@ -67,7 +67,8 @@ namespace Webshop.Controllers
                 orderviewmodel.paymentMethodlist = GetPaymentMethods();
 
                 // Get user information from current logged in user
-                User user = await webAPI.GetOneAsync<User>("https://localhost:44305/api/User/" + User.Identity.Name);// await UserMgr.GetUserAsync(HttpContext.User);
+                // User user = await webAPI.GetOneAsync<User>("https://localhost:44305/api/User/" + User.Identity.Name);
+                User user = context.Users.Where(x => x.Email == User.Identity.Name).FirstOrDefault();
                 orderviewmodel.User = user;
 
                 // Check if user has a complete shipping address
