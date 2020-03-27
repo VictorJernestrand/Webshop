@@ -35,12 +35,11 @@ namespace Webshop.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var ewtwt = User.Identity.Name;
-
             // Get current logged in user
             //User user = await context.Users.Where(x => x.Email == User.Identity.Name).FirstOrDefaultAsync();// await userManager.GetUserAsync(HttpContext.User);
 
-            User user = await webAPI.GetOneAsync<User>("https://localhost:44305/api/User/" + User.Identity.Name);
+            //User user = await webAPI.GetOneAsync<User>("https://localhost:44305/api/User/" + User.Identity.Name);
+            User user = await context.Users.Where(x => x.Email == User.Identity.Name).FirstOrDefaultAsync();
 
             var activeOrders = context.Orders.Include(x => x.Status)
                 .Include(x => x.PaymentMethod)
