@@ -18,7 +18,7 @@ namespace WebAPI.Context
         {
             context.Database.EnsureCreated();
 
-            string adminEmail = "admin@webshop.se";
+            string adminEmail = "admin@rockstart.se";
             string password = "Test123!";
             string firstName = "RockStart";
             string lastName = "Administrator";

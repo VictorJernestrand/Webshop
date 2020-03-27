@@ -37,13 +37,11 @@ namespace Webshop.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var ewtwt = User.Identity.Name;
-
             // Get current logged in user
             User user = await context.Users.Where(x => x.Email == User.Identity.Name).FirstOrDefaultAsync();// await userManager.GetUserAsync(HttpContext.User);
             //User user = await webAPI.GetOneAsync<User>("https://localhost:44305/api/User/" + User.Identity.Name);
 
-            var allOrders = context.Orders.Include(x => x.Status)
+            var activeOrders = context.Orders.Include(x => x.Status)
                 .Include(x => x.PaymentMethod)
                 .Where(x => x.UserId == user.Id)
                 .Select(x => new AllUserOrders
@@ -57,12 +55,7 @@ namespace Webshop.Controllers
                 .OrderByDescending(x => x.OrderDate)
                 .ToList();
 
-
-        
-
-            return View(allOrders);
-
-
+            return View(activeOrders);
         }
 
         public async Task<ActionResult> OrderDetails(int id)
