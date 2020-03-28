@@ -107,6 +107,9 @@ namespace Webshop.Services
 
         public bool DeleteImage(string pathToImage)
         {
+            if (pathToImage == "")
+                return true;
+
             var fullPath = Path.Combine(_categoryFolderPath, pathToImage);
             File.Delete(fullPath);
             return ImageExist(fullPath);

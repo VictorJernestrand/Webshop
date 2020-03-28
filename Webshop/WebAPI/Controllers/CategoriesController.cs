@@ -32,9 +32,9 @@ namespace WebAPI.Controllers
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<List<AllProductsViewModel>>> GetCategory(int id)
+        public async Task<ActionResult<Category>> GetCategory(int id)
         {
-            //var category = await _context.Categories.FindAsync(id);
+            var category = await _context.Categories.FindAsync(id);
 
 
             // List<Product> categoryList = _context.Products.Include(x => x.Brand).Include(x => x.Category).ToList();
@@ -49,18 +49,18 @@ namespace WebAPI.Controllers
             //                                            .OrderBy(c => c.Name)
             //                                           .ToListAsync();
 
-            var product = await _context.Products.Include(x=>x.Brand).Include(x => x.Category)
+            /*var product = await _context.Products.Include(x=>x.Brand).Include(x => x.Category)
                                 .Where(x => x.Category.Id == id)
                                 .Select(x => new AllProductsViewModel(x))                                 
-                                .ToListAsync();
+                                .ToListAsync();*/
 
 
-            if (product == null)
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return product;
+            return category;
         }
 
         // PUT: api/Categories/5

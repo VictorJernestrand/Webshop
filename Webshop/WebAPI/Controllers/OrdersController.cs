@@ -9,6 +9,7 @@ using WebAPI.Context;
 using WebAPI.Models.Data;
 using WebAPI.Models;
 using WebAPI.Services;
+using System.Transactions;
 
 namespace WebAPI.Controllers
 {
@@ -99,13 +100,86 @@ namespace WebAPI.Controllers
         // POST: api/Orders
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPost]
-        public async Task<ActionResult<Order>> PostOrder(Order order)
+        [HttpPost("{Id}")]
+        public async Task<ActionResult<Order>> PostOrder(string Id, OrderViewModel orderView)
         {
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+            // Cart Id
+            var cartId = Guid.Parse(Id);
 
-            return CreatedAtAction("GetOrder", new { id = order.Id }, order);
+            User user = await _context.Users.AsNoTracking()
+                .Where(x => x.Email == orderView.UserEmail)
+                .FirstOrDefaultAsync();
+
+            // Create order
+            Order newOrder = new Order()
+            {
+                UserId = user.Id,
+                PaymentMethodId = orderView.PaymentMethodId,
+                StatusId = 1
+            };
+
+            // Keep data consistant! Begin transaction!
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                // Add order to Entity Framework
+                _context.Orders.Add(newOrder);
+                await _context.SaveChangesAsync();
+
+                // Get productinformation from shoppingcart
+                var productOrders = await _context.ShoppingCart.Include(x => x.Product)
+                    .Where(x => x.CartId == cartId && x.Amount > 0)
+                    .Select(x => new ProductOrder
+                    {
+                        OrderId = newOrder.Id,
+                        Price = x.Product.Price,
+                        Amount = x.Amount,
+                        ProductId = x.Product.Id,
+                        Discount = (decimal)x.Product.Discount,
+                    })
+                    .ToListAsync();
+
+                // Add all products to the ProductOrders-table
+                _context.ProductOrders.AddRange(productOrders);
+                await _context.SaveChangesAsync();
+
+                // Update product stock/quanity in database
+                //var products = await _context.ShoppingCart.Include(x => x.Product)
+                //    .Where(x => x.CartId == cartId)
+                //    .Select(x => new Product
+                //    {
+                //        Id = x.Id
+                //    }).ToListAsync();
+
+                //foreach (var product in products)
+                //{
+                //    product.Product.Quantity = (product.Product.Quantity - product.Amount >= 0) ?
+                //                                product.Product.Quantity -= product.Amount : 0;
+                //    _context.Products.Update(product.Product);
+                //    _context.SaveChanges();
+                //}
+
+                foreach(var item in productOrders)
+                {
+                    var product = _context.Products.Find(item.ProductId);
+
+                    product.Quantity = (product.Quantity - item.Amount >= 0) ?
+                                        product.Quantity -= item.Amount : 0;
+
+                    _context.Entry(product).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
+                }
+
+                // Empty cart
+                List<ShoppingCart> cartProducts = _context.ShoppingCart.Where(x => x.CartId == cartId).ToList();
+
+                _context.ShoppingCart.RemoveRange(cartProducts);
+                _context.SaveChanges();
+
+                transaction.Complete();
+
+                return CreatedAtAction("GetOrder", new { id = newOrder.Id }, newOrder);
+            }
+
         }
 
         // DELETE: api/Orders/5

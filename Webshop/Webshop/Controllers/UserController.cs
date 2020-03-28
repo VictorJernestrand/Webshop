@@ -78,7 +78,7 @@ namespace Webshop.Controllers
         {
             var email = User.Identity.Name;
 
-            var user = await webAPI.GetOneAsync<User>("https://localhost:44305/api/User/" + email);
+            var user = await webAPI.GetOneAsync<User>(ApiURL.USERS + email);
             EditUserInfoModel = new EditUserInfoModel()
             {
                 Email           = user.Email,
@@ -102,7 +102,7 @@ namespace Webshop.Controllers
 
             if (ModelState.IsValid)
             {
-                var apiResult = await webAPI.PostAsync<LoginModel>(model, "https://localhost:44305/api/user/login");
+                var apiResult = await webAPI.PostAsync<LoginModel>(model, ApiURL.USERS_LOGIN);
 
                 if (apiResult.Status.IsSuccessStatusCode)
                 {
@@ -126,7 +126,7 @@ namespace Webshop.Controllers
                 // Was the registration form filled out correctly?
                 if (ModelState.IsValid)
                 {
-                    var apiResult = await webAPI.PostAsync<RegisterUserModel>(model, "https://localhost:44305/api/user/register");
+                    var apiResult = await webAPI.PostAsync<RegisterUserModel>(model, ApiURL.USERS_REGISTER);
 
                     if (!apiResult.Status.IsSuccessStatusCode && apiResult.ResponseContent.Length > 0)
                     {
@@ -159,7 +159,7 @@ namespace Webshop.Controllers
         {
             if (ModelState.IsValid)
             {
-                var apiResult = await webAPI.UpdateAsync<UpdateUserPasswordModel>(model, "https://localhost:44305/api/user/loginupdate/" + User.Identity.Name);
+                var apiResult = await webAPI.UpdateAsync<UpdateUserPasswordModel>(model, ApiURL.USERS_LOGIN_UPDATE + User.Identity.Name);
 
                 if (apiResult.Status.IsSuccessStatusCode)
                 {
@@ -191,7 +191,7 @@ namespace Webshop.Controllers
                     City = model.City
                 };
 
-                var apiResult = await webAPI.UpdateAsync<User>(user, "https://localhost:44305/api/user/infoupdate/" + User.Identity.Name);
+                var apiResult = await webAPI.UpdateAsync<User>(user, ApiURL.USERS_INFO_UPDATE + User.Identity.Name);
 
                 if (apiResult.Status.IsSuccessStatusCode)
                 {

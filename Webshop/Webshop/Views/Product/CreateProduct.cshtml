@@ -1,4 +1,4 @@
-﻿@model CreateProductModel
+﻿@model AllProductsViewModel
 
 @{
     ViewData["Title"] = "Rock★Start - Skapa Produkt";
@@ -57,25 +57,21 @@
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="PriceToConvert" class="control-label">Pris</label>
-            <input asp-for="PriceToConvert" class="form-control" />
-            <span asp-validation-for="PriceToConvert" class="text-danger"></span>
+            <label asp-for="Price" class="control-label">Pris</label>
+            <input asp-for="Price" class="form-control" value="@Model.Price.ToString("0")" />
+            <span asp-validation-for="Price" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="DiscountToConvert" class="control-label">Rabatt</label>
-            @*<input asp-for="DiscountToConvert" class="form-control" />*@
-        <select asp-for="DiscountToConvert" class="form-control">
-            <option value="0">Ingen</option>
-
-            @for (var i = 5; i < 100; i += 5)
-            {
-                <option value="@discountToProductByDecimal">@i%</option>
-
-                discountToProductByDecimal += 0.05;
-            }
-        </select>
-
-            <span asp-validation-for="DiscountToConvert" class="text-danger"></span>
+            <label asp-for="Discount" class="control-label">Rabatt</label>
+            <select asp-for="Discount" class="form-control">
+                <option value="0">Ingen</option>
+                @for (var i = 5; i < 100; i += 5)
+                {
+                    <option value="0,@i">@i%</option>
+                }
+                <option value="1">Ingen</option>
+            </select>
+            <span asp-validation-for="Discount" class="text-danger"></span>
         </div>
         <div class="form-group">
             <label asp-for="Quantity" class="control-label">Antal</label>
@@ -86,12 +82,11 @@
             <label asp-for="CategoryId" class="control-label">Kategori</label>
             <br />
             <select asp-for="CategoryId" class="form-control">
-                <option>Välj</option>
-                @foreach (var item in Model.categoryVM)
+                <option value="0">Välj</option>
+                @foreach (var item in Model.Categories)
                 {
                     <option value="@item.Id">@item.Name</option>
                 }
-
             </select>
             <span asp-validation-for="CategoryId" class="text-danger"></span>
         </div>
@@ -99,8 +94,8 @@
             <label asp-for="BrandId" class="control-label">Märke</label>
             <br />
             <select asp-for="BrandId" class="form-control">
-                <option>Välj</option>
-                @foreach (var item in Model.brandVM)
+                <option value="0">Välj</option>
+                @foreach (var item in Model.Brands)
                 {
                     <option value="@item.Id">@item.Name</option>
                 }

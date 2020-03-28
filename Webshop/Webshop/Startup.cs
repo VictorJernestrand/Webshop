@@ -35,11 +35,12 @@ namespace Webshop
         public void ConfigureServices(IServiceCollection services)
         {
             // Set the SqlServer to use the connection string form appsettings.json
+            /*
             services.AddDbContext<WebshopContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlDatabase"));
             });
-
+            */
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
             services.AddTransient<WebAPIToken>();
@@ -76,7 +77,7 @@ namespace Webshop
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, WebshopContext context)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

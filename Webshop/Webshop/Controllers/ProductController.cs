@@ -1,68 +1,72 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Webshop.Context;
 using Webshop.Models;
 using Microsoft.AspNetCore.Hosting;
-using Webshop.Models.Data;
-using System.Text.Json;
 using Webshop.Services;
 
 namespace Webshop.Controllers
 {
     public class ProductController : Controller
     {
-        private readonly WebshopContext context;
-        public CreateProductModel createProductModel = new CreateProductModel();
-        public SpecificationModel productSpecification = new SpecificationModel();
-        private IWebHostEnvironment environment;
-
+        private readonly WebAPIToken webAPIToken;
         private readonly WebAPIHandler webAPI;
+        private readonly IWebHostEnvironment environment;
 
-        public EditProductModel EditProductModel { get; set; }
+        public AllProductsViewModel allProductsViewModel = new AllProductsViewModel();
 
-        public ProductController(WebshopContext context, IWebHostEnvironment env, WebAPIHandler webAPI)
+        // TODO: Safe to delete this file? 
+        //public EditProductModel EditProductModel { get; set; }
+
+        public ProductController(WebAPIHandler webAPI, WebAPIToken webAPIToken, IWebHostEnvironment env)
         {
-            this.context = context;
+            //this.context = context;
+            this.webAPIToken = webAPIToken;
             this.environment = env;
             this.webAPI = webAPI;
         }
 
-        //This mtd display the Products based on Passed in CategoryId
+        // Get all products based on category Id
         public async Task<ActionResult<List<AllProductsViewModel>>> Index(int catid)
         {
-            //List<Product> categoryList = context.Products.Include(x => x.Brand).Include(x=> x.Category).ToList();
-
-            //List<AllProductsViewModel> categoryViewList = categoryList.Select(x => new AllProductsViewModel(x))
-            //                        .Where(x => x.CategoryId == catid).OrderBy(c => c.Name).ToList();
-
-            List<AllProductsViewModel> categoryViewList = await webAPI.GetAllAsync<AllProductsViewModel>("https://localhost:44305/api/Categories/" + catid);
-
+            List<AllProductsViewModel> categoryViewList = await webAPI.GetAllAsync<AllProductsViewModel>(ApiURL.PRODUCTS_IN_CAT + catid);
             return View(categoryViewList);                
         }
 
-        [Authorize(Roles = "Admin")]
-        public  IActionResult CreateProduct()
+        // Get all products
+        public async Task<ActionResult<IEnumerable<AllProductsViewModel>>> AllProducts()
         {
-            createProductModel.categoryVM = context.Categories.ToList();
-            createProductModel.brandVM = context.Brands.ToList();
+            var allProducts = await webAPI.GetAllAsync<AllProductsViewModel>(ApiURL.PRODUCTS);
+            return View(allProducts);
+        }
 
-            return View(createProductModel);           
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteProduct(int Id)
+        {
+            var query = await webAPI.GetOneAsync<AllProductsViewModel>(ApiURL.PRODUCTS + Id);
+
+            if (query == null)
+                return NotFound();
+
+            return View(query);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateProduct()
+        {
+            allProductsViewModel.Categories = await webAPI.GetAllAsync<Category>(ApiURL.CATEGORIES);
+            allProductsViewModel.Brands     = await webAPI.GetAllAsync<Brand>(ApiURL.BRANDS);
+            return View(allProductsViewModel);           
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateProduct(IFormFile file,[Bind]CreateProductModel model)
+        public async Task<ActionResult> CreateProduct(IFormFile file, [Bind]AllProductsViewModel model)
         {
             try
             {
@@ -72,55 +76,37 @@ namespace Webshop.Controllers
                     Product newProduct = new Product()
                     {
                         Name = model.Name,
-                        Price = Convert.ToDecimal(model.PriceToConvert.Replace('.', ',')),
+                        Price = model.Price,
                         Quantity = model.Quantity,
                         CategoryId = model.CategoryId,
                         BrandId = model.BrandId,
                         Description = model.Description,
                         FullDescription = model.FullDescription,
                         Specification = model.Specification,
-                        Discount = Convert.ToSingle(model.DiscountToConvert.ToString().Replace('.', ','))
+                        Discount = model.Discount
                     };
-
-                    // Insert new product in database
-                    context.Add<Product>(newProduct);
-                    await context.SaveChangesAsync();
 
                     if (file != null)
                     {
                         // Set category folder name
-                        var folderName = GetCategoryName(model.CategoryId);
+                        var folderName = await GetCategoryName(model.CategoryId);
 
                         // Store new image
                         ProductImage productImage = new ProductImage(environment.WebRootPath, folderName, file);
-                        newProduct.Photo = productImage.StoreImage(newProduct.Id); ;
-
-                        // Update product in databse with path to product photo
-                        context.Update<Product>(newProduct);
-                        await context.SaveChangesAsync();
+                        newProduct.Photo = productImage.StoreImage(newProduct.Id);
                     }
+
+                    // Request token
+                    var token = await webAPIToken.New();
+                    var apiResonse = await webAPI.PostAsync(newProduct, ApiURL.PRODUCTS, token);
                 }               
 
                else
-                {                 
-                    StringBuilder result = new StringBuilder();
-
-                    foreach (var item in ModelState)
-                    {
-                        string key = item.Key;
-                        var errors = item.Value.Errors;
-
-                        foreach (var error in errors)
-                        {
-                            result.Append(key + " " + error.ErrorMessage);
-                        }
-                    }
-
-                    model.categoryVM = context.Categories.ToList();
-                    model.brandVM = context.Brands.ToList();
-                        TempData["Errors"] = result.ToString();
+               {
+                    model.Categories = await webAPI.GetAllAsync<Category>(ApiURL.CATEGORIES);
+                    model.Brands = await webAPI.GetAllAsync<Brand>(ApiURL.BRANDS);
+                    TempData["Errors"] = "Fyll i formuläret ordentligt";
                     return View(model);
-                    
                 }
 
                 TempData["Succesmsg"] = $"Great!! {model.Name} skapad i databasen"; 
@@ -133,20 +119,17 @@ namespace Webshop.Controllers
                 return RedirectToAction("CreateProduct", "Product");              
             }
         }
-        
-        public async Task<ActionResult<IEnumerable<AllProductsViewModel>>> AllProducts()
-        {
-            var allProducts = await webAPI.GetAllAsync<AllProductsViewModel>("https://localhost:44305/api/products/");
-            return View(allProducts);
-        }
-
+       
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProductConfirmed(int? Id)
         {
-            Product product = await context.Products.FindAsync(Id);
-            context.Remove<Product>(product);
-            context.SaveChanges();
+            // Get product so we can get the image path
+            Product product = await webAPI.GetOneAsync<Product>(ApiURL.PRODUCTS + Id);
+
+            // Send to API and delete product
+            var token = await webAPIToken.New();
+            var apiResonse = await webAPI.DeleteAsync(ApiURL.PRODUCTS + Id, token);
 
             ProductImage deleteImage = new ProductImage(environment.WebRootPath);
             deleteImage.DeleteImage(product.Photo);
@@ -163,75 +146,32 @@ namespace Webshop.Controllers
 
         }
 
-        
-        [Authorize(Roles = "Admin")]
-        public IActionResult DeleteProduct(int Id)
-        {
-            var query = context.Products.Include(x => x.Brand)
-                .Include(x => x.Category)
-                .FirstOrDefault(p => p.Id == Id);
-
-            if (query == null)
-                return NotFound();
-
-            return View(query);
-        }
-
         public async Task<IActionResult> ProductDetail(int id)
         {
-            //var query = context.Products.Include(x => x.Brand).Include(x => x.Category).FirstOrDefault(p => p.Id == Id);
-            //if (query == null)
-            //    return NotFound();
-
-            //query.DiscountPrice = query.Price - (query.Price * (decimal)query.Discount);
-            //return View(query);
-           var prod = await webAPI.GetOneAsync<AllProductsViewModel>("https://localhost:44305/api/products/" + id);
+           var prod = await webAPI.GetOneAsync<AllProductsViewModel>(ApiURL.PRODUCTS + id);
             return View(prod);
         }
 
         [Authorize(Roles = "Admin")]
-        public IActionResult EditProduct(int id)
+        public async Task<IActionResult> EditProduct(int id)
         {
+            // Get data from API
+            var EditProductModel        = await webAPI.GetOneAsync<AllProductsViewModel>(ApiURL.PRODUCTS + id);
+            EditProductModel.Categories = await webAPI.GetAllAsync<Category>(ApiURL.CATEGORIES);
+            EditProductModel.Brands     = await webAPI.GetAllAsync<Brand>(ApiURL.BRANDS);
 
-            var result = context.Products.Include(x => x.Brand)
-                .Include(x => x.Category)
-                .Select(x => new EditProductModel
-                {
-                   Id = x.Id,
-                   Name = x.Name,
-                   Description = x.Description,
-                   Price = x.Price,
-                   PriceToConvert = x.Price.ToString(),
-                   Quantity = x.Quantity,
-                   Photo = x.Photo,
-                   CategoryId = x.CategoryId,
-                   BrandId = x.BrandId,
-                   FullDescription = x.FullDescription,
-                   Specification = x.Specification,
-
-                   DiscountToConvert = x.Discount.ToString()
-                 
-                   
-
-                })
-                .FirstOrDefault(p => p.Id == id);
-
-            EditProductModel = result;
-
-            EditProductModel.categoryVM = context.Categories.ToList();
-            EditProductModel.brandVM = context.Brands.ToList();
             return View(EditProductModel);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditProduct(IFormFile file, [Bind]EditProductModel model)
+        public async Task<ActionResult> EditProduct(IFormFile file, [Bind]AllProductsViewModel model)
         {
             try
             {
-                // Get information about the stored info from database to compare with new info
-                var productInDB = await context.Products.AsNoTracking().FirstOrDefaultAsync(x => x.Id == model.Id);
+                // Get product by id from API
+                var productInDB = await webAPI.GetOneAsync<AllProductsViewModel>(ApiURL.PRODUCTS + model.Id);
 
                 if (ModelState.IsValid)
                 {
@@ -239,7 +179,7 @@ namespace Webshop.Controllers
                     {
                         Id = model.Id,
                         Name = model.Name,
-                        Price = Convert.ToDecimal(model.PriceToConvert.ToString().Replace('.', ',')),
+                        Price = Convert.ToDecimal(model.Price.ToString().Replace('.', ',')),
                         Quantity = model.Quantity,
                         CategoryId = model.CategoryId,
                         BrandId = model.BrandId,
@@ -247,11 +187,11 @@ namespace Webshop.Controllers
                         Photo = model.Photo,
                         FullDescription = model.FullDescription,
                         Specification = model.Specification,
-                        Discount = Convert.ToSingle(model.DiscountToConvert.ToString().Replace('.', ','))
+                        Discount = Convert.ToSingle(model.Discount.ToString().Replace('.', ','))
                     };
 
                     // Set category folder name
-                    var folderName = context.Categories.Find(model.CategoryId).Name;
+                    var folderName = await GetCategoryName(model.CategoryId);
 
                     // Update image
                     if (file != null)
@@ -270,48 +210,35 @@ namespace Webshop.Controllers
                         editproduct.Photo = productImage.MoveImage();
                     }
 
-                    // save
-                    context.Update<Product>(editproduct);
-                    await context.SaveChangesAsync();
+                    // Send to API and update product
+                    var token = await webAPIToken.New();
+                    var apiResonse = await webAPI.UpdateAsync(editproduct, ApiURL.PRODUCTS + editproduct.Id, token);
                 }
 
                 else
                 {
-                    StringBuilder result = new StringBuilder();
-
-                    foreach (var item in ModelState)
-                    {
-                        string key = item.Key;
-                        var errors = item.Value.Errors;
-
-                        foreach (var error in errors)
-                        {
-                            result.Append(key + " " + error.ErrorMessage);
-                        }
-                    }
-
-                    model.categoryVM = context.Categories.ToList();
-                    model.brandVM = context.Brands.ToList();
-                    TempData["Errors"] = result.ToString();
+                    // TODO: Separate this to its own method?
+                    model.Categories = await webAPI.GetAllAsync<Category>(ApiURL.CATEGORIES);
+                    model.Brands     = await webAPI.GetAllAsync<Brand>(ApiURL.BRANDS);
                     return View(model);
-
                 }
 
-                TempData["EditSuccesmsg"] = $"Great!! {model.Name} uppdateras i databasen";
+                TempData["EditSuccesmsg"] = $"{model.Name} har uppdaterats!";
                 return RedirectToAction("AllProducts", "Product");
             }
             catch
             {
-                TempData["EditDatabase error"] = "Sorry!! Något gick fel när du lägger Data till databasen";
+                TempData["EditDatabase error"] = "Oops! Något gick fel. Försök igen eller kontakta support om problemet kvarstår.";
                 return RedirectToAction("EditProduct", "Product");
             }
         }
 
 
         // Get category name by Id
-        private string GetCategoryName(int id)
+        private async Task<string> GetCategoryName(int id)
         { 
-            return context.Categories.Find(id).Name;
+            var category = await webAPI.GetOneAsync<Category>(ApiURL.CATEGORIES + id);
+            return category.Name;
         }
     }
 }

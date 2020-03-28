@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Webshop.Context;
 using Webshop.Models;
 using Webshop.Services;
 using Webshop.Models.Data;
@@ -15,12 +11,10 @@ namespace Webshop.Controllers
     public class ShoppingCartController : Controller
     {
         // SQL connection
-        private readonly WebshopContext _context;
         private readonly WebAPIHandler webAPI;
 
-        public ShoppingCartController(WebshopContext context, WebAPIHandler webAPI)
+        public ShoppingCartController(WebAPIHandler webAPI)
         {
-            this._context = context;
             this.webAPI = webAPI;
         }
 
