@@ -1,21 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Rewrite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Webshop.Context;
-using Webshop.Models;
 using Webshop.Services;
 
 namespace Webshop
@@ -29,24 +18,14 @@ namespace Webshop
 
         public IConfiguration Configuration { get; }
 
-        //readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Set the SqlServer to use the connection string form appsettings.json
-            /*
-            services.AddDbContext<WebshopContext>(options =>
-            {
-                options.UseSqlServer(Configuration.GetConnectionString("SqlDatabase"));
-            });
-            */
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
             services.AddTransient<WebAPIToken>();
             services.AddSingleton<WebAPIHandler>();
 
-            /*
+            /* Old Identity Framwork settings.
             // Set email to be unique for each user
             services.AddIdentity<User, AppRole>(options =>
             {
@@ -61,19 +40,21 @@ namespace Webshop
                 options.ExpireTimeSpan = TimeSpan.FromDays(365);
                 options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
                 options.SlidingExpiration = true;
-            });*/
+            });
+            */
 
             // Needed for IHttpClientFactory to work and accessing our WebAPI
             services.AddHttpClient();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 
-            services.AddMvcCore();//.AddAuthorization(); // Note - this is on the IMvcBuilder, not the service collection
+            services.AddMvcCore().AddAuthorization(); // Note - this is on the IMvcBuilder, not the service collection
 
             services.AddSession(); // Enable session cookies
+
             services.AddControllersWithViews();
+
             services.AddSingleton(_ => Configuration);
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -91,24 +72,20 @@ namespace Webshop
             }
 
             app.UseHttpsRedirection();
+
             app.UseDefaultFiles();
+
             app.UseStaticFiles();
 
             app.UseRouting();
 
-            app.UseSession();           // Enable session cookies. Must be added BEFORE .UseEndpoints!!!
+            app.UseSession(); // Enable session cookies. Must be added BEFORE .UseEndpoints!!!
+
             app.UseCookiePolicy();
 
-            app.UseAuthentication();    // Identifies who is who. For Identity features. Must be added BEFORE Authorization!!!
-            app.UseAuthorization();     // Give different users access to different areas in the application.
+            app.UseAuthentication(); // Identifies who is who. For Identity features. Must be added BEFORE Authorization!!!
 
-
-            /*app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "test",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-            });*/
+            app.UseAuthorization(); // Give different users access to different areas in the application.
 
             app.UseEndpoints(endpoints =>
             {
@@ -119,9 +96,6 @@ namespace Webshop
 
             // Activate SSL
             app.UseRewriter(new RewriteOptions().AddRedirectToHttpsPermanent());
-
-            // Add a default Admin account and Roles!
-            //AdminAccountAndRoles.Initialize(context, userManager, roleManager).Wait();
         }
     }
 }
