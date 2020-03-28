@@ -5,54 +5,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200213173950_InitialCreate.cs" />
-    <Compile Remove="Migrations\20200213173950_InitialCreate.Designer.cs" />
-    <Compile Remove="Migrations\20200213174206_InitialCreate.cs" />
-    <Compile Remove="Migrations\20200213174206_InitialCreate.Designer.cs" />
-    <Compile Remove="Migrations\20200214183013_InitialCreate.cs" />
-    <Compile Remove="Migrations\20200214183013_InitialCreate.Designer.cs" />
-    <Compile Remove="Migrations\20200214185053_InitialCreate.cs" />
-    <Compile Remove="Migrations\20200214185053_InitialCreate.Designer.cs" />
-    <Compile Remove="Migrations\20200214185606_InitialCreate.cs" />
-    <Compile Remove="Migrations\20200214185606_InitialCreate.Designer.cs" />
-    <Compile Remove="Migrations\20200216174406_InitialCreate.cs" />
-    <Compile Remove="Migrations\20200216174406_InitialCreate.Designer.cs" />
-    <Compile Remove="Migrations\20200224134751_robin1.cs" />
-    <Compile Remove="Migrations\20200224134751_robin1.Designer.cs" />
-    <Compile Remove="Migrations\20200224135511_robin1.cs" />
-    <Compile Remove="Migrations\20200224135511_robin1.Designer.cs" />
-    <Compile Remove="Migrations\20200225091608_ee.cs" />
-    <Compile Remove="Migrations\20200225091608_ee.Designer.cs" />
-    <Compile Remove="Migrations\20200225123332_eee.cs" />
-    <Compile Remove="Migrations\20200225123332_eee.Designer.cs" />
-    <Compile Remove="Migrations\20200302202307_rka.cs" />
-    <Compile Remove="Migrations\20200302202307_rka.Designer.cs" />
-    <Compile Remove="Migrations\20200302203232_rka.cs" />
-    <Compile Remove="Migrations\20200302203232_rka.Designer.cs" />
-    <Compile Remove="Migrations\20200302203526_rka.cs" />
-    <Compile Remove="Migrations\20200302203526_rka.Designer.cs" />
-    <Compile Remove="Migrations\20200310171350_1.cs" />
-    <Compile Remove="Migrations\20200310171350_1.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.1" />
-    <Compile Remove="Migrations\20200217084017_Product_Data.cs" />
-    <Compile Remove="Migrations\20200217084017_Product_Data.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Remove="wwwroot\Image\Guitar\guitar3.jpg" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.1">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Image\Elgitarr\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebAPI\WebAPI.csproj" />
   </ItemGroup>
 
 

@@ -34,7 +34,7 @@ $(document).ready(function () {
 
 // Add items to cart using AJAX and fetch framework
 function AddCrapToCart(productId, name) {
-
+    console.log("Add to cart");
     // Declare new FormData object
     let formData = new FormData();
 
@@ -51,9 +51,6 @@ function AddCrapToCart(productId, name) {
         // Handle response
         .then((response) => {
 
-
-            console.log(response);
-
             // If response was ok, update cart and display a message with the product name telling it was added to cart.
             if (response.ok) {
                 UpdateCartButton();
@@ -66,7 +63,7 @@ function AddCrapToCart(productId, name) {
 }
 
 
-
+// Remove 1 in quantity from selected product
 function RemoveCrapFromCart(cartItemId, productId) {
 
     // Declare new FormData object
@@ -82,8 +79,9 @@ function RemoveCrapFromCart(cartItemId, productId) {
     })
         .then((response) => {
             if (response.ok) {
-                UpdateCartButton();
-                DecreaseSingleProductInCart(productId);
+                UpdateCartButton();                         // Update Cartbutton with total products and cost
+                DecreaseSingleProductInCart(productId);     // Remove 1 from selected product from cart
+                DisableBuyButton();                         // Disable "Buy" button
             } else {
                 alert("Skit också, något gick fel. Försök igen eller kontakta vår sketna support!");
             }
@@ -91,14 +89,14 @@ function RemoveCrapFromCart(cartItemId, productId) {
 }
 
 
-
-function DeleteCrapFromCart(cartId) {
+// Delete selected product from cart completely!
+function DeleteCrapFromCart(cartProductId) {
 
     // Declare new FormData object
     let formData = new FormData();
 
     // Append form data
-    formData.append("Id", cartId);
+    formData.append("Id", cartProductId);
     formData.append("__RequestVerificationToken", GetAntiForgerytoken());
 
     fetch("https://localhost:44364/ShoppingCart/DeleteItemFromCart", {
@@ -107,8 +105,11 @@ function DeleteCrapFromCart(cartId) {
     })
         .then((response) => {
             if (response.ok) {
-                document.getElementById("DumpCrap_" + cartId).style.display = "none";
+
+                // Remove <tr> element from table
+                document.getElementById("DumpCrap_" + cartProductId).remove();
                 UpdateCartButton();
+                UpdateBuyButton();
             } else {
                 alert("Skit också, något gick fel. Försök igen eller kontakta vår sketna support!");
             }
@@ -133,6 +134,8 @@ function DisplayResponseMessage(productName) {
 // Update cart button with info on total items and current cost
 function UpdateCartButton() {
 
+    console.log("Update cart button");
+
     // Get cart content using an AJAX call to GetCartContent() actionmethod
     fetch('https://localhost:44364/ShoppingCart/GetCartContent')
 
@@ -151,12 +154,27 @@ function UpdateCartButton() {
 
 
 
+// Update cartbutton information
+function UpdateBuyButton() {
+    let productCount = document.querySelectorAll("tr").length;
+
+    // If cart is empty, reload cart and display a "Cart empty" message!
+    if (productCount == 0) {
+        console.log(productCount);
+        location.reload(true);
+    }
+
+}
+
+
+
 // Update amount for each product in the view (index.cshtml) for ShoppingCart
 function IncreaseSingleProductInCart(productId) {
     let total = parseInt(document.getElementById('cartProductId_' + productId).innerHTML) + 1;
 
     if (total > 0) {
         document.getElementById('DecreaseBtn_' + productId).disabled = false;
+        document.getElementById('CashOut').disabled = false;
     }
 
     if (total >= 50) {
@@ -190,6 +208,19 @@ function GetAntiForgerytoken() {
     return document.getElementById('AntiForgeryToken').innerHTML;
 }
 
+
+// Disable "Buy" button
+function DisableBuyButton() {
+    let elements = document.querySelectorAll(".productCounter");
+
+    for (let i = 0; i < elements.length; i++) {
+        if (elements[i].innerHTML != 0) 
+            return;
+    }
+
+    // Disable "Buy" button!
+    document.getElementById('CashOut').disabled = true;
+}
 
 
 // Invoke UpdateCartButton() as soon as page has loaded

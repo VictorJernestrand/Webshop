@@ -38,6 +38,11 @@
                 <span asp-validation-for="PriceToConvert" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="DiscountToConvert" class="control-label">Rabatt</label>
+                <input asp-for="DiscountToConvert" class="form-control" />
+                <span asp-validation-for="DiscountToConvert" class="text-danger"></span>
+            </div>        
+            <div class="form-group">
                 <label asp-for="Quantity" class="control-label">Antal</label>
                 <input asp-for="Quantity" class="form-control" />
                 <span asp-validation-for="Quantity" class="text-danger"></span>
@@ -89,7 +94,7 @@
                         console.error(error);
                     });
             </script>
-            <p>	&nbsp;</p>       
+            <p>	&nbsp;</p>
             <a>Specifikationer</a>
 
             <textarea asp-for="Specification" id="editor2"></textarea>

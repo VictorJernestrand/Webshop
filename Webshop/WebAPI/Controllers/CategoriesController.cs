@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,38 +25,48 @@ namespace WebAPI.Controllers
 
         // GET: api/Categories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryProductCountModel>>> GetCategories()
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
-            // Get categories and count total instruments in each category
-            //var categories = await _context.Categories.Include(x => x.Products)
-            //                                          .Select(x => new CategoryProductCountModel
-            //                                          {
-            //                                              Id = x.Id,
-            //                                              Name = x.Name,
-            //                                              InstrumentCount = x.Products.Count()
-            //                                          })
-            //                                          .ToListAsync();
-            var categories = await _context.Categories.ToListAsync();
-
-            return Ok(categories);
+            return await _context.Categories.ToListAsync();
         }
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategory(int id)
+        public async Task<ActionResult<List<AllProductsViewModel>>> GetCategory(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            //var category = await _context.Categories.FindAsync(id);
 
-            if (category == null)
+
+            // List<Product> categoryList = _context.Products.Include(x => x.Brand).Include(x => x.Category).ToList();
+
+            // List<AllProductsViewModel> categoryViewList = categoryList.Select(x => new AllProductsViewModel(x))
+            //                         .Where(x => x.CategoryId == id).OrderBy(c => c.Name).ToList();
+
+
+            //List<AllProductsViewModel> categoryViewList = await _context.Products.Include(x => x.Brand).Include(x => x.Category)
+            //                                             .Select(x => new AllProductsViewModel(x))
+            //                                               .Where(x => x.Category.Id == id)
+            //                                            .OrderBy(c => c.Name)
+            //                                           .ToListAsync();
+
+            var product = await _context.Products.Include(x=>x.Brand).Include(x => x.Category)
+                                .Where(x => x.Category.Id == id)
+                                .Select(x => new AllProductsViewModel(x))                                 
+                                .ToListAsync();
+
+
+            if (product == null)
+            {
                 return NotFound();
+            }
 
-            return Ok(category);
+            return product;
         }
-
 
         // PUT: api/Categories/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(int id, Category category)
         {
@@ -88,6 +99,7 @@ namespace WebAPI.Controllers
         // POST: api/Categories
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
@@ -98,6 +110,7 @@ namespace WebAPI.Controllers
         }
 
         // DELETE: api/Categories/5
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Category>> DeleteCategory(int id)
         {

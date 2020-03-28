@@ -11,7 +11,7 @@ using Webshop.Interfaces;
 
 namespace Webshop.Services
 {
-    public class ProductImage : IImage
+    public class ProductImage
     {
         private readonly string _categoryFolderPath;
         private readonly string _folderName;
@@ -19,9 +19,9 @@ namespace Webshop.Services
         private readonly string _currentImage;
         private readonly IFormFile _file;
 
-        public ProductImage()
+        public ProductImage(string pathToRoot)
         {
-            _categoryFolderPath = null;
+            _categoryFolderPath = pathToRoot + @"\image\";
             _folderName = null;
             _oldFolderName = null;
             _currentImage = null;
@@ -59,8 +59,9 @@ namespace Webshop.Services
         {
             if (CategoryFolder(_categoryFolderPath))
             {
+
                 // Set name of file using productId.!
-                var fileName = idproductId + Path.GetExtension(_file.FileName);
+                var fileName = idproductId + "_" + _file.FileName;
 
                 // Set full path to new image
                 var fullFilePath = Path.Combine(_categoryFolderPath, fileName);
@@ -101,18 +102,14 @@ namespace Webshop.Services
                 return null;
         }
 
-        public bool RemoveImage(string imageInCategoryFolder)
-        {
-            // Delete file. If file does not exist.
-            // If the file to be deleted does not exist, no exception is thrown.
-            File.Delete(_categoryFolderPath + imageInCategoryFolder);
-
-            // Check if file still exist
-            return ImageExist(imageInCategoryFolder);
-        }
-
         public bool ImageExist(string pathTofile)
             => File.Exists(Path.Combine(pathTofile));
 
+        public bool DeleteImage(string pathToImage)
+        {
+            var fullPath = Path.Combine(_categoryFolderPath, pathToImage);
+            File.Delete(fullPath);
+            return ImageExist(fullPath);
+        }
     }
 }

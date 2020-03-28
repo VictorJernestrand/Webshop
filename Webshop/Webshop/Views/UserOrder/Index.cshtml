@@ -1,6 +1,55 @@
-﻿@*
+﻿@model List<AllUserOrders>
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
 }
-<h3>Mina feta ordrar!</h3>
+
+<h3>Mina feta aktiva ordrar!</h3>
+
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Datum</th>
+            <th scope="col">Betalmetod</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var order in Model)
+        {
+            if (order.StatusId < 4)
+            {
+        <tr>
+            <td><a asp-action="OrderDetails" asp-route-id="@order.OrderId" >@order.OrderDate</a> </td>
+            <td>@order.OrderPayment</td>
+            <td>@order.OrderStatus</td>
+        </tr>
+            }
+        }
+</table>
+
+<h3>Mina feta levererade ordrar!</h3>
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Datum</th>
+            <th scope="col">Betalmetod</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            if (order.StatusId == 4)
+            {
+            <tr>
+                <td><a asp-action="OrderDetails" asp-route-id="@order.OrderId">@order.OrderDate</a> </td>
+                <td>@order.OrderPayment</td>
+                <td>@order.OrderStatus</td>
+            </tr>
+
+            }
+        }
+</table>

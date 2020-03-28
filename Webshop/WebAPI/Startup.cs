@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using WebAPI.Context;
-
+using WebAPI.Models;
+using WebAPI.Models.Data;
 
 namespace WebAPI
 {
@@ -40,6 +42,13 @@ namespace WebAPI
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlDatabase"));
             });
+
+            // Set email to be unique for each user
+            services.AddIdentity<User, AppRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            }).AddRoles<AppRole>()
+              .AddEntityFrameworkStores<WebAPIContext>();
 
             services.AddCors(options =>
             {
@@ -78,7 +87,7 @@ namespace WebAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, WebAPIContext context, UserManager<User> userManager, RoleManager<AppRole> roleManager)
         {
             if (env.IsDevelopment())
             {
@@ -93,7 +102,7 @@ namespace WebAPI
 
             app.UseCors(_corsePolicyString);
 
-            app.UseAuthorization();
+            app.UseAuthentication();    // Identifies who is who. For Identity features. Must be added BEFORE Authorization!!!
 
             app.UseAuthorization();
 
@@ -104,6 +113,9 @@ namespace WebAPI
 
             // Activate SSL
             app.UseRewriter(new RewriteOptions().AddRedirectToHttpsPermanent());
+
+            // Add a default Admin account and Roles!
+            AdminAccountAndRoles.Initialize(context, userManager, roleManager).Wait();
         }
     }
 }

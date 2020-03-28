@@ -1,17 +1,18 @@
 ﻿//using Microsoft.AspNetCore.Identity;
 //using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebAPI.Models;
 using WebAPI.Models.Data;
-//using Webshop.Models;
 
 namespace WebAPI.Context
 {
-    public class WebAPIContext : DbContext
+    public class WebAPIContext : IdentityDbContext<User, AppRole, int>
     {
         public WebAPIContext()
         {
@@ -23,7 +24,7 @@ namespace WebAPI.Context
             // ...
         }
 
-        public DbSet<User> Users { get; set; }
+        //public DbSet<User> Users { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }
@@ -39,7 +40,8 @@ namespace WebAPI.Context
 
             builder.Entity<ProductOrder>(entity =>
             {
-                entity.Property(x => x.Discount).HasDefaultValue(0);
+                entity.Property(x => x.Discount).HasDefaultValue(0).HasColumnType("decimal(3,2)");
+                entity.Property(x => x.Price).IsRequired().HasColumnType("decimal(18,2)");
                 entity.Property(x => x.Amount).IsRequired();
                 entity.Property(x => x.OrderId).IsRequired();
                 entity.Property(x => x.ProductId).IsRequired();
@@ -58,7 +60,7 @@ namespace WebAPI.Context
             builder.Entity<Product>(entity =>
             {
                 entity.Property(x => x.Name).IsRequired().HasMaxLength(50);
-                entity.Property(x => x.Price).IsRequired();
+                entity.Property(x => x.Price).IsRequired().HasColumnType("decimal(18,2)");
                 entity.Property(x => x.Quantity).IsRequired();
                 entity.Property(x => x.FullDescription).HasMaxLength(10000);
             });
@@ -110,18 +112,18 @@ namespace WebAPI.Context
             );
 
             builder.Entity<Product>().HasData(
-                new Product() { Id = 1, Name = "Stratocaster", Price = 4000, Quantity = 4, CategoryId = 5, Description = "Black and white", BrandId = 2, Photo = @"Guitar\guitar1.jpg" },
-                new Product() { Id = 2, Name = "Precision", Price = 3000, Quantity = 5, CategoryId = 3, Description = "Smooth", BrandId = 2, Photo = @"Piano\piano1.jpg" },
-                new Product() { Id = 3, Name = "Vintera", Price = 4000, Quantity = 2, CategoryId = 3, Description = "Blue bas", BrandId = 2, Photo = @"Piano\piano2.jpg" },
-                new Product() { Id = 4, Name = "Epiphone", Price = 4000, Quantity = 2, CategoryId = 3, Description = "Advanced", BrandId = 1, Photo = @"Piano\piano3.jpg" },
-                new Product() { Id = 5, Name = "Youngster", Price = 1100, Quantity = 8, CategoryId = 2, Description = "For kids", BrandId = 5, Photo = @"Bas\bas1.jpg" },
-                new Product() { Id = 6, Name = "MPS-150X", Price = 3200, Quantity = 4, CategoryId = 2, Description = "For good players", BrandId = 5, Photo = @"Bas\bas2.jpg" },
-                new Product() { Id = 7, Name = "DTX­432K", Price = 5600, Quantity = 2, CategoryId = 1, Description = "Nice set of drums", BrandId = 3, Photo = @"Drum set\drum1.jpg" },
-                new Product() { Id = 8, Name = "P116M", Price = 8000, Quantity = 1, CategoryId = 4, Description = "Black and black", BrandId = 3, Photo = @"Keyboard\keyboard1.jpg" },
-                new Product() { Id = 9, Name = "Calvinova", Price = 8900, Quantity = 1, CategoryId = 4, Description = "Old model", BrandId = 3, Photo = @"Keyboard\keyboard2.jpg" },
-                new Product() { Id = 10, Name = "B2SP", Price = 2300, Quantity = 6, CategoryId = 3, Description = "Digitalpiano", BrandId = 4, Photo = @"Piano\piano4.jpg" },
-                new Product() { Id = 11, Name = "SP-280", Price = 5300, Quantity = 3, CategoryId = 5, Description = "Traveling model", BrandId = 4, Photo = @"Guitar\guitar2.jpg" },
-                new Product() { Id = 12, Name = "P-45", Price = 4900, Quantity = 3, CategoryId = 4, Description = "Our best keyboard", BrandId = 3, Photo = @"Keyboard\keyboard3.jpg" }
+                new Product() { Id = 1, Name = "Stratocaster", Price = 4000, Quantity = 4, CategoryId = 5, Description = "Black and white", BrandId = 2, Photo = @"Guitar\guitar1_original.jpg" },
+                new Product() { Id = 2, Name = "Precision", Price = 3000, Quantity = 5, CategoryId = 3, Description = "Smooth", BrandId = 2, Photo = @"Piano\piano1_original.jpg" },
+                new Product() { Id = 3, Name = "Vintera", Price = 4000, Quantity = 2, CategoryId = 3, Description = "Blue bas", BrandId = 2, Photo = @"Piano\piano2_original.jpg" },
+                new Product() { Id = 4, Name = "Epiphone", Price = 4000, Quantity = 2, CategoryId = 3, Description = "Advanced", BrandId = 1, Photo = @"Piano\piano3_original.jpg" },
+                new Product() { Id = 5, Name = "Youngster", Price = 1100, Quantity = 8, CategoryId = 2, Description = "For kids", BrandId = 5, Photo = @"Bas\bas1_original.jpg" },
+                new Product() { Id = 6, Name = "MPS-150X", Price = 3200, Quantity = 4, CategoryId = 2, Description = "For good players", BrandId = 5, Photo = @"Bas\bas2_original.jpg" },
+                new Product() { Id = 7, Name = "DTX­432K", Price = 5600, Quantity = 2, CategoryId = 1, Description = "Nice set of drums", BrandId = 3, Photo = @"Drum set\drum1_original.jpg" },
+                new Product() { Id = 8, Name = "P116M", Price = 8000, Quantity = 1, CategoryId = 4, Description = "Black and black", BrandId = 3, Photo = @"Keyboard\keyboard1_original.jpg" },
+                new Product() { Id = 9, Name = "Calvinova", Price = 8900, Quantity = 1, CategoryId = 4, Description = "Old model", BrandId = 3, Photo = @"Keyboard\keyboard2_original.jpg" },
+                new Product() { Id = 10, Name = "B2SP", Price = 2300, Quantity = 6, CategoryId = 3, Description = "Digitalpiano", BrandId = 4, Photo = @"Piano\piano4_original.jpg" },
+                new Product() { Id = 11, Name = "SP-280", Price = 5300, Quantity = 3, CategoryId = 5, Description = "Traveling model", BrandId = 4, Photo = @"Guitar\guitar2_original.jpg" },
+                new Product() { Id = 12, Name = "P-45", Price = 4900, Quantity = 3, CategoryId = 4, Description = "Our best keyboard", BrandId = 3, Photo = @"Keyboard\keyboard3_original.jpg" }
 
 
                 );
@@ -130,12 +132,14 @@ namespace WebAPI.Context
                 new PaymentMethod() { Id = 2, Name = "Konto" }
                 );
             builder.Entity<Status>().HasData(
-                new Status() { Id = 1, Name = "Postförskott" },
+                new Status() { Id = 1, Name = "Under behandling" },
                 new Status() { Id = 2, Name = "Förpackning" },
                 new Status() { Id = 3, Name = "Skickad" },
                 new Status() { Id = 4, Name = "Levereras" }
                 );
-        }
+
 
         }
+
+    }
 }

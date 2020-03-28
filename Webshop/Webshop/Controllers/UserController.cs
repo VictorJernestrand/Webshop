@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Webshop.Context;
 using Webshop.Models;
 using Webshop.Services;
@@ -15,32 +19,22 @@ namespace Webshop.Controllers
 {
     public class UserController : Controller
     {
-        private readonly WebshopContext context;
-        private readonly DatabaseCRUD db;
-
         public RegisterUserModel RegisterUserModel { get; set; }
         public LoginModel LoginModel { get; set; }
         public UpdateUserPasswordModel UpdateUserPassword { get; set; }
         public EditUserInfoModel EditUserInfoModel { get; set; }
-        private UserManager<User> UserMgr { get; }
-        private SignInManager<User> SignMgr { get; }
-        private RoleManager<AppRole> RoleMgr { get; }
 
+        private WebAPIHandler webAPI;
+        private readonly IConfiguration config;
+        private WebAPIToken webAPIToken;
 
-        public UserController(WebshopContext context, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<AppRole> roleManager)
+        public UserController(WebAPIToken webAPIToken, WebAPIHandler webAPIHandler, IConfiguration config)
         {
-            // Get database context and connection
-            this.context = context;
-
-            // Instantiate a new CRUD-object
-            db = new DatabaseCRUD(context);
-
-            // Instantiate Auth-services for managing User authorization
-            UserMgr = userManager;
-            SignMgr = signInManager;
-            RoleMgr = roleManager;
+            // Instantiate a new WebAPIHandler object
+            this.webAPI = webAPIHandler;
+            this.config = config;
+            this.webAPIToken = webAPIToken;
         }
-
 
         // GET: User
         public ActionResult Index()
@@ -48,20 +42,20 @@ namespace Webshop.Controllers
             return View();
         }
 
-        
         // Register new customer
         public ActionResult Register()
         {
             return View(RegisterUserModel);
         }
-        
 
         // Login view
         public ActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+                return RedirectToAction("index", "Home");
+
             return View(LoginModel);
         }
-
 
         // View Orders
         [Authorize]
@@ -70,7 +64,6 @@ namespace Webshop.Controllers
         {
             return View();
         }
-
 
         // Login view
         [Authorize]
@@ -83,25 +76,22 @@ namespace Webshop.Controllers
         [HttpGet]
         public async Task<ActionResult> EditUser()
         {
-            // Get user information
-            User user = new User();
+            var email = User.Identity.Name;
 
-            user = await UserMgr.GetUserAsync(HttpContext.User); //context.Users.Where(x => x.UserName == HttpContext.User.Identity.Name).FirstOrDefault();
-
+            var user = await webAPI.GetOneAsync<User>("https://localhost:44305/api/User/" + email);
             EditUserInfoModel = new EditUserInfoModel()
             {
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                PhoneNumber = user.PhoneNumber,
-                StreetAddress = user.StreetAddress,
-                ZipCode = user.ZipCode,
-                City = user.City
+                Email           = user.Email,
+                FirstName       = user.FirstName,
+                LastName        = user.LastName,
+                PhoneNumber     = user.PhoneNumber,
+                StreetAddress   = user.StreetAddress,
+                ZipCode         = user.ZipCode,
+                City            = user.City
             };
 
             return View(EditUserInfoModel);
         }
-
 
         // POST: User/Create
         [HttpPost]
@@ -109,46 +99,22 @@ namespace Webshop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login([Bind]LoginModel model)
         {
-            try
+
+            if (ModelState.IsValid)
             {
-                // First, validate the form. Did the user provide expected data such as email and password?
-                if (ModelState.IsValid)
+                var apiResult = await webAPI.PostAsync<LoginModel>(model, "https://localhost:44305/api/user/login");
+
+                if (apiResult.Status.IsSuccessStatusCode)
                 {
-                    // Make a sign-in request!
-                    Microsoft.AspNetCore.Identity.SignInResult signInResult = await SignMgr.PasswordSignInAsync(model.UserEmail, model.UserPassword, model.RememberUser, false);
-
-                    // Did the user submit correct email and password?
-                    if (signInResult.Succeeded)
-                    {
-                        // Get user information from database
-                        User user = await db.GetUserByUserEmail(model.UserEmail);
-
-                        // Is user admin?
-                        bool isAdmin = await UserMgr.IsInRoleAsync(user, "Admin");
-                        if (isAdmin)
-                        {
-                            // Login succesfull! Redirect to main page :)
-                            return RedirectToAction("Index", "Admin");
-                        }
-
-                        // Bake a new session-cookie with the User's name as the main ingredient ;)
-                        HttpContext.Session.SetString(Common.USER_NAME, user.FirstName + " " + user.LastName);
-
-                        // Login succesfull! Redirect to main page :)
-                        return RedirectToAction("Index", "Home");
-                    }
-
-                    ViewBag.LoginResult = "Felaktiga inloggningsuppgifter! Försök igen!";
+                    await SetAuthCookie(apiResult.ResponseContent, model.RememberUser);
+                    return RedirectToAction("Index", "Home");
                 }
+            }
 
-                return View(model);
-            }
-            catch
-            {
-                return View(model);
-            }
+            ViewBag.LoginResult = "Felaktiga inloggningsuppgifter! Försök igen!";
+            return View(model);
+
         }
-
 
         // POST: User/Create
         [HttpPost]
@@ -160,44 +126,22 @@ namespace Webshop.Controllers
                 // Was the registration form filled out correctly?
                 if (ModelState.IsValid)
                 {
-                    // Initialize a new User-object and populate it with the provided user data
-                    User newUser = new User()
+                    var apiResult = await webAPI.PostAsync<RegisterUserModel>(model, "https://localhost:44305/api/user/register");
+
+                    if (!apiResult.Status.IsSuccessStatusCode && apiResult.ResponseContent.Length > 0)
                     {
-                        UserName = model.Email, // Must be filled due to the autogenerated fields in the AspNetUsers table in the database
-                        FirstName = model.FirstName,
-                        LastName = model.LastName,
-                        Email = model.Email,
-                        Password = model.Password
-                    };
+                        var errors = JsonSerializer.Deserialize<RegisterErrorCodes>(apiResult.ResponseContent, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
 
-                    // Store the new user in the database
-                    IdentityResult result = await UserMgr.CreateAsync(newUser, newUser.Password);
-
-                    // Redirect the user to the login page
-                    if (result.Succeeded)
+                        if (errors.Email[0].Length > 0)
+                            ModelState.AddModelError("Email", "Adressen används redan");
+                    }
+                    else
                     {
                         TempData["RegisterSuccess"] = "Ditt konto har skapats!";
                         return RedirectToAction(nameof(Login));
                     }
-
-                    // Loop through the errors and customize errormessages
-                    foreach (var error in result.Errors)
-                    {
-                        if (error.Code == "DuplicateEmail")
-                            ModelState.AddModelError("Email", "Epostadressen används redan");
-
-                        if (error.Code == "PasswordTooShort" ||
-                            error.Code == "PasswordRequiresNonAlphanumeric" ||
-                            error.Code == "PasswordRequiresLower" ||
-                            error.Code == "PasswordRequiresUpper")
-                            {
-                                ModelState.AddModelError("Password", "Lösenordet måste bestå av minst 6 tecken och innehålla en stor och liten bokstav, en siffra + specialtecken.");
-                            }
-                    }
-
                 }
 
-                // The registration form contains errors, display the view again along with the error information
                 return View(model);
 
             }
@@ -215,42 +159,18 @@ namespace Webshop.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Get current user from database
-                User user = await UserMgr.GetUserAsync(HttpContext.User);
+                var apiResult = await webAPI.UpdateAsync<UpdateUserPasswordModel>(model, "https://localhost:44305/api/user/loginupdate/" + User.Identity.Name);
 
-                // Replace current password with new password
-                IdentityResult result = await UserMgr.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
-
-                // Was passwordreplacement successful?
-                if (result.Succeeded)
+                if (apiResult.Status.IsSuccessStatusCode)
                 {
+                    await SetAuthCookie(apiResult.ResponseContent);
                     TempData["PasswordSuccess"] = "Lösenordet har uppdaterats!";
                     return RedirectToAction(nameof(UpdateLogin));
                 }
-                else
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        if (error.Code == "PasswordMismatch")
-                        {
-                            ModelState.AddModelError("CurrentPassword", "Lösenordet stämmer inte med ditt nuvarande");
-                        }
-
-                        if (error.Code == "PasswordTooShort" ||
-                        error.Code == "PasswordRequiresNonAlphanumeric" ||
-                        error.Code == "PasswordRequiresLower" ||
-                        error.Code == "PasswordRequiresUpper")
-                        {
-                            ModelState.AddModelError("NewPassword", "Lösenordet måste bestå av minst 6 tecken och innehålla en stor och liten bokstav, en siffra + specialtecken.");
-                        }
-                    }
-                }
             }
 
-            // Return model
             return View(model);
         }
-
 
         [Authorize]
         [HttpPost]
@@ -259,36 +179,37 @@ namespace Webshop.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Fetch user from database
-                User user = await UserMgr.GetUserAsync(HttpContext.User);
-
-                // Update user with the new information
-                user.UserName       = model.Email;
-                user.Email          = model.Email;
-                user.FirstName      = model.FirstName;
-                user.LastName       = model.LastName;
-                user.PhoneNumber    = model.PhoneNumber;
-                user.StreetAddress  = model.StreetAddress;
-                user.ZipCode        = model.ZipCode;
-                user.City           = model.City;
-
-                // Save changes
-                var result = await UserMgr.UpdateAsync(user);
-                if (result.Succeeded)
+                User user = new User()
                 {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    PhoneNumber = model.PhoneNumber,
+                    StreetAddress = model.StreetAddress,
+                    ZipCode = model.ZipCode,
+                    City = model.City
+                };
+
+                var apiResult = await webAPI.UpdateAsync<User>(user, "https://localhost:44305/api/user/infoupdate/" + User.Identity.Name);
+
+                if (apiResult.Status.IsSuccessStatusCode)
+                {
+                    // If email was updated, update token cookie and authcookie with new criterias!
+                    if (!User.Identity.Name.Equals(model.Email))
+                    {
+                        await SetAuthCookie(apiResult.ResponseContent);
+                    }
+
                     TempData["UpdateSuccess"] = "Din information har uppdaterats!";
                     return RedirectToAction(nameof(EditUser));
                 }
                 else
                 {
-                    foreach(var error in result.Errors)
-                    {
-                        if (error.Code == "DuplicateUserName" || error.Code == "DuplicateEmail")
-                        {
-                            ModelState.AddModelError("Email", "Epostadressen används redan");
-                            break;
-                        }
-                    }
+                    var errors = JsonSerializer.Deserialize<List<ErrorCodes>>(apiResult.ResponseContent, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+
+                    if (errors.Any(x => x.Code == "DuplicateEmail"))
+                        ModelState.AddModelError("Email", "Adressen används redan");
                 }
             }
 
@@ -296,11 +217,75 @@ namespace Webshop.Controllers
         }
 
 
-        public IActionResult LogOut()
+        public async Task<IActionResult> LogOut()
         {
-            SignMgr.SignOutAsync();
+            // Remove shoppingcart session cookie!
+            HttpContext.Session.Remove(Common.CART_COOKIE_NAME);
+
+            // Remove TokenCookie
+            Response.Cookies.Delete(config["RefreshToken:Name"]);
+
+            // SignMgr.SignOutAsync();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }
 
+
+        public async Task SetAuthCookie(string tokenString, bool persistent = true)
+        {
+            // Create local token cookie
+            webAPIToken.TokenRefreshCookie = tokenString;
+
+            // Extract payload from token cookie
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(tokenString);
+
+            var userEmail = token.Claims.Where(x => x.Type == "UserEmail")
+                .Select(x => x.Value)
+                .FirstOrDefault()
+                .ToString();
+
+            var userName = token.Claims.Where(x => x.Type == "Name")
+                .Select(x => x.Value)
+                .FirstOrDefault()
+                .ToString();
+
+            var userRole = token.Claims.Where(x => x.Type == ClaimTypes.Role)
+                .Select(x => x.Value)
+                .FirstOrDefault()
+                .ToString();
+
+            // Set up Claims for ASP authentication cookie
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, userEmail),
+                new Claim(ClaimTypes.Name, userEmail),
+                new Claim("FullName", userName),
+                new Claim(ClaimTypes.Role, userRole)
+            };
+
+            // Does user want to be remembered?
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = persistent
+            };
+
+            // Bake cookie!
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+        }
+
     }
+
+    public class RegisterErrorCodes
+    {
+        public List<string> Email { get; set; }
+    }
+
+    public class ErrorCodes
+    {
+        public string Code { get; set; }
+        public string Description { get; set; }
+    }
+
 }

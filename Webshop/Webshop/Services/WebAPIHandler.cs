@@ -21,8 +21,6 @@ namespace Webshop.Services
         const string USER_AGENT_VALUE   = "WebshopProject";
         const string ACCEPT_VALUE       = "application/json";
 
-
-
         /// <summary>
         /// Instantiate a new WebAPIHandler with a IHttpClientFactory parameter.
         /// The IHttpClientFactory object is required for communicating with the API
@@ -63,7 +61,7 @@ namespace Webshop.Services
         /// Get a collection of T from API
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<T>> GetAllAsync<T>(string webApiPath, string token = null)
+        public async Task<List<T>> GetAllAsync<T>(string webApiPath, string token = null)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, webApiPath);   
 
@@ -79,6 +77,9 @@ namespace Webshop.Services
 
             return null;
         }
+               
+
+
 
         /// <summary>
         /// Request a single object of T from API
@@ -107,21 +108,25 @@ namespace Webshop.Services
         /// <param name="webApiPath"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> UpdateAsync<T>(T obj, string webApiPath, string token)
+        public async Task<APIResponseData> UpdateAsync<T>(T obj, string webApiPath, string token = null)
         {
             HttpResponseMessage response = null;
             using (var request = new HttpRequestMessage(HttpMethod.Put, webApiPath))
             {
                 // Send JWT authentication token
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                if(token != null)
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var serialized = JsonSerializer.Serialize(obj);
                 request.Content = new StringContent(serialized, Encoding.UTF8, ACCEPT_VALUE);
 
                 response = await _clientFactory.SendAsync(request);
+
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                return new APIResponseData() { Status = response, ResponseContent = responseString };
             }
 
-            return response;
         }
 
         /// <summary>
@@ -131,12 +136,14 @@ namespace Webshop.Services
         /// <param name="webApiPath"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<bool> DeleteAsync<T>(string webApiPath, string token)
+        public async Task<bool> DeleteAsync(string webApiPath, string token = null)
         {
             HttpResponseMessage response = null;
             using (var request = new HttpRequestMessage(HttpMethod.Delete, webApiPath))
             {
+                if (token != null)
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
                 response = await _clientFactory.SendAsync(request);
             }
 
