@@ -35,16 +35,16 @@ namespace WebAPI.Controllers
             }
 
             // Are there any products in the cart??
-            var content = await webAPI.GetAllAsync<ShoppingCartModel>($"https://localhost:44305/api/cart/content/{cartId}");
+            var content = await webAPI.GetAllAsync<ShoppingCartModel>(ApiURL.CARTS_CONTENT + cartId);
             if (content.Count == 0)
             {
                 return RedirectToAction("Index", "ShoppingCart");
             }
 
-            // IS user logged in?
+            // Is user logged in?
             if (User.Identity.IsAuthenticated)
             {
-                orderviewmodel = await webAPI.GetOneAsync<OrderViewModel>($"https://localhost:44305/api/cart/content_and_payment/{cartId}/{User.Identity.Name}");
+                orderviewmodel = await webAPI.GetOneAsync<OrderViewModel>(ApiURL.CARTS_CONTENT_PAY + $"{cartId}/{User.Identity.Name}");
 
                 // Does user have a complete shippingaddress?
                 if (!orderviewmodel.AddressComplete)
@@ -76,7 +76,8 @@ namespace WebAPI.Controllers
                 var cartId = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
 
                 // Send order to API
-                var apiResult = await webAPI.PostAsync(model, "https://localhost:44305/api/orders/" + cartId);
+                var token = await webAPIToken.New();
+                var apiResult = await webAPI.PostAsync(model, ApiURL.ORDERS + cartId, token);
 
                 if (apiResult.Status.IsSuccessStatusCode)
                     return RedirectToAction(nameof(ThankYou));
@@ -91,7 +92,7 @@ namespace WebAPI.Controllers
 
         public async Task<IActionResult> ThankYou()
         {
-            User user = await webAPI.GetOneAsync<User>(ApiURL.USERS + User.Identity.Name);// await UserMgr.GetUserAsync(HttpContext.User);
+            User user = await webAPI.GetOneAsync<User>(ApiURL.USERS + User.Identity.Name);
             loggedInUserName.Name = user.FirstName;
             return View(loggedInUserName);
         }

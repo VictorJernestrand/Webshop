@@ -31,5 +31,14 @@ namespace Webshop.Services
         public const string CATEGORIES          = URL + "categories/";
         public const string BRANDS              = URL + "brands/";
         public const string PAYMENTS            = URL + "payments/";
+
+        // API-paths to cart-contorllers
+        public const string CARTS               = URL + "carts/";
+        public const string CARTS_CONTENT       = URL + "carts/content/";
+        public const string CARTS_CONTENT_PAY   = URL + "carts/content_and_payment/";
+
+        // API-paths to order-controllers
+        public const string ORDERS              = URL + "orders/";
+        public const string ORDERS_BY_USER      = URL + "orders/userorders/";
     }
 }

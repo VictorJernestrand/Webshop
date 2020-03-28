@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Context;
@@ -10,16 +9,17 @@ using WebAPI.Models.Data;
 using WebAPI.Models;
 using WebAPI.Services;
 using System.Transactions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebAPI.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class OrdersController : ControllerBase
     {
         private readonly WebAPIContext _context;
-        //private object orderViewModel;
-        readonly OrderViewModel orderViewModel = new OrderViewModel();
+
         public OrdersController(WebAPIContext context)
         {
             _context = context;
@@ -32,16 +32,47 @@ namespace WebAPI.Controllers
             return await _context.Orders.ToListAsync();
         }
 
+
+        
+        [HttpGet]
+        [Route("userorders/{customerEmail}")]
+        public async Task<ActionResult<IEnumerable<AllUserOrders>>> GetAllUserOrderByOrderId(string customerEmail)
+        {
+            // Get current logged in user
+            User user = await _context.Users.Where(x => x.Email == customerEmail).FirstOrDefaultAsync();
+
+            // Return badrequest if user doesn't exit
+            if (user == null)
+                return BadRequest();
+
+            // Collect orders by user id
+            var activeOrders = await _context.Orders.Include(x => x.Status)
+                .Include(x => x.PaymentMethod)
+                .Where(x => x.UserId == user.Id)
+                .Select(x => new AllUserOrders
+                {
+                    OrderId = x.Id,
+                    OrderDate = x.OrderDate,
+                    OrderStatus = x.Status.Name,
+                    OrderPayment = x.PaymentMethod.Name,
+                    StatusId = x.StatusId
+                })
+                .OrderByDescending(x => x.OrderDate)
+                .ToListAsync();
+
+            // Orders exist?
+            if (activeOrders == null)
+                return NotFound();
+
+            return Ok(activeOrders);
+        }
+
+
         // GET: api/Orders/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<OrderViewModel>> GetOrder(int id)
+        public async Task<ActionResult<OrderViewModel>> GetOrderById(int id)
         {
-            //var order = await _context.Orders.FindAsync(id);
-
-            //if (order == null)
-            //{
-            //    return NotFound();
-            //}
+            OrderViewModel orderViewModel = new OrderViewModel();
 
             var orderItems = await _context.ProductOrders.Include(x => x.Product)
                 .Where(x => x.OrderId == id)
@@ -53,16 +84,20 @@ namespace WebAPI.Controllers
                     Price = x.Price,
                     Amount = x.Amount,
                     Discount = x.Discount,
-                    TotalProductCost = (x.Product.Price * x.Amount),
+                    TotalProductCost = (x.Price * x.Amount),
                     TotalProductCostDiscount = CalculateDiscount.NewPrice((x.Price * x.Amount), x.Discount)
                 })
                 .ToListAsync();
 
+            if (orderItems == null)
+            {
+                return NotFound();
+            }
+
             orderViewModel.Products = orderItems;
             orderViewModel.OrderTotal = orderItems.Sum(x => x.TotalProductCostDiscount);
 
-
-            return orderViewModel;
+            return Ok(orderViewModel);
         }
 
         // PUT: api/Orders/5
@@ -142,22 +177,7 @@ namespace WebAPI.Controllers
                 _context.ProductOrders.AddRange(productOrders);
                 await _context.SaveChangesAsync();
 
-                // Update product stock/quanity in database
-                //var products = await _context.ShoppingCart.Include(x => x.Product)
-                //    .Where(x => x.CartId == cartId)
-                //    .Select(x => new Product
-                //    {
-                //        Id = x.Id
-                //    }).ToListAsync();
-
-                //foreach (var product in products)
-                //{
-                //    product.Product.Quantity = (product.Product.Quantity - product.Amount >= 0) ?
-                //                                product.Product.Quantity -= product.Amount : 0;
-                //    _context.Products.Update(product.Product);
-                //    _context.SaveChanges();
-                //}
-
+                // Update product quantity
                 foreach(var item in productOrders)
                 {
                     var product = _context.Products.Find(item.ProductId);
@@ -169,17 +189,21 @@ namespace WebAPI.Controllers
                     await _context.SaveChangesAsync();
                 }
 
-                // Empty cart
-                List<ShoppingCart> cartProducts = _context.ShoppingCart.Where(x => x.CartId == cartId).ToList();
-
+                // Empty cart.
+                List<ShoppingCart> cartProducts = await _context.ShoppingCart.Where(x => x.CartId == cartId).ToListAsync();
                 _context.ShoppingCart.RemoveRange(cartProducts);
                 _context.SaveChanges();
 
+                // Keep cart clean by removing carts older than 3 days
+                List<ShoppingCart> oldCarts = await _context.ShoppingCart.Where(x => x.TimeStamp.AddDays(3) <= DateTime.Now).ToListAsync();
+                _context.ShoppingCart.RemoveRange(oldCarts);
+                _context.SaveChanges();
+
+
                 transaction.Complete();
 
-                return CreatedAtAction("GetOrder", new { id = newOrder.Id }, newOrder);
+                return CreatedAtAction("GetOrderById", new { id = newOrder.Id }, newOrder);
             }
-
         }
 
         // DELETE: api/Orders/5

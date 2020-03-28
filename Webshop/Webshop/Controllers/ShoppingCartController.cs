@@ -23,7 +23,7 @@ namespace Webshop.Controllers
             if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) != null)
             {
                 var cartId = HttpContext.Session.GetString(Common.CART_COOKIE_NAME);
-                var result = await webAPI.GetAllAsync<ShoppingCartModel>("https://localhost:44305/api/cart/content/" + cartId);
+                var result = await webAPI.GetAllAsync<ShoppingCartModel>("https://localhost:44305/api/carts/content/" + cartId);
                 return View(result);
             }
 
@@ -48,7 +48,7 @@ namespace Webshop.Controllers
                 Amount = 1
             };
 
-            await webAPI.PostAsync<ShoppingCart>(shoppingCart, "https://localhost:44305/api/cart");
+            await webAPI.PostAsync<ShoppingCart>(shoppingCart, "https://localhost:44305/api/carts");
         }
 
         [HttpPost]
@@ -57,21 +57,21 @@ namespace Webshop.Controllers
         {
             // Remove product from cart!!
             if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) != null)
-                await webAPI.PostAsync<int>(id, "https://localhost:44305/api/cart/remove/product");
+                await webAPI.PostAsync<int>(id, "https://localhost:44305/api/carts/remove/product");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task DeleteItemFromCart(int id)
         {
-            await webAPI.DeleteAsync("https://localhost:44305/api/cart/delete/" + id);
+            await webAPI.DeleteAsync("https://localhost:44305/api/carts/delete/" + id);
         }
 
         [HttpGet]
         [Produces("application/json")]
         public async Task<CartButtonInfoModel> GetCartContent()
         {
-            var result = await webAPI.GetOneAsync<CartButtonInfoModel>("https://localhost:44305/api/cart/" + HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
+            var result = await webAPI.GetOneAsync<CartButtonInfoModel>("https://localhost:44305/api/carts/" + HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
             return (result != null) ? result : new CartButtonInfoModel();
         }
     }

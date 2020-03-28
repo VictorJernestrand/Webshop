@@ -14,11 +14,11 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CartController : ControllerBase
+    public class CartsController : ControllerBase
     {
         private readonly WebAPIContext _context;
 
-        public CartController(WebAPIContext context)
+        public CartsController(WebAPIContext context)
         {
             _context = context;
         }
