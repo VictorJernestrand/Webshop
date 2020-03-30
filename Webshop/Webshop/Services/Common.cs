@@ -25,14 +25,15 @@ namespace Webshop.Services
         public const string USERS_LOGIN_UPDATE  = URL + "users/loginupdate/";
         public const string USERS_INFO_UPDATE   = URL + "users/infoupdate/";
 
-        // API-paths to content-controllers
+        // API-paths to products-controllers
         public const string PRODUCTS            = URL + "products/";
         public const string PRODUCTS_IN_CAT     = URL + "products/category/";
         public const string CATEGORIES          = URL + "categories/";
         public const string BRANDS              = URL + "brands/";
         public const string PAYMENTS            = URL + "payments/";
+        public const string SEARCH              = URL + "products/search/";
 
-        // API-paths to cart-contorllers
+        // API-paths to cart-controllers
         public const string CARTS               = URL + "carts/";
         public const string CARTS_CONTENT       = URL + "carts/content/";
         public const string CARTS_CONTENT_PAY   = URL + "carts/content_and_payment/";
