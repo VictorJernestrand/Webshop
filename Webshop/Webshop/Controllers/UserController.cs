@@ -233,9 +233,6 @@ namespace Webshop.Controllers
 
         public async Task SetAuthCookie(string tokenString, bool persistent = true)
         {
-            // Create local token cookie
-            webAPIToken.TokenRefreshCookie = tokenString;
-
             // Extract payload from token cookie
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(tokenString);
@@ -268,11 +265,15 @@ namespace Webshop.Controllers
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var authProperties = new AuthenticationProperties
             {
-                IsPersistent = persistent
+                IsPersistent = persistent,
+                ExpiresUtc = DateTime.UtcNow.AddMonths(int.Parse(config["AuthCookie:Expire"]))
             };
 
-            // Bake cookie!
+            // Bake authentication cookie!
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+            // Bake Token-Cookie
+            webAPIToken.TokenRefreshCookie = tokenString;
         }
 
     }

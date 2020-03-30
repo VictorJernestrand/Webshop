@@ -89,7 +89,6 @@ namespace WebAPI.Controllers
 
         }
 
-
         private ClaimsPrincipal ValidateToken(string token)
         {
             TokenValidationParameters validationParameters = new TokenValidationParameters
