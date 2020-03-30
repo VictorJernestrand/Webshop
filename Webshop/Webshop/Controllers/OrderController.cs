@@ -248,6 +248,29 @@ namespace WebAPI.Controllers
             loggedInUserName.Name = user.FirstName;
             return View(loggedInUserName);
         }
+         
+        public IActionResult OrderStatus()
+        {
+            var getstatus = context.Statuses.ToList();
+
+            // List<ProductOrder> getAllorders = context.ProductOrders.ToList();
+            List<ProductOrderViewModel> productOrderViewModel = context.ProductOrders
+                                                                .Include(x=>x.Order)
+                                                               .Select(x => new ProductOrderViewModel()
+                                                               {
+                                                                   orderId=x.OrderId,
+                                                                   productId=x.ProductId,
+                                                                   Quantity=x.Amount,
+                                                                   price=x.Price,
+                                                                   orderCreationDate=x.Order.OrderDate, 
+                                                                   orderstatus=x.Order.Status.Name,
+                                                                   statusId=x.Order.Status.Id,
+                                                                   statuslist=getstatus
+                                                               }).ToList();
+            
+            
+            return View(productOrderViewModel);
+        }
 
     }
 }

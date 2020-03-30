@@ -1,0 +1,54 @@
+﻿@model List<ProductOrderViewModel>
+@{
+    ViewData["Title"] = "OrderStatus";
+}
+
+<h1>OrderStatus</h1>
+<form method="post">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>OrderId</th>
+                <th>ProductId</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Order Creation Date</th>
+                <th>Order Status</th>
+                <th>Change Order Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.orderId</td>
+                    <td>@item.productId</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.price</td>
+                    <td>@item.orderCreationDate</td>
+                    <td>@item.orderstatus</td>
+                    @if (item.statusId != 4)
+                    {
+                        <td>
+                            <select>
+                                <option>--Byta Order Status--</option>
+                                @foreach (var statusname in item.statuslist)
+                                {
+                                    <option value="@statusname.Id">@statusname.Name</option>
+                                }
+
+                            </select>
+                        </td>
+                    }
+                
+                    <td>
+                        <button class="btn btn-success"> Update OrderStatus</button>
+                    </td>
+                
+                   
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
