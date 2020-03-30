@@ -1,0 +1,66 @@
+﻿@model List<ProductOrderViewModel>
+
+@{
+    ViewData["Title"] = "PopulateOrderDetails";
+}
+
+<h1>PopulateOrderDetails</h1>
+
+    <div>
+            <h3>Order Details</h3>
+        </div>
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>Product Id</td>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Order Creation Date</th>
+                    <th>Order Status</th>
+                    <th>Change Order Status</th>
+                </tr>
+            </thead>
+            
+            </table>
+        </div>
+
+
+
+
+
+
+<form method="post">
+    @foreach (var item in Model)
+    {
+
+        <div>
+            <table class="table">
+               
+                <tbody>
+                    <tr>
+                        <td>@item.orderId</td>
+                        <td>@item.productId</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.price</td>
+                        <td>@item.orderCreationDate</td>
+                        <td>@item.orderstatus</td>
+                        <td>
+                            <select>
+                                <option>--Byta Order Status--</option>
+                                @foreach (var statusname in item.statuslist)
+                                {
+                                    <option value="@statusname.Id">@statusname.Name</option>
+                                }
+
+                            </select>
+                        </td>
+
+</tbody>
+            </table>
+        </div>
+    }  
+        
+    
+</form>
+

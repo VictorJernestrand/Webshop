@@ -1,0 +1,11 @@
+﻿@model List<Order>
+
+@{
+    ViewData["Title"] = "OrderStatus_test";
+}
+<h3>Order Numbers</h3>
+@foreach(var item in Model)
+{
+    <a  asp-action="PopulateOrderDetails"  asp-route-orderid="@item.Id">@item.Id</a>
+    <br />
+}
