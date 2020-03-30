@@ -9,19 +9,14 @@ using Webshop.Models;
 
 namespace Webshop.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-
-        private UserManager<User> UserMgr { get; set; }
-        private RoleManager<AppRole> RoleMgr { get; set; }
-
-        public AdminController(UserManager<User> userManager, RoleManager<AppRole> roleManager)
+        public AdminController()
         {
-            UserMgr = userManager;
-            RoleMgr = roleManager;
-        }
 
-        [Authorize(Roles = "Admin")]
+        }
+        
         public IActionResult Index()
         {
             return View();

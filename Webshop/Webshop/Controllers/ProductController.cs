@@ -25,26 +25,27 @@ namespace Webshop.Controllers
         public CreateProductModel createProductModel = new CreateProductModel();
         public SpecificationModel productSpecification = new SpecificationModel();
         private IWebHostEnvironment environment;
+
         private readonly WebAPIHandler webAPI;
-        private DatabaseCRUD databaseCRUD;
 
         public EditProductModel EditProductModel { get; set; }
 
         public ProductController(WebshopContext context, IWebHostEnvironment env, WebAPIHandler webAPI)
         {
             this.context = context;
-            databaseCRUD = new DatabaseCRUD(context);
             this.environment = env;
             this.webAPI = webAPI;
         }
 
         //This mtd display the Products based on Passed in CategoryId
-        public IActionResult Index(int catid)
+        public async Task<ActionResult<List<AllProductsViewModel>>> Index(int catid)
         {
-           List<Product> categoryList = context.Products.Include(x => x.Brand).Include(x=> x.Category).ToList();
+            //List<Product> categoryList = context.Products.Include(x => x.Brand).Include(x=> x.Category).ToList();
 
-           List<AllProductsViewModel> categoryViewList = categoryList.Select(x => new AllProductsViewModel(x))
-                                   .Where(x => x.CategoryId == catid).OrderBy(c => c.Name).ToList();
+            //List<AllProductsViewModel> categoryViewList = categoryList.Select(x => new AllProductsViewModel(x))
+            //                        .Where(x => x.CategoryId == catid).OrderBy(c => c.Name).ToList();
+
+            List<AllProductsViewModel> categoryViewList = await webAPI.GetAllAsync<AllProductsViewModel>("https://localhost:44305/api/Categories/" + catid);
 
             return View(categoryViewList);                
         }
@@ -82,21 +83,21 @@ namespace Webshop.Controllers
                     };
 
                     // Insert new product in database
-                    await databaseCRUD.InsertAsync<Product>(newProduct);
+                    context.Add<Product>(newProduct);
+                    await context.SaveChangesAsync();
 
                     if (file != null)
                     {
                         // Set category folder name
-                        var folderName = databaseCRUD.GetCategoryName(model.CategoryId);
+                        var folderName = GetCategoryName(model.CategoryId);
 
                         // Store new image
                         ProductImage productImage = new ProductImage(environment.WebRootPath, folderName, file);
-
-                        // Update newProduct with path to new photo
                         newProduct.Photo = productImage.StoreImage(newProduct.Id); ;
 
                         // Update product in databse with path to product photo
-                        await databaseCRUD.UpdateAsync<Product>(newProduct);
+                        context.Update<Product>(newProduct);
+                        await context.SaveChangesAsync();
                     }
                 }               
 
@@ -136,7 +137,6 @@ namespace Webshop.Controllers
         public async Task<ActionResult<IEnumerable<AllProductsViewModel>>> AllProducts()
         {
             var allProducts = await webAPI.GetAllAsync<AllProductsViewModel>("https://localhost:44305/api/products/");
-
             return View(allProducts);
         }
 
@@ -144,21 +144,12 @@ namespace Webshop.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProductConfirmed(int? Id)
         {
-            //Product product = await context.Products.FirstOrDefaultAsync(p => p.Id == Id);
             Product product = await context.Products.FindAsync(Id);
-
-            // Get full path to wwwroot folder and concatenate product image from database
-            var pathToProductImage = environment.WebRootPath + @"\Image\" + product.Photo;
-
-            // Check if the product image exist...
-            if (System.IO.File.Exists(pathToProductImage))
-            {
-                // Remove product Image from Image folder
-                System.IO.File.Delete(pathToProductImage);
-            }
-
-            context.Products.Remove(product);
+            context.Remove<Product>(product);
             context.SaveChanges();
+
+            ProductImage deleteImage = new ProductImage(environment.WebRootPath);
+            deleteImage.DeleteImage(product.Photo);
 
             if (product != null)
             {
@@ -176,7 +167,9 @@ namespace Webshop.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult DeleteProduct(int Id)
         {
-            var query = context.Products.Include(x => x.Brand).Include(x => x.Category).FirstOrDefault(p => p.Id == Id);
+            var query = context.Products.Include(x => x.Brand)
+                .Include(x => x.Category)
+                .FirstOrDefault(p => p.Id == Id);
 
             if (query == null)
                 return NotFound();
@@ -257,31 +250,29 @@ namespace Webshop.Controllers
                         Discount = Convert.ToSingle(model.DiscountToConvert.ToString().Replace('.', ','))
                     };
 
+                    // Set category folder name
+                    var folderName = context.Categories.Find(model.CategoryId).Name;
+
                     // Update image
                     if (file != null)
                     {
-                        // Set category folder name
-                        var folderName = databaseCRUD.GetCategoryName(model.CategoryId);
-
                         // Remove old image and store new image
                         ProductImage productImage = new ProductImage(environment.WebRootPath, folderName, file);
-                        productImage.RemoveImage(editproduct.Photo);
+                        productImage.DeleteImage(editproduct.Photo);
                         editproduct.Photo = productImage.StoreImage(editproduct.Id);
                     }
 
                     // If category was changed, move existing product photo to selected folder
                     else if(productInDB.CategoryId != model.CategoryId)
                     {
-                        // Set category folder name
-                        var newFolderName = databaseCRUD.GetCategoryName(model.CategoryId);
-
                         // Move image to new location
-                        ProductImage productImage = new ProductImage(environment.WebRootPath, newFolderName, editproduct.Photo);
+                        ProductImage productImage = new ProductImage(environment.WebRootPath, folderName, editproduct.Photo);
                         editproduct.Photo = productImage.MoveImage();
                     }
 
                     // save
-                    await databaseCRUD.UpdateAsync<Product>(editproduct);
+                    context.Update<Product>(editproduct);
+                    await context.SaveChangesAsync();
                 }
 
                 else
@@ -314,6 +305,13 @@ namespace Webshop.Controllers
                 TempData["EditDatabase error"] = "Sorry!! Något gick fel när du lägger Data till databasen";
                 return RedirectToAction("EditProduct", "Product");
             }
+        }
+
+
+        // Get category name by Id
+        private string GetCategoryName(int id)
+        { 
+            return context.Categories.Find(id).Name;
         }
     }
 }

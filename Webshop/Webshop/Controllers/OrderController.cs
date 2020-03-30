@@ -11,23 +11,27 @@ using Webshop.Models;
 using Webshop.Models.Data;
 using Webshop.Services;
 
-namespace Webshop.Controllers
+namespace WebAPI.Controllers
 {
     public class OrderController : Controller
     {
-        private readonly WebshopContext context;      
-        
+        private readonly WebshopContext context;
+        private readonly WebAPIHandler webAPI;
         public OrderViewModel orderviewmodel = new OrderViewModel();
-        private UserManager<User> UserMgr { get; }
-       private DatabaseCRUD databaseCRUD { get; }
+        //private UserManager<User> UserMgr { get; }
 
         public LoggedInUserName loggedInUserName = new LoggedInUserName();
 
-        public OrderController(WebshopContext context, UserManager<User> userManager)
+        //public OrderController(WebshopContext context, UserManager<User> userManager)
+        //{
+        //    this.context = context;
+        //    this.UserMgr = userManager;
+        //}
+
+        public OrderController(WebshopContext context, WebAPIHandler webAPI)
         {
-            this.context = context;          
-            this.UserMgr = userManager;
-            this.databaseCRUD = new DatabaseCRUD(context);
+            this.context = context;
+            this.webAPI = webAPI;
         }
 
         [HttpGet]
@@ -63,7 +67,8 @@ namespace Webshop.Controllers
                 orderviewmodel.paymentMethodlist = GetPaymentMethods();
 
                 // Get user information from current logged in user
-                User user = await UserMgr.GetUserAsync(HttpContext.User);
+                // User user = await webAPI.GetOneAsync<User>("https://localhost:44305/api/User/" + User.Identity.Name);
+                User user = context.Users.Where(x => x.Email == User.Identity.Name).FirstOrDefault();
                 orderviewmodel.User = user;
 
                 // Check if user has a complete shipping address
@@ -107,8 +112,9 @@ namespace Webshop.Controllers
 
             if (ModelState.IsValid)
             {
+
                 // Get current logged in user
-                User user = await UserMgr.GetUserAsync(HttpContext.User);
+                User user = context.Users.Where(x => x.Email == User.Identity.Name).FirstOrDefault();
 
                 // Create order
                 Order order = new Order()
@@ -185,19 +191,8 @@ namespace Webshop.Controllers
                     TempData["OrderError"] = "Oops det här var pinsamt! Kunde inte skapa din order. Något sket sig, eh he hee....";
             }
 
-            // Update model with product details from shopping cart
-            //model.Products = GetProductDetails(model, cartId);
-
-            //// Calculate total cost of whole order
-            //model.OrderTotal = OrderTotal(model.Products);
-
-            //// Update with payment methods
-            //model.paymentMethodlist = GetPaymentMethods();
-
             TempData["PaymentMethodError"] = "Vänligen välj ett betalsätt";
             return RedirectToAction("Index");
-
-            //return View(model);
         }
 
 
@@ -249,7 +244,7 @@ namespace Webshop.Controllers
 
         public async Task<IActionResult> ThankYou()
         {
-            User user = await UserMgr.GetUserAsync(HttpContext.User);
+            User user = await webAPI.GetOneAsync<User>("https://localhost:44305/api/User/" + User.Identity.Name);// await UserMgr.GetUserAsync(HttpContext.User);
             loggedInUserName.Name = user.FirstName;
             return View(loggedInUserName);
         }

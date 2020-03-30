@@ -12,6 +12,34 @@
     </ol>
 </nav>
 
+@if (TempData["NewBrand"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["NewBrand"]
+    </div>
+}
+
+@if (TempData["BrandUpdate"] != null)
+{
+    <div class="alert alert-info" role="alert">
+        @TempData["BrandUpdate"]
+    </div>
+}
+
+@if (TempData["DeletedBrand"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["DeletedBrand"]
+    </div>
+}
+
+@if (TempData["DeletedBrandFail"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["DeletedBrandFail"]
+    </div>
+}
+
 <span asp-validation-for="Name" class="text-danger" style="margin-left: 30px"></span>
 <form asp-action="Edit" method="post" class="form-inline">
 
@@ -55,7 +83,7 @@
 </table>
 
 <div>
-   
+
     <a href="#" onClick="history.go(-1); return false;">Tillbaka</a>
 
 

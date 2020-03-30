@@ -7,96 +7,89 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Webshop.Context;
 using Webshop.Models;
+using Webshop.Services;
 
 namespace Webshop.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly WebshopContext context;
+        private readonly WebAPIHandler webAPI;
+        private readonly WebAPIToken webAPIToken;
 
-
-        public CategoryController(WebshopContext context)
+        public CategoryController(WebAPIHandler webAPI, WebAPIToken webAPIToken)
         {
-            this.context = context;
+            this.webAPI = webAPI;
+            this.webAPIToken = webAPIToken;
         }
         
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var catlist = (from category in context.Categories
-                           select category).ToList();
-            
- 
-            return View(catlist);
-        }
-        //[HttpPost]
-        //public IActionResult Index(IFormCollection form)
-        //{
-        //    var selectedvalue = form["ddcategory"];
+            //var catlist = (from category in context.Categories
+            //               select category).ToList();
 
-        //    return RedirectToAction("Index", "Product", new { catid = selectedvalue });
-            
-        //}
+            var categories = await webAPI.GetAllAsync<Category>("https://localhost:44305/api/categories");
+            return View(categories);
+        }
 
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public IActionResult EditCategory(int? id)
+        public async Task<IActionResult> EditCategory(int? id)
         {
             EditCategoryModel editCategoryModel = new EditCategoryModel();
             if (id != null)
             {
-                var category = context.Categories.Where(x => x.Id == (int)id).FirstOrDefault();
+                var category = await webAPI.GetOneAsync<Category>("https://localhost:44305/api/categories/" + id);
+
                 editCategoryModel.Id = category.Id;
                 editCategoryModel.Name = category.Name;
             }
 
-            editCategoryModel.categoryCollection = context.Categories.ToList();
+            editCategoryModel.categoryCollection = await webAPI.GetAllAsync<Category>("https://localhost:44305/api/categories");
 
             return View(editCategoryModel);
         }
 
 
         [HttpPost]
-        public IActionResult EditCategory([Bind]EditCategoryModel model)
+        public async Task<IActionResult> EditCategory([Bind]EditCategoryModel model)
         {
-            model.categoryCollection = context.Categories.ToList();
+            model.categoryCollection = await webAPI.GetAllAsync<Category>("https://localhost:44305/api/categories");// context.Categories.ToList();
 
             if (ModelState.IsValid)
             {
                 // If category contains an Id, update it, else create new category!
                 if (model.Id > 0)
                 {
-                    var result = context.Categories.Find(model.Id);
+                    var result = model.categoryCollection.Where(x => x.Id == model.Id).FirstOrDefault();
                     result.Name = model.Name;
 
-                    context.Update<Category>(result);   // Update category
-                    model.Id = 0;
-                    
+                    var token = await webAPIToken.New();
+                    var response = await webAPI.UpdateAsync(result, "https://localhost:44305/api/categories/" + result.Id, token);
+
+                    TempData["CategoryUpdate"] = "Kategorin har uppdaterats!";
                 }
                 else
                 {
                     // Does category already exist?
-                    if (context.Categories.Any(x => x.Name == model.Name))
+                    if (model.categoryCollection.Any(x => x.Name == model.Name))
                     {
-                        ModelState.AddModelError("Name", "Kategori finns redan registrerad!");
+                        ModelState.AddModelError("Name", "Kategorin finns redan registrerad!");
                         return View("EditCategory", model);
                     }
 
                     // Create new category
-                    var category = new Category()
-                    {
-                        Id = model.Id,
-                        Name = model.Name
-                    };
+                    var category = new Category() { Name = model.Name };
 
-                    // Add new brand
-                    context.Add<Category>(category);
+                    // Post to API
+                    var token = await webAPIToken.New();
+                    var response = await webAPI.PostAsync<Category>(category, "https://localhost:44305/api/categories/", token);
+
+                    TempData["NewCategory"] = "Ny kategori har skapats!";
                 }
 
-                // Save changes
-                context.SaveChanges();
                 return RedirectToAction("EditCategory", "Category", new { id = "" });
-               // return RedirectToAction("EditCategory", "Category");
+
             }
             else
             {
@@ -106,21 +99,26 @@ namespace Webshop.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public IActionResult DeleteCategory(int id)
+        public async Task<IActionResult> DeleteCategory(int id)
         {
-            var category = context.Categories.Find(id);
+            var category = await webAPI.GetOneAsync<Category>("https://localhost:44305/api/categories/" + id);
             return View(category);
         }
 
         [HttpPost]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = context.Categories.Find(id);
+            var category = await webAPI.GetOneAsync<Category>("https://localhost:44305/api/categories/" + id);
 
-            context.Remove<Category>(category);
-            context.SaveChanges();
+            var token = await webAPIToken.New();
+            var response = await webAPI.DeleteAsync("https://localhost:44305/api/categories/" + id, token);
 
-            return RedirectToAction("EditCategory", "Category");
+            if (response)
+                TempData["DeletedCategory"] = "Kategori " + category.Name + " och alla produkter har readerats";
+            else
+                TempData["DeletedCategoryFail"] = "Kunde inte radera " + category.Name + ". Kontakta support om problemet kvarstår!";
+
+            return RedirectToAction("EditCategory", "Category", new { id = "" });
         }
     }
 }

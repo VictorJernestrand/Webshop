@@ -14,36 +14,19 @@ namespace Webshop.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        private readonly DatabaseCRUD db;
         private readonly WebshopContext context;
-
-        public new User User { get; set; }
 
         private UserManager<User> UserMgr { get; }
 
-        public HomeController(WebshopContext context, UserManager<User> userManager, ILogger<HomeController> logger)
+        public HomeController(WebshopContext context)
         {
             this.context = context;
-            db = new DatabaseCRUD(context);
-            UserMgr = userManager;
-            _logger = logger;
+            //UserMgr = userManager;
         }
-
-        private void GetLoggedInUserAsync()
-        {
-            
-            //User = db.GetByIdAsync<User>(UserMgr.GetUserId(HttpContext.User));
-        }
-
-        /*public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }*/
 
         public IActionResult Index()
         {
+
             List<AllProductsViewModel> allproductslist = new List<AllProductsViewModel>();            
 
 
@@ -76,6 +59,7 @@ namespace Webshop.Controllers
                                   ).ToList();
 
             return View(allproductslist);
+
         }
 
         public IActionResult Privacy()
@@ -88,7 +72,6 @@ namespace Webshop.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        
-       
+
     }
 }

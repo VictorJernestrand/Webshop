@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using WebAPI.Context;
@@ -36,7 +37,7 @@ namespace WebAPI.Controllers
 
         // api/renewtoken
         [AllowAnonymous]
-        [Route("renew")]
+        [Route("new")]
         [HttpPost]
         [Produces("text/plain")]
         public async Task<IActionResult> RenewToken(APIPayload jwtToken)
@@ -47,19 +48,18 @@ namespace WebAPI.Controllers
                 var validToken = ValidateToken(jwtToken.Token);
                 if (validToken.Identity.IsAuthenticated)
                 {
-                    var refreshToken = validToken.FindFirst("RefreshToken")?.Value;
+                    var refreshToken = Guid.Parse(validToken.FindFirst("RefreshToken")?.Value);
                     var email = validToken.FindFirst("UserEmail")?.Value;
 
                     // Get user from database based on email and refresh token
-                    var user = _context.Users.Where(x => x.Email == email && x.RefreshToken == refreshToken).FirstOrDefault();
+                    var user = await _context.Users.Where(x => x.Email == email && x.RefreshToken == refreshToken).FirstOrDefaultAsync();
 
                     // User has a role?
                     bool isAdmin = await userManager.IsInRoleAsync(user, "Admin");
-                    var role = (isAdmin) ? "Admin" : "";
 
                     // Create token and store new refreshtoken in database
                     TokenCreatorService tokenService = new TokenCreatorService(_context, _config);
-                    var token = tokenService.CreateToken(user, role);
+                    var token = tokenService.CreateToken(user, isAdmin);
 
                     return Ok(token);
                 }
