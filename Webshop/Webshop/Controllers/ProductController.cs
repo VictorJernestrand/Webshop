@@ -136,7 +136,7 @@ namespace Webshop.Controllers
 
             if (product != null)
             {
-                TempData["Deleted"] = $"{product.Name} är nu borttagen!";
+                TempData["Deleted"] = $"{product.Name} är borttagen!";
                 return RedirectToAction("AllProducts", "Product");
             }
             else

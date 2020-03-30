@@ -74,7 +74,7 @@ namespace WebAPI.Services
         private Guid CreateRefreshToken(User user)
         {
             user.RefreshToken = Guid.NewGuid();
-            user.RefreshTokenExpire = DateTime.UtcNow.AddMonths(6);
+            user.RefreshTokenExpire = DateTime.UtcNow.AddSeconds(int.Parse(_configure["JWT:TokenExpireSeconds"]));
 
             _context.Update<User>(user);
             _context.SaveChanges();
