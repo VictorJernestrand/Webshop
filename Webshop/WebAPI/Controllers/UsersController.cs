@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly WebAPIContext _context;
         private readonly UserManager<User> userManager;
@@ -31,7 +31,7 @@ namespace WebAPI.Controllers
         private readonly RoleManager<AppRole> roleManager;
         private readonly IConfiguration _configure;
 
-        public UserController(WebAPIContext context, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<AppRole> roleManager, IConfiguration configure)
+        public UsersController(WebAPIContext context, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<AppRole> roleManager, IConfiguration configure)
         {
             _context = context;
             this.userManager = userManager;

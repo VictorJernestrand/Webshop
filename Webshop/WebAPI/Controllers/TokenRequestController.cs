@@ -44,6 +44,9 @@ namespace WebAPI.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(jwtToken.Token))
+                    return BadRequest();
+
                 // Validate token...
                 var validToken = ValidateToken(jwtToken.Token);
                 if (validToken.Identity.IsAuthenticated)
@@ -85,7 +88,6 @@ namespace WebAPI.Controllers
             }
 
         }
-
 
         private ClaimsPrincipal ValidateToken(string token)
         {

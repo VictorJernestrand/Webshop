@@ -14,14 +14,10 @@ namespace Webshop.ViewComponents
     public class CategoryMenuListViewComponent : ViewComponent
     {
         private readonly WebAPIHandler webAPI;
-        private readonly WebshopContext _context;
-        private readonly IHttpClientFactory _clientFactory;
 
-        public CategoryMenuListViewComponent(WebshopContext context, IHttpClientFactory clientFactory)
+        public CategoryMenuListViewComponent(WebAPIHandler webAPI)
         {
-            this.webAPI = new WebAPIHandler(clientFactory);
-            _context = context;
-            _clientFactory = clientFactory;
+            this.webAPI = webAPI;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(

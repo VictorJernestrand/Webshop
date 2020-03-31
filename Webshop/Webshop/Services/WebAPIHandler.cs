@@ -63,11 +63,11 @@ namespace Webshop.Services
         /// <returns></returns>
         public async Task<List<T>> GetAllAsync<T>(string webApiPath, string token = null)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, webApiPath);   
+            var request = new HttpRequestMessage(HttpMethod.Get, webApiPath);
 
             if (token != null)
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            
+
             var response = await _clientFactory.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
@@ -77,9 +77,6 @@ namespace Webshop.Services
 
             return null;
         }
-               
-
-
 
         /// <summary>
         /// Request a single object of T from API
@@ -87,9 +84,13 @@ namespace Webshop.Services
         /// <typeparam name="T"></typeparam>
         /// <param name="webApiPath"></param>
         /// <returns></returns>
-        public async Task<T> GetOneAsync<T>(string webApiPath) where T : class
+        public async Task<T> GetOneAsync<T>(string webApiPath, string token = null) where T : class
         {
             var request = new HttpRequestMessage(HttpMethod.Get, webApiPath);
+
+            if (token != null)
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             var response = await _clientFactory.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
