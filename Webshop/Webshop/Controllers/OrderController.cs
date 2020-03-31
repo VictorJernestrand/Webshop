@@ -116,7 +116,7 @@ namespace WebAPI.Controllers
 
 
             getorder.StatusId = model.statusid;
-            var updatestatuid = await webAPI.UpdateAsync<Order>(getorder, ApiURL.ORDERS + getorder.Id);
+            var updatestatuid = await webAPI.UpdateAsync<Order>(getorder, ApiURL.ORDERS + getorder.Id,token);
 
 
             return RedirectToAction("OrderStatus", "Order");

@@ -132,7 +132,8 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<Order> GetAdminOrderById(int id)
         {
-            return await _context.Orders.FindAsync(id);
+            var result= await _context.Orders.FindAsync(id);
+            return result;
         }
 
 
