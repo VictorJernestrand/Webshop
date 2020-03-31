@@ -100,6 +100,43 @@ namespace WebAPI.Controllers
             return Ok(orderViewModel);
         }
 
+       
+        [HttpGet]
+        [Route("getallorders")]
+        public async Task<ActionResult<IEnumerable<ProductOrderViewModel>>> GetAllOrders()
+        {
+            // Collect orders by user id
+            var activeOrders = await _context.ProductOrders
+                                                               .Include(x => x.Order)
+                                                              .Select(x => new ProductOrderViewModel()
+                                                              {
+                                                                  orderId = x.OrderId,
+                                                                  productId = x.ProductId,
+                                                                  Quantity = x.Amount,
+                                                                  price = x.Price,
+                                                                  orderCreationDate = x.Order.OrderDate,
+                                                                  orderstatus = x.Order.Status.Name,
+                                                                  statusId = x.Order.Status.Id,
+                                                                  statuslist = _context.Statuses.ToList()
+                                                              })
+                                                           .ToListAsync();
+
+            // Orders exist?
+            if (activeOrders == null)
+                return NotFound();
+
+            return Ok(activeOrders);
+        }
+
+        [Route("orderrequest/{id}")]
+        [HttpGet]
+        public async Task<Order> GetAdminOrderById(int id)
+        {
+            return await _context.Orders.FindAsync(id);
+        }
+
+
+
         // PUT: api/Orders/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
@@ -226,5 +263,8 @@ namespace WebAPI.Controllers
         {
             return _context.Orders.Any(e => e.Id == id);
         }
+
+
+
     }
 }

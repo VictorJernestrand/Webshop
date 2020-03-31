@@ -41,5 +41,10 @@ namespace Webshop.Services
         // API-paths to order-controllers
         public const string ORDERS              = URL + "orders/";
         public const string ORDERS_BY_USER      = URL + "orders/userorders/";
+        public const string AllORDERS           = URL + "orders/getallorders/";
+        public const string ORDERREQBYID        = URL + "orders/orderrequest/";
+
+        //API-path to status-controllers
+        public const string STATUS              = URL + "status/";
     }
 }
