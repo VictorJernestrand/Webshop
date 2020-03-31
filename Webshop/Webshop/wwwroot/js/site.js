@@ -34,7 +34,7 @@ $(document).ready(function () {
 
 // Add items to cart using AJAX and fetch framework
 function AddCrapToCart(productId, name) {
-
+    console.log("Add to cart");
     // Declare new FormData object
     let formData = new FormData();
 
@@ -90,13 +90,13 @@ function RemoveCrapFromCart(cartItemId, productId) {
 
 
 // Delete selected product from cart completely!
-function DeleteCrapFromCart(cartId) {
+function DeleteCrapFromCart(cartProductId) {
 
     // Declare new FormData object
     let formData = new FormData();
 
     // Append form data
-    formData.append("Id", cartId);
+    formData.append("Id", cartProductId);
     formData.append("__RequestVerificationToken", GetAntiForgerytoken());
 
     fetch("https://localhost:44364/ShoppingCart/DeleteItemFromCart", {
@@ -107,7 +107,7 @@ function DeleteCrapFromCart(cartId) {
             if (response.ok) {
 
                 // Remove <tr> element from table
-                document.getElementById("DumpCrap_" + cartId).remove();
+                document.getElementById("DumpCrap_" + cartProductId).remove();
                 UpdateCartButton();
                 UpdateBuyButton();
             } else {
@@ -133,6 +133,8 @@ function DisplayResponseMessage(productName) {
 
 // Update cart button with info on total items and current cost
 function UpdateCartButton() {
+
+    console.log("Update cart button");
 
     // Get cart content using an AJAX call to GetCartContent() actionmethod
     fetch('https://localhost:44364/ShoppingCart/GetCartContent')

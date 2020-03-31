@@ -1,10 +1,10 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@*@using Microsoft.AspNetCore.Identity
 @inject SignInManager<User> SignInManager
-@inject UserManager<User> UserManager
+@inject UserManager<User> UserManager*@
 
 
 <ul class="navbar-nav">
-    @if (SignInManager.IsSignedIn(User))
+    @if (User.Identity.IsAuthenticated)
     {
 
         @if (!User.IsInRole("Admin"))
