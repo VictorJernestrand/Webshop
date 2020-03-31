@@ -17,7 +17,9 @@ namespace Webshop.Models
         public int PaymentMethodId { get; set; }
 
         //public int UserId { get; set; }
-        public User User { get; set; }
+        //public User User { get; set; }
+
+        public string UserEmail { get; set; }
 
         public bool AddressComplete { get; set; }
 
@@ -28,6 +30,7 @@ namespace Webshop.Models
         public List<PaymentMethod> paymentMethodlist { get; set; } = new List<PaymentMethod>();
 
         public bool OrderContainsProductsOutOfStock { get; set; }
+
         public decimal OrderTotal { get; set; }
 
 

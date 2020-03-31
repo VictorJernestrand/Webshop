@@ -103,13 +103,16 @@ namespace Webshop.Services
         }
 
         public bool ImageExist(string pathTofile)
-            => File.Exists(Path.Combine(pathTofile));
+            => File.Exists(pathTofile);
 
-        public bool DeleteImage(string pathToImage)
+        public void DeleteImage(string pathToImage)
         {
+            if (string.IsNullOrEmpty(pathToImage) || !ImageExist(pathToImage))
+                return;
+
             var fullPath = Path.Combine(_categoryFolderPath, pathToImage);
+
             File.Delete(fullPath);
-            return ImageExist(fullPath);
         }
     }
 }

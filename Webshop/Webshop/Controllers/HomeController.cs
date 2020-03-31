@@ -9,57 +9,23 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Webshop.Context;
 using Webshop.Models;
+using Webshop.Services;
 
 namespace Webshop.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly WebshopContext context;
+        private readonly WebAPIHandler webAPI;
 
-        private UserManager<User> UserMgr { get; }
-
-        public HomeController(WebshopContext context)
+        public HomeController(WebAPIHandler webAPI)
         {
-            this.context = context;
-            //UserMgr = userManager;
+            this.webAPI = webAPI;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-
-            List<AllProductsViewModel> allproductslist = new List<AllProductsViewModel>();            
-
-
-            // var products = context.Products.Include(x => x.Brand).Include(x => x.Category).ToList();
-            //  List<AllProductsViewModel> allProductswithDiscount = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).Where(d => d.Discount > 0).ToList();
-          
-            
-
-            allproductslist = context.Products.Include(x => x.Brand).Include(x => x.Category)
-                                  .Select(x => new AllProductsViewModel()
-                                  {
-                                        Id = x.Id,
-                                        Name = x.Name,
-                                        Price = x.Price,
-                                        Discount = x.Discount,
-                                        DiscountPrice = x.Price - (x.Price * (decimal)x.Discount),//product.DiscountPrice;
-                                        Quantity = x.Quantity,
-                                        CategoryId = x.CategoryId,
-                                        BrandId = x.BrandId,
-                                        Description = x.Description,
-                                        Photo = x.Photo != null ? x.Photo : "",
-                                        BrandName = x.Brand.Name,
-                                        CategoryName = x.Category.Name,
-                                        Category = x.Category,
-                                        Brand = x.Brand,
-                                        FullDescription = x.FullDescription,
-                                        Specification = x.Specification,
-                                      
-                                  }
-                                  ).ToList();
-
+            var allproductslist = await webAPI.GetAllAsync<AllProductsViewModel>(ApiURL.PRODUCTS);
             return View(allproductslist);
-
         }
 
         public IActionResult Privacy()

@@ -14,11 +14,11 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CartController : ControllerBase
+    public class CartsController : ControllerBase
     {
         private readonly WebAPIContext _context;
 
-        public CartController(WebAPIContext context)
+        public CartsController(WebAPIContext context)
         {
             _context = context;
         }
@@ -38,7 +38,7 @@ namespace WebAPI.Controllers
                 .Select(x => new CartButtonInfoModel
                 {
                     TotalItems = x.Sum(x => x.Amount),
-                    TotalCost = x.Sum(a => NewPrice((a.Product.Price * a.Amount), (decimal)a.Product.Discount)).ToString("C0")
+                    TotalCost = x.Sum(a => CostWithDiscount((a.Product.Price * a.Amount), (decimal)a.Product.Discount)).ToString("C0")
                 }).FirstOrDefault();
 
             return (cartContent != null) ? Ok(cartContent) : Ok(new CartButtonInfoModel());
@@ -47,7 +47,7 @@ namespace WebAPI.Controllers
 
         [Route("content/{customerCartId}")]
         [HttpGet]
-        public ActionResult<IEnumerable<CartButtonInfoModel>> Renew(string customerCartId)
+        public ActionResult<IEnumerable<ShoppingCartModel>> GetCartContent(string customerCartId)
         {
             // TODO: Validate cart Id here and return an error code if id is not valid.
 
@@ -61,7 +61,7 @@ namespace WebAPI.Controllers
                     ProductId = x.Product.Id,
                     Name = x.Product.Name,
                     Price = x.Product.Price,
-                    DiscountPrice = NewPrice(x.Product.Price, (decimal)x.Product.Discount),
+                    DiscountPrice = CostWithDiscount(x.Product.Price, (decimal)x.Product.Discount),
                     Discount = x.Product.Discount,
                     Photo = x.Product.Photo,
                     Amount = x.Amount
@@ -71,6 +71,42 @@ namespace WebAPI.Controllers
             return Ok(cartContent);
         }
 
+        [Route("content_and_payment/{customerCartId}/{customerEmail}")]
+        [HttpGet]
+        public async Task<ActionResult<OrderViewModel>> GetCartContentAndPaymentOptions(string customerCartId, string customerEmail)
+        {
+            Guid cartId = Guid.Parse(customerCartId);
+
+            OrderViewModel orderViewModel = new OrderViewModel();
+
+            // Calculate all items and discounts (if any) from shopping cart
+            orderViewModel.Products = GetProductDetails(orderViewModel, cartId);
+
+            // Calculate order total cost
+            orderViewModel.OrderTotal = OrderTotal(orderViewModel.Products);
+
+            // Get all payment methods
+            orderViewModel.paymentMethodlist = await _context.PaymentMethods.ToListAsync();
+
+            // Get user information from current logged in user
+            User user = await _context.Users.Where(x => x.Email == customerEmail).FirstOrDefaultAsync();
+            //orderViewModel.User = user;
+
+            // Check if user has a complete shipping address
+            var addressComplete = false;
+            if (user.StreetAddress != null &&
+                user.PhoneNumber != null &&
+                user.ZipCode != 0 &&
+                user.City != null)
+            {
+                addressComplete = true;
+            }
+
+            // Does user have a complete shippingaddress?
+            orderViewModel.AddressComplete = addressComplete;
+
+            return orderViewModel;
+        }
 
         // POST: api/Cart
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
@@ -155,17 +191,46 @@ namespace WebAPI.Controllers
         }
 
 
+        public List<OrderItemsModel> GetProductDetails(OrderViewModel orderviewmodel, Guid cartId)
+        {
+            var productOrders = _context.ShoppingCart.Include(x => x.Product)
+                .Where(x => x.CartId == cartId && x.Amount > 0)
+                .Select(x => new OrderItemsModel
+                {
+                    ProductId = x.Product.Id,
+                    ProductName = x.Product.Name,
+                    Photo = x.Product.Photo,
+                    Amount = x.Amount,
+                    QuantityInStock = x.Product.Quantity,
+                    Price = x.Product.Price,
+                    Discount = (decimal)x.Product.Discount,
+                    UnitPriceWithDiscount = CostWithDiscount(x.Product.Price, (decimal)x.Product.Discount),
+                    TotalProductCostDiscount = TotalCost(x.Amount, x.Product.Price, (decimal)x.Product.Discount),
+                    TotalProductCost = x.Product.Price * x.Amount
+                })
+                .ToList();
+
+            orderviewmodel.Products = productOrders;
+            return orderviewmodel.Products;
+        }
+
+
 
         private bool ShoppingCartExists(int id)
         {
             return _context.ShoppingCart.Any(e => e.Id == id);
         }
 
+        private static decimal CostWithDiscount(decimal price, decimal discount)
+            => price - (discount * price);
 
-        public static decimal NewPrice(decimal price, decimal discount)
-        {
-            return price - (price * discount);
-        }
+        // Calculate total itemcost
+        private static decimal TotalCost(int quantity, decimal price, decimal discount)
+            => CostWithDiscount(price, discount) * quantity;
+
+        // Calculate total cost of whole order
+        private static decimal OrderTotal(IEnumerable<OrderItemsModel> order)
+            => order.Sum(x => x.TotalProductCostDiscount);
 
     }
 }

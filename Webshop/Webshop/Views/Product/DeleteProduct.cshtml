@@ -1,4 +1,4 @@
-﻿@model Product
+﻿@model AllProductsViewModel
 
 @{
     ViewData["Title"] = "Rock★Start - Ta Bort Produkt";
@@ -41,16 +41,16 @@
             <img src="@Url.Content("~/Image/" + Model.Photo)" height="80" width="100" alt="Finns ingen bild än">
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
+            @Html.DisplayNameFor(model => model.CategoryName)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category.Name)
+            @Html.DisplayFor(model => model.CategoryName)
         </dd class>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Brand)
+            @Html.DisplayNameFor(model => model.BrandName)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Brand.Name)
+            @Html.DisplayFor(model => model.BrandName)
         </dd class>
     </dl>
     

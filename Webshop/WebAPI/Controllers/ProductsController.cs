@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Context;
@@ -25,10 +24,9 @@ namespace WebAPI.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AllProductsViewModel>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<AllProductsViewModel>>> GetAllProducts()
         {
             var products = await _context.Products.Include(x => x.Brand).Include(x => x.Category).ToListAsync();
-
             List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).ToList();
 
             return allProducts;
@@ -46,9 +44,51 @@ namespace WebAPI.Controllers
             return query;
         }
 
+
+        // GET: api/Products/search/tjolahopp
+        [Route("search/{searchTerm}")]
+        [HttpGet]
+        public async Task<ActionResult<AllProductsViewModel>> searchProduct(string searchTerm)
+        {
+            searchTerm = searchTerm.ToLower();
+
+            var searchResult = await _context.Products.Include(x => x.Category)
+                .Include(x => x.Brand)
+                .Where(x => x.Name.ToLower().Contains(searchTerm) ||
+                    x.Brand.Name.ToLower().Contains(searchTerm) ||
+                    x.Category.Name.ToLower().Contains(searchTerm) ||
+                    x.Description.ToLower().Contains(searchTerm) ||
+                    x.FullDescription.ToLower().Contains(searchTerm) ||
+                    x.Specification.ToLower().Contains(searchTerm)
+                    )
+                .Select(x => new AllProductsViewModel(x))
+                .ToListAsync();
+
+            return Ok(searchResult);
+        }
+
+
+        // GET: api/Products/5
+        [Route("category/{Id}")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<AllProductsViewModel>>> GetllProductbyCategory(int id)
+        {
+            var products = await _context.Products.Include(x => x.Brand).Include(x => x.Category)
+                .Where(x => x.CategoryId == id)
+                .ToListAsync();
+
+            var allProducts = products.Select(x => new AllProductsViewModel(x))
+                .OrderBy(p => p.Name)
+                .ToList();
+
+            return allProducts;
+        }
+
         // PUT: api/Products/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
+
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, Product product)
         {
@@ -81,6 +121,7 @@ namespace WebAPI.Controllers
         // POST: api/Products
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
@@ -91,6 +132,7 @@ namespace WebAPI.Controllers
         }
 
         // DELETE: api/Products/5
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Product>> DeleteProduct(int id)
         {
