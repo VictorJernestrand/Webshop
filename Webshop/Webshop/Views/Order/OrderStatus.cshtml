@@ -1,57 +1,60 @@
-﻿@model TestProductorder
+﻿@model ProductOrderViewModel
 @{
     ViewData["Title"] = "OrderStatus";
 }
 
 <h1>OrderStatus</h1>
 
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>OrderId</th>
-                <th>ProductId</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Order Creation Date</th>
-                <th>Order Status</th>
-                <th>Change Order Status</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @foreach (var item in Model.productOrderViewModelslist)
-            
-            {                <tr>
-
-    <td>@item.orderId</td>
-    <td>@item.productId</td>
-    <td>@item.Quantity</td>
-    <td>@item.price</td>
-    <td>@item.orderCreationDate</td>
-    <td>@item.orderstatus</td>
-
-
-    <td>
-        <form asp-action="OrderStatus" method="post">
-            <input type="hidden" asp-for="@Model.orderid" value="@item.orderId" />
-            <select asp-for="@Model.statusid" >
-                <option>--Byta Order Status--</option>
-                @foreach (var statusname in item.statuslist)
-                {
-                    <option value="@statusname.Id">@statusname.Name</option>
-                }
-
-            </select>
-            <input class="btn btn-success" type="submit" value="Update" />
-   
-
-    </form>
-    </td>
-
-</tr>
-
-               
+<div class="row">
+    <div class="col-sm-12 col-md-3">
+        <ul class="list-group">
+        @if (Model.Statuses != null)
+        {
+            @foreach (var status in Model.Statuses)
+            {
+                <li class="list-group-item"><a asp-action="OrderStatus" asp-route-statusid="@status.Id">@Html.Raw(@status.Name)</a></li>
             }
+        }
+        </ul>
+    </div>
 
-</table>
+    <div class="col">
+
+        <table class="table thead-dark table-hover table-responsive-md">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">OrderDatum</th>
+                    <th scope="col">Produkter</th>
+                    <th scope="col">Kund</th>
+                    <th scope="col">Kr</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (Model.Orders != null && Model.Orders.Count > 0)
+                {
+                    @foreach (var order in Model.Orders)
+                    {
+                        <tr>
+                            <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                            <td>@order.Quantity</td>
+                            <td><a href="">@order.CustomerEmail</a></td>
+                            <td>@order.TotalCost.ToString("C0")</td>
+                            <td><a asp-action="EditStatus" asp-route-id="@order.OrderId" class="btn btn-secondary">Ändra Status</a></td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5">Inga ordrar</td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

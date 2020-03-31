@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Webshop.Models
 {
     public class ProductOrderViewModel
-    {
+    {/*
        // public int productOrderId { get; set; }
         public int orderId { get; set; }
         public DateTime orderCreationDate { get; set; }
@@ -18,7 +18,12 @@ namespace Webshop.Models
         public string orderstatus { set; get; }
         public Status status { get; set; }
         public int statusId { get; set; }
-       
+       */
+        public List<AllUserOrders> Orders { get; set; }
+        public List<Status> Statuses { get; set; }
+
+        public int orderid { get; set; }
+        public int statusid { get; set; }
 
     }
 }
