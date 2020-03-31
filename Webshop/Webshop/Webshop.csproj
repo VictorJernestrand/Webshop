@@ -5,21 +5,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\Image\Elgitarr\**" />
+    <Content Remove="wwwroot\Image\Elgitarr\**" />
+    <EmbeddedResource Remove="wwwroot\Image\Elgitarr\**" />
+    <None Remove="wwwroot\Image\Elgitarr\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="wwwroot\Image\Guitar\guitar3.jpg" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.3">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\Image\Elgitarr\" />
   </ItemGroup>
 
   <ItemGroup>

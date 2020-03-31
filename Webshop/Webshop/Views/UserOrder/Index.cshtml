@@ -5,8 +5,14 @@
 @{
 }
 
-<h3>Mina feta aktiva ordrar!</h3>
+@if (TempData["OrderEmpty"] != null)
+{
+    <div class="alert alert-warning" role="alert">
+        @TempData["OrderEmpty"]
+    </div>
+}
 
+<h3>Mina feta aktiva ordrar!</h3>
 
 <table class="table">
     <thead class="thead-dark">
@@ -17,15 +23,15 @@
         </tr>
     </thead>
     <tbody>
-        @foreach(var order in Model)
+        @foreach (var order in Model)
         {
             if (order.StatusId < 4)
             {
-        <tr>
-            <td><a asp-action="OrderDetails" asp-route-id="@order.OrderId" >@order.OrderDate</a> </td>
-            <td>@order.OrderPayment</td>
-            <td>@order.OrderStatus</td>
-        </tr>
+                <tr>
+                    <td><a asp-action="OrderDetails" asp-route-id="@order.OrderId">@order.OrderDate</a> </td>
+                    <td>@order.OrderPayment</td>
+                    <td>@order.OrderStatus</td>
+                </tr>
             }
         }
 </table>
@@ -44,11 +50,11 @@
         {
             if (order.StatusId == 4)
             {
-            <tr>
-                <td><a asp-action="OrderDetails" asp-route-id="@order.OrderId">@order.OrderDate</a> </td>
-                <td>@order.OrderPayment</td>
-                <td>@order.OrderStatus</td>
-            </tr>
+                <tr>
+                    <td><a asp-action="OrderDetails" asp-route-id="@order.OrderId">@order.OrderDate</a> </td>
+                    <td>@order.OrderPayment</td>
+                    <td>@order.OrderStatus</td>
+                </tr>
 
             }
         }
