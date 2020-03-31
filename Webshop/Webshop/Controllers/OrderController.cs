@@ -97,25 +97,33 @@ namespace WebAPI.Controllers
             loggedInUserName.Name = user.FirstName;
             return View(loggedInUserName);
         }
+
+
         [Authorize(Roles ="Admin")]
          [HttpGet]
         public async Task<IActionResult> OrderStatus()
         {
             TestProductorder testProductorder = new TestProductorder();
  
+            // get the order details from api
             var token = await webAPIToken.New();
             testProductorder.productOrderViewModelslist = await webAPI.GetAllAsync<ProductOrderViewModel>(ApiURL.AllORDERS,token);
             
             return View(testProductorder);
         }
+
+
         [HttpPost]
         public async Task< IActionResult> OrderStatus([Bind]TestProductorder model)
        {
+            // get an order from api
             var token = await webAPIToken.New();
             var getorder = await webAPI.GetOneAsync<Order>(ApiURL.ORDERREQBYID + model.orderid,token);
 
-
+            //Update the status id
             getorder.StatusId = model.statusid;
+
+            //Call api to update the order with updated statusid
             var updatestatuid = await webAPI.UpdateAsync<Order>(getorder, ApiURL.ORDERS + getorder.Id,token);
 
 
@@ -123,41 +131,6 @@ namespace WebAPI.Controllers
         }
 
 
-        //public IActionResult OrderStatus_test()
-        //{
-        //    var orderlist = context.Orders.Include(x=>x.Status).ToList();
-        //    List<Order> orders = new List<Order>();
-        //    orders = orderlist;
-        //    return View(orderlist);
-        //}
-        //[HttpGet]
-        //public IActionResult PopulateOrderDetails(int orderid)
-        //{
-        //    var getstatus = context.Statuses.ToList();
-        //    var result = context.ProductOrders.Include(x => x.Order)
-        //                .Select(x => new ProductOrderViewModel()
-        //                {
-        //                    orderId = x.OrderId,
-        //                    productId = x.ProductId,
-        //                    Quantity = x.Amount,
-        //                    price = x.Price,
-        //                    orderCreationDate = x.Order.OrderDate,
-        //                    orderstatus = x.Order.Status.Name,
-        //                    statusId = x.Order.Status.Id,
-        //                    statuslist = getstatus
-        //                })
-        //                .Where(x=>x.orderId==orderid)
-        //                .ToList();
-        //    return View(result);
-        //}
-
-        [HttpPost]
-        public IActionResult PopulateOrderDetails([Bind]ProductOrderViewModel model)
-        {
-            return View();
-        }
-
-      //  public IActionResult 
 
     }
 }

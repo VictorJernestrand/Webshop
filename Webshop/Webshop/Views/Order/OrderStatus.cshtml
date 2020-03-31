@@ -11,47 +11,40 @@
             <tr>
                 <th>OrderId</th>
                 <th>ProductId</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Order Creation Date</th>
+                <th>Antal</th>
+                <th>Pris</th>
+                <th>Beställningsdatum</th>
                 <th>Order Status</th>
-                <th>Change Order Status</th>
+                <th>Byta Order Status</th>
             </tr>
         </thead>
 
         <tbody>
             @foreach (var item in Model.productOrderViewModelslist)
-            
-            {                <tr>
+             {                
+            <tr>
 
-    <td>@item.orderId</td>
-    <td>@item.productId</td>
-    <td>@item.Quantity</td>
-    <td>@item.price</td>
-    <td>@item.orderCreationDate</td>
-    <td>@item.orderstatus</td>
+                <td>@item.orderId</td>
+                <td>@item.productId</td>
+                <td>@item.Quantity</td>
+                <td>@item.price</td>
+                <td>@item.orderCreationDate</td>
+                <td>@item.orderstatus</td>
+                <td>
+                    <form asp-action="OrderStatus" method="post">
+                        <input type="hidden" asp-for="@Model.orderid" value="@item.orderId" />
+                        <select asp-for="@Model.statusid">
+                            <option>--Byta Order Status--</option>
+                            @foreach (var statusname in item.statuslist)
+                            {
+                                <option value="@statusname.Id">@statusname.Name</option>
+                            }
 
+                        </select>
+                        <input class="btn btn-success" type="submit" value="Update" />
+                    </form>
+                </td>
 
-    <td>
-        <form asp-action="OrderStatus" method="post">
-            <input type="hidden" asp-for="@Model.orderid" value="@item.orderId" />
-            <select asp-for="@Model.statusid" >
-                <option>--Byta Order Status--</option>
-                @foreach (var statusname in item.statuslist)
-                {
-                    <option value="@statusname.Id">@statusname.Name</option>
-                }
-
-            </select>
-            <input class="btn btn-success" type="submit" value="Update" />
-   
-
-    </form>
-    </td>
-
-</tr>
-
-               
-            }
-
-</table>
+            </tr>
+             }
+    </table>
