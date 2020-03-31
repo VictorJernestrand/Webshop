@@ -4,8 +4,27 @@
     ViewData["Title"] = "OrderStatus_test";
 }
 <h3>Order Numbers</h3>
-@foreach(var item in Model)
-{
-    <a  asp-action="PopulateOrderDetails"  asp-route-orderid="@item.Id">@item.Id</a>
-    <br />
-}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order Id</th>
+            <th>Order status</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                <a asp-action="PopulateOrderDetails" asp-route-orderid="@item.Id">@item.Id</a>
+                <br />
+            </td>
+            <td>@item.Status.Name</td>
+            <td>
+                <button asp-action="" class="btn-btn success">Update</button>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

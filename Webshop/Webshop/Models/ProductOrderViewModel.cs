@@ -18,6 +18,7 @@ namespace Webshop.Models
         public string orderstatus { set; get; }
         public Status status { get; set; }
         public int statusId { get; set; }
+       
 
     }
 }

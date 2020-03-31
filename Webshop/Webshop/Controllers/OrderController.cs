@@ -251,9 +251,10 @@ namespace WebAPI.Controllers
          [HttpGet]
         public IActionResult OrderStatus()
         {
+            TestProductorder testProductorder = new TestProductorder();
             var getstatus = context.Statuses.ToList();
 
-            List<ProductOrderViewModel> productOrderViewModel = context.ProductOrders
+             testProductorder.productOrderViewModelslist = context.ProductOrders
                                                                 .Include(x => x.Order)
                                                                .Select(x => new ProductOrderViewModel()
                                                                {
@@ -266,31 +267,33 @@ namespace WebAPI.Controllers
                                                                    statusId = x.Order.Status.Id,
                                                                    statuslist = getstatus
                                                                })                                                              
-                                                               .ToList();            
+                                                            .ToList();            
             
-            return View(productOrderViewModel);
+            return View(testProductorder);
         }
         [HttpPost]
-        public IActionResult OrderStatus([Bind]ProductOrderViewModel model)
-        {
+        public async Task< IActionResult> OrderStatus([Bind]TestProductorder model)
+       {
+            var getorder=await webAPI.GetOneAsync<ProductOrderViewModel>("")
             //Status id should be in ProductOrder table, so that each productid's Status can be updated
             //update order table with updated status value from model
 
-            Order updatedstatus = new Order()
-            {
-                StatusId=model.statusId
-            };
+            //Order updatedstatus = new Order()
+            //{
+            //    StatusId=model.statusId
+            //};
 
-            var getorderid = context.Orders.Where(x => x.Id == model.orderId);
-            //how to update order table      ??
-
+            //var getorderid = context.Orders.Where(x => x.Id == model.orderId);
+            //var result = context.Orders.Find(model.orderId);
+            //how to update order table      ?? on specified orderid
+           //  context.Update<Order>(updatedstatus)
             return View();
         }
 
 
         public IActionResult OrderStatus_test()
         {
-            var orderlist = context.Orders.ToList();
+            var orderlist = context.Orders.Include(x=>x.Status).ToList();
             List<Order> orders = new List<Order>();
             orders = orderlist;
             return View(orderlist);
@@ -321,6 +324,8 @@ namespace WebAPI.Controllers
         {
             return View();
         }
+
+      //  public IActionResult 
 
     }
 }

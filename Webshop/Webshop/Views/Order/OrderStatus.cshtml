@@ -1,11 +1,11 @@
-﻿@model List<ProductOrderViewModel>
+﻿@model TestProductorder
 @{
     ViewData["Title"] = "OrderStatus";
 }
 
 <h1>OrderStatus</h1>
 
-<form asp-action="OrderStatus" method="post">
+
     <table class="table">
         <thead>
             <tr>
@@ -18,38 +18,40 @@
                 <th>Change Order Status</th>
             </tr>
         </thead>
+
         <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.orderId</td>
-                    <td>@item.productId</td>
-                    <td>@item.Quantity</td>
-                    <td>@item.price</td>
-                    <td>@item.orderCreationDate</td>
-                    <td>@item.orderstatus</td>
-                    @if (item.statusId != 4)
-                    {
-                        <td>
-                            <select>
-                                <option>--Byta Order Status--</option>
-                                @foreach (var statusname in item.statuslist)
-                                {
-                                    <option value="@statusname.Id">@statusname.Name</option>
-                                }
+            @foreach (var item in Model.productOrderViewModelslist)
+            
+            {                <tr>
 
-                            </select>
-                        </td>
-                    }
-                
-                    <td>
-                        @*<button type="submit" class="btn btn-success"> Update OrderStatus</button>*@
-                        <input class="btn btn-success" type="submit" value="Update" />
-                    </td>               
-                   
+    <td>@item.orderId</td>
+    <td>@item.productId</td>
+    <td>@item.Quantity</td>
+    <td>@item.price</td>
+    <td>@item.orderCreationDate</td>
+    <td>@item.orderstatus</td>
 
-                </tr>
+
+    <td>
+        <form asp-action="OrderStatus" method="post">
+            <input type="hidden" asp-for="@Model.orderid" value="@item.orderId" />
+            <select asp-for="@Model.statusid" >
+                <option>--Byta Order Status--</option>
+                @foreach (var statusname in item.statuslist)
+                {
+                    <option value="@statusname.Id">@statusname.Name</option>
+                }
+
+            </select>
+            <input class="btn btn-success" type="submit" value="Update" />
+   
+
+    </form>
+    </td>
+
+</tr>
+
+               
             }
-        </tbody>
-    </table>
-</form>
+
+</table>
