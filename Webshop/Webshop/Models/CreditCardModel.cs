@@ -14,7 +14,6 @@ namespace Webshop.Models
 
         [Required(ErrorMessage = "Ange CVC-numret")]
         [RegularExpression(@"^[0-9]{3}$", ErrorMessage = "CVC-numret är ogiltigt")]
-        public int CVC { get; set; }
-
+        public string CVC { get; set; }
     }
 }

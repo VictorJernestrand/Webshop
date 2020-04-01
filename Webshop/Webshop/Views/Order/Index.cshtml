@@ -1,4 +1,4 @@
-﻿@model Webshop.Models.OrderViewModel
+﻿@model OrderAndPaymentMethods
 
 @{
     ViewData["Title"] = "Index";
@@ -48,7 +48,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var product in Model.Products)
+        @foreach (var product in Model.OrderViewModel.Products)
         {
             <tr>
                 <td><img src="@Url.Content("~/Image/" + @product.Photo)" style="height: 60px; width: auto" /></td>
@@ -86,36 +86,49 @@
 </table>
 <div class="row">
     <div class="col ">
-        <div class="text-success float-right" style="margin: 4px, 20px, 4px, 20px; font-size: 2em">@Model.OrderTotal.ToString("C0")</div>
+        <div class="text-success float-right" style="margin: 4px, 20px, 4px, 20px; font-size: 2em">@Model.OrderViewModel.OrderTotal.ToString("C0")</div>
     </div>
 </div>
 
 
-@if (Model.AddressComplete)
+@if (Model.OrderViewModel.AddressComplete)
 {
     <div class="row">
+
+        <div class="col-md4 col-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Din Fraktadress</h5>
+                    <p>@Model.User.FirstName @Model.User.FirstName</p>
+                    <p>@Model.User.StreetAddress</p>
+                    <p>@Model.User.ZipCode, @Model.User.City</p>
+                    Stämmer inte adressen? <a href="#">ändra här</a>
+                </div>
+            </div>
+        </div>
+
         <div class="col-md-4">
             <form asp-action="Index" method="post" asp-controller="Order">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <div class="form-group">
-                    <label asp-for="PaymentMethodId" class="control-label">Betalning Method</label>
+                    <label asp-for="OrderViewModel.PaymentMethodId" class="control-label">Betalning Method</label>
 
-                    <select asp-for="PaymentMethodId" class="form-control" id="paymentMethodDropdown">
-                        >
+                    <select asp-for="OrderViewModel.PaymentMethodId" class="form-control" id="paymentMethodDropdown">
+
                         <option>Välj</option>
-                        @foreach (var item in Model.paymentMethodlist)
+                        @foreach (var item in Model.OrderViewModel.paymentMethodlist)
                         {
                             <option value="@item.Id">@item.Name</option>
                         }
                     </select>
-                    <span asp-validation-for="PaymentMethodId" class="text-danger"></span>
+                    <span asp-validation-for="OrderViewModel.PaymentMethodId" class="text-danger"></span>
                 </div>
-                <div>
-                    @foreach (var method in Model.paymentMethodlist)
-                    {
-                        <div id="@(method.Id)_paymentMethod" style="display:none;">@*<partial name="CreditCardPayment"/>*@</div>
-                    }
+
+
+                <div id="paymentForms">
+                    <div data-id="1" style="display:none;"><partial name="_KortPaymentPartial" model="@Model.CreditCardModel" /></div>
+                    <div data-id="2" style="display:none;"><partial name="_SwishPaymentPartial" /></div>
                 </div>
 
 
@@ -133,9 +146,9 @@
 }
 
 
-@section Scripts {
+@*@section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    @*<script>
+    <script>
         $('#paymentMethodDropdown').change(function () {
 
             //var selectedPaymentMethodId = $(this).val();
@@ -148,9 +161,28 @@
     </script>*@
 <script>
     document.getElementById("paymentMethodDropdown").addEventListener("change", function () {
-        alert(this.value);
-        document.getElementById("creditCardPayment").style.display = "block";
+
+        // Store selected payment Id from option element
+        var selectedPaymentMethod = this.value;
+
+        // Get parent div-element
+        var parent = document.getElementById("paymentForms");
+
+        // Get collectoin of child-elements
+        var children = parent.children;
+
+        console.log(children);
+
+        // Iteratet through children
+        for (var i = 0; i < children.length; i++) {
+
+            // If selected payment matches a child, display it!
+            if (children[i].dataset.id == selectedPaymentMethod)
+                children[i].style.display = "block";
+            else
+                children[i].style.display = "none";
+        }
+
+        //document.getElementById("creditCardPayment").style.display = "block";
     });
 </script>
-
-}

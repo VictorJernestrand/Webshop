@@ -14,6 +14,8 @@ namespace WebAPI.Controllers
         private readonly WebAPIHandler webAPI;
         private readonly WebAPIToken webAPIToken;
         public OrderViewModel orderviewmodel = new OrderViewModel();
+        public OrderAndPaymentMethods OrderAndPaymentMethods = new OrderAndPaymentMethods();
+
         public CreditCardModel creditCardModel { get; set; }
 
         public LoggedInUserName loggedInUserName = new LoggedInUserName();
@@ -61,7 +63,11 @@ namespace WebAPI.Controllers
                 return RedirectToAction("Index", "ShoppingCart");
             }
 
-            return View(orderviewmodel);
+            OrderAndPaymentMethods.OrderViewModel = orderviewmodel;
+
+            var token = await webAPIToken.New();
+            OrderAndPaymentMethods.User = await webAPI.GetOneAsync<User>(ApiURL.USERS + User.Identity.Name, token);
+            return View(OrderAndPaymentMethods);
         }
 
 
