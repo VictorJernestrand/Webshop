@@ -101,7 +101,8 @@
                 <div class="form-group">
                     <label asp-for="PaymentMethodId" class="control-label">Betalning Method</label>
 
-                    <select asp-for="PaymentMethodId" class="form-control">
+                    <select asp-for="PaymentMethodId" class="form-control" id="paymentMethodDropdown">
+                        >
                         <option>Välj</option>
                         @foreach (var item in Model.paymentMethodlist)
                         {
@@ -110,9 +111,12 @@
                     </select>
                     <span asp-validation-for="PaymentMethodId" class="text-danger"></span>
                 </div>
-
-
-
+                <div>
+                    @foreach (var method in Model.paymentMethodlist)
+                    {
+                        <div id="@(method.Id)_paymentMethod" style="display:none;">@*<partial name="CreditCardPayment"/>*@</div>
+                    }
+                </div>
 
 
 
@@ -131,4 +135,22 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @*<script>
+        $('#paymentMethodDropdown').change(function () {
+
+            //var selectedPaymentMethodId = $(this).val();
+
+            $.get('/Order/CreditCardPayment/', /*+ selectedPaymentMethodId,*/ function (data) {
+                $('#creditCardPayment').html(data);
+                $('#creditCardPayment').fadeIn('fast');
+            });
+        });
+    </script>*@
+<script>
+    document.getElementById("paymentMethodDropdown").addEventListener("change", function () {
+        alert(this.value);
+        document.getElementById("creditCardPayment").style.display = "block";
+    });
+</script>
+
 }

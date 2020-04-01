@@ -14,6 +14,7 @@ namespace WebAPI.Controllers
         private readonly WebAPIHandler webAPI;
         private readonly WebAPIToken webAPIToken;
         public OrderViewModel orderviewmodel = new OrderViewModel();
+        public CreditCardModel creditCardModel { get; set; }
 
         public LoggedInUserName loggedInUserName = new LoggedInUserName();
 
@@ -89,6 +90,37 @@ namespace WebAPI.Controllers
             TempData["PaymentMethodError"] = "Vänligen välj ett betalsätt";
             return RedirectToAction("Index");
         }
+
+
+        [HttpPost, ActionName("CreditCardPayment")]
+        [ValidateAntiForgeryToken]
+        public IActionResult PostCreditCardPayment([Bind]CreditCardModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    CreditCardModel creditCardPayment = new CreditCardModel()
+                    {
+                        CardNumber = model.CardNumber,
+                        CVC = model.CVC
+                    };
+
+                    return RedirectToAction(nameof(ThankYou));
+                }
+                return View(model);
+            }
+            catch
+            {
+                return View();
+            }
+        }
+        public IActionResult CreditCardPayment()
+        {
+
+            return View(creditCardModel);
+        }
+
 
         public async Task<IActionResult> ThankYou()
         {
