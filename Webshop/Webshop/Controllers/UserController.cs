@@ -79,7 +79,8 @@ namespace Webshop.Controllers
         {
             var email = User.Identity.Name;
 
-            var user = await webAPI.GetOneAsync<User>(ApiURL.USERS + email);
+            var token = await webAPIToken.New();
+            var user = await webAPI.GetOneAsync<User>(ApiURL.USERS + email, token);
             EditUserInfoModel = new EditUserInfoModel()
             {
                 Email           = user.Email,

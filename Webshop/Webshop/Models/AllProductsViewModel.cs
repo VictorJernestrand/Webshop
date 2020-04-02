@@ -75,8 +75,9 @@ namespace Webshop.Models
         public List<Brand> Brands { get; set; }
 
         public string Specification { get; set; }
+        public bool ActiveProduct { get; set; }
 
-       // public List<Product> productsDiscountlist { get; set; } = new List<Product>();
+        // public List<Product> productsDiscountlist { get; set; } = new List<Product>();
 
     }
 }
