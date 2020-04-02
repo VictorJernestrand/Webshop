@@ -52,6 +52,7 @@ namespace WebAPI.Controllers
 
         // GET: api/User/5
         //       [Authorize(Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpGet("{email}")]
         public async Task<ActionResult<User>> GetUser(string email)
         {

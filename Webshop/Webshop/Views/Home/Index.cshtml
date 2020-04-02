@@ -25,20 +25,26 @@
         right: auto;
     }
 
-    ol.carousel-indicators li,
-    ol.carousel-indicators li.active {
+    ol.carousel-indicators li {
         border-radius: 50%;
         background: grey;
     }
 
-        ol.carousel-indicators li.active {
+    ol.carousel-indicators li.active {
             background: gainsboro;
-        }
+    }
 
     .carousel-item img {
         width: auto;
         margin: auto;
         display: block;
+    }
+
+    .carousel-control-next-icon {
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='gray' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E");
+    }
+    .carousel-control-prev-icon {
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='gray' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E");
     }
 </style>
 <h3>Startsidan</h3>
@@ -71,7 +77,7 @@
                                             <img src="@Url.Content("~/Image/" + x.Photo)" style="width: auto; height: 400px" alt="First slide">
                                         </a>
                                         <div class="carousel-caption">
-                                            <h5 style="color: black">@x.Name</h5>
+                                            <h5 style=" color: black">@x.Name</h5>
                                             <p style="font-size:small; color: black; margin-bottom: 0px; text-decoration: line-through">
                                                 @x.Price.ToString("C0")
                                             </p>
@@ -118,11 +124,11 @@
 
                 <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="false"></span>
-                    <span class="sr-only">Previous</span>
+                    <span class="sr-only" style="color:gray">Previous</span>
                 </a>
                 <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="false"></span>
-                    <span class="sr-only">Next</span>
+                    <span class="sr-only" style="color:gray">Next</span>
                 </a>
             </div>
    
