@@ -26,6 +26,7 @@ namespace Webshop.Models
         public Category Category { get; set; }
         public Brand Brand { get; set; }
         public List<ProductOrder> ProductOrders { get; set; }
+        public bool ActiveProduct { get; set; }
 
 
     }
