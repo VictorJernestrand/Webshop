@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Webshop.Context;
 using Webshop.Models;
 using Webshop.Services;
@@ -13,20 +14,22 @@ namespace WebAPI.Controllers
     {
         private readonly WebAPIHandler webAPI;
         private readonly WebAPIToken webAPIToken;
-        public OrderViewModel orderviewmodel = new OrderViewModel();
+        private readonly string _cartSessionCookie;
 
+        public OrderViewModel orderviewmodel = new OrderViewModel();
         public LoggedInUserName loggedInUserName = new LoggedInUserName();
 
-        public OrderController(WebAPIHandler webAPI, WebAPIToken webAPIToken)
+        public OrderController(WebAPIHandler webAPI, WebAPIToken webAPIToken, IConfiguration config)
         {
             this.webAPI = webAPI;
             this.webAPIToken = webAPIToken;
+            this._cartSessionCookie = config["CartSessionCookie:Name"];
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var cartId = HttpContext.Session.GetString(Common.CART_COOKIE_NAME);
+            var cartId = HttpContext.Session.GetString(_cartSessionCookie);
 
             // Does user have a shoppingcart Id?
             if (cartId == null)
@@ -73,7 +76,7 @@ namespace WebAPI.Controllers
                 model.UserEmail = User.Identity.Name;
 
                 // Get cart id
-                var cartId = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
+                var cartId = Guid.Parse(HttpContext.Session.GetString(_cartSessionCookie));
 
                 // Send order to API
                 var token = await webAPIToken.New();

@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using WebAPI.Domain;
 
 namespace Webshop.Services
 {
@@ -53,8 +54,9 @@ namespace Webshop.Services
             // Send and receive request
             var result = await SendRequestAsync(request);
             var responseString = await result.Content.ReadAsStringAsync();
-            
-            return new APIResponseData() { Status = result, ResponseContent = responseString };
+
+            //var payload = await DeserializeJSON<APIPayload>(responseString);
+            return new APIResponseData() { Status = result, ResponseContent = responseString, APIPayload = DeserializeTokens(responseString) };
         }
 
         /// <summary>
@@ -211,8 +213,26 @@ namespace Webshop.Services
                         PropertyNameCaseInsensitive = true
                     }
                 );
-
+                
                 return post;
+            }
+        }
+
+
+        private APIPayload DeserializeTokens(string tokenJson)
+        {
+            try
+            {
+                var post = JsonSerializer.Deserialize<APIPayload>(tokenJson, new JsonSerializerOptions()
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+               return post;
+            }
+            catch (Exception)
+            {
+                return new APIPayload();
             }
         }
 

@@ -11,7 +11,7 @@ namespace Webshop.Services
         public const string USER_NAME = "UserName";
 
         // Cart cookie
-        public const string CART_COOKIE_NAME = "CustomerCartSessionId";
+        public const string CART_COOKIE_NAME = "HeavyMetalCart";
     }
 
     public class ApiURL

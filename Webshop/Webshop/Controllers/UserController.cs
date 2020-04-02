@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using WebAPI.Domain;
 using Webshop.Context;
 using Webshop.Models;
 using Webshop.Services;
@@ -102,11 +103,11 @@ namespace Webshop.Controllers
 
             if (ModelState.IsValid)
             {
-                var apiResult = await webAPI.PostAsync<LoginModel>(model, ApiURL.USERS_LOGIN);
+                var apiResult = await webAPI.PostAsync(model, ApiURL.USERS_LOGIN);
 
                 if (apiResult.Status.IsSuccessStatusCode)
                 {
-                    await SetAuthCookie(apiResult.ResponseContent, model.RememberUser);
+                    await SetAuthCookie(apiResult.APIPayload, model.RememberUser);
                     return RedirectToAction("Index", "Home");
                 }
             }
@@ -163,7 +164,7 @@ namespace Webshop.Controllers
 
                 if (apiResult.Status.IsSuccessStatusCode)
                 {
-                    await SetAuthCookie(apiResult.ResponseContent);
+                    await SetAuthCookie(apiResult.APIPayload);
                     TempData["PasswordSuccess"] = "Lösenordet har uppdaterats!";
                     return RedirectToAction(nameof(UpdateLogin));
                 }
@@ -198,7 +199,7 @@ namespace Webshop.Controllers
                     // If email was updated, update token cookie and authcookie with new criterias!
                     if (!User.Identity.Name.Equals(model.Email))
                     {
-                        await SetAuthCookie(apiResult.ResponseContent);
+                        await SetAuthCookie(apiResult.APIPayload);
                     }
 
                     TempData["UpdateSuccess"] = "Din information har uppdaterats!";
@@ -220,7 +221,10 @@ namespace Webshop.Controllers
         public async Task<IActionResult> LogOut()
         {
             // Remove shoppingcart session cookie!
-            HttpContext.Session.Remove(Common.CART_COOKIE_NAME);
+            HttpContext.Session.Remove(config["CartSessionCookie:Name"]);
+
+            // Remove shoppingcart session cookie!
+            HttpContext.Session.Remove(config["JwtSessionToken:Name"]);
 
             // Remove TokenCookie
             Response.Cookies.Delete(config["RefreshToken:Name"]);
@@ -231,11 +235,19 @@ namespace Webshop.Controllers
         }
 
 
-        public async Task SetAuthCookie(string tokenString, bool persistent = true)
+        // TODO: Add User object to PayLoad class
+
+        public async Task SetAuthCookie(APIPayload payload, bool persistent = true)
         {
+            // Bake Token Refresh cookie
+            webAPIToken.TokenRefreshCookie = payload.RefreshToken;
+
+            // Bake Token-Cookie
+            webAPIToken.SessionTokenRefresh = payload.Token;
+
             // Extract payload from token cookie
             var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(tokenString);
+            var token = handler.ReadJwtToken(payload.Token);
 
             var userEmail = token.Claims.Where(x => x.Type == "UserEmail")
                 .Select(x => x.Value)
@@ -261,7 +273,7 @@ namespace Webshop.Controllers
                 new Claim(ClaimTypes.Role, userRole)
             };
 
-            // Does user want to be remembered?
+            // Do user want to be remembered?
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var authProperties = new AuthenticationProperties
             {
@@ -271,9 +283,7 @@ namespace Webshop.Controllers
 
             // Bake authentication cookie!
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-
-            // Bake Token-Cookie
-            webAPIToken.TokenRefreshCookie = tokenString;
+            
         }
 
     }

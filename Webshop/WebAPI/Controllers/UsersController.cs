@@ -139,13 +139,12 @@ namespace WebAPI.Controllers
             return Unauthorized();
         }
 
-        // POST: api/User
+        // POST: api/Users
         [HttpPost]
         [Route("Login")]
-        [Produces("text/plain")]
-        public async Task<ActionResult<User>> LoginUser(LoginModel model)
+        //[Produces("text/plain")]
+        public async Task<ActionResult<APIPayload>> LoginUser(LoginModel model)
         {
-
             // Get user by e-mail
             User user = await _context.Users.Where(x => x.Email == model.UserEmail).FirstOrDefaultAsync();
 
@@ -163,9 +162,9 @@ namespace WebAPI.Controllers
 
                 // Construct JWT token
                 TokenCreatorService tokenService = new TokenCreatorService(_context, _configure);
-                var result = tokenService.CreateToken(user, isAdmin);
+                var newToken = tokenService.CreateToken(user, isAdmin, true);
 
-                return Ok(result);
+                return Ok(newToken);
             }
 
             else

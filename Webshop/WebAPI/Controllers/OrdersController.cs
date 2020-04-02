@@ -19,10 +19,14 @@ namespace WebAPI.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly WebAPIContext _context;
+        private readonly MailService _mailService;
+        private readonly CustomerOrderService _customerOrderService;
 
-        public OrdersController(WebAPIContext context)
+        public OrdersController(WebAPIContext context, MailService mailService, CustomerOrderService customerOrderService)
         {
-            _context = context;
+            this._context = context;
+            this._mailService = mailService;
+            this._customerOrderService = customerOrderService;
         }
 
         // GET: api/Orders
@@ -73,21 +77,21 @@ namespace WebAPI.Controllers
         public async Task<ActionResult<OrderViewModel>> GetOrderById(int id)
         {
             OrderViewModel orderViewModel = new OrderViewModel();
-
-            var orderItems = await _context.ProductOrders.Include(x => x.Product)
-                .Where(x => x.OrderId == id)
-                .Select(x => new OrderItemsModel
-                {
-                    ProductId = x.Product.Id,
-                    ProductName = x.Product.Name,
-                    Photo = x.Product.Photo,
-                    Price = x.Price,
-                    Amount = x.Amount,
-                    Discount = x.Discount,
-                    TotalProductCost = (x.Price * x.Amount),
-                    TotalProductCostDiscount = CalculateDiscount.NewPrice((x.Price * x.Amount), x.Discount)
-                })
-                .ToListAsync();
+            var orderItems = await _customerOrderService.CustomerOrderByIdAsync(id);// await  await CustomerOrderByIdAsync(id);
+            //var orderItems = await _context.ProductOrders.Include(x => x.Product)
+            //    .Where(x => x.OrderId == id)
+            //    .Select(x => new OrderItemsModel
+            //    {
+            //        ProductId = x.Product.Id,
+            //        ProductName = x.Product.Name,
+            //        Photo = x.Product.Photo,
+            //        Price = x.Price,
+            //        Amount = x.Amount,
+            //        Discount = x.Discount,
+            //        TotalProductCost = (x.Price * x.Amount),
+            //        TotalProductCostDiscount = CalculateDiscount.NewPrice((x.Price * x.Amount), x.Discount)
+            //    })
+            //    .ToListAsync();
 
             if (orderItems == null)
             {
@@ -199,7 +203,11 @@ namespace WebAPI.Controllers
                 _context.ShoppingCart.RemoveRange(oldCarts);
                 _context.SaveChanges();
 
+                // Send order-confirmation mail to customer
+                //MailService mail = new MailService();
+                bool test = await _mailService.SendAsync(user.Email, user.FirstName, "Orderbekräftelse", "Tack för din order sörrö", MailType.OrderConfirmation, newOrder.Id);
 
+                // Flag that the SQL-transaction has completed successfully
                 transaction.Complete();
 
                 return CreatedAtAction("GetOrderById", new { id = newOrder.Id }, newOrder);
@@ -226,5 +234,7 @@ namespace WebAPI.Controllers
         {
             return _context.Orders.Any(e => e.Id == id);
         }
+
+
     }
 }

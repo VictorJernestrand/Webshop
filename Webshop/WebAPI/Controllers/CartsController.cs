@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Models;
 using WebAPI.Context;
+using WebAPI.Domain;
 using WebAPI.Models;
 using WebAPI.Models.Data;
 
