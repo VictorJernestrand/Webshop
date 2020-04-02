@@ -92,9 +92,6 @@ namespace WebAPI.Context
                 entity.Property(x => x.Amount).IsRequired();
             });
 
-
-
-
             builder.Entity<Brand>().HasData(
                 new Brand() { Id = 1, Name = "Gibson" },
                 new Brand() { Id = 2, Name = "Fender" },
@@ -104,11 +101,11 @@ namespace WebAPI.Context
             );
 
             builder.Entity<Category>().HasData(
-                new Category() { Id = 1, Name = "Drum set" },
+                new Category() { Id = 1, Name = "Trummor" },
                 new Category() { Id = 2, Name = "Bas" },
                 new Category() { Id = 3, Name = "Piano" },
                 new Category() { Id = 4, Name = "Keyboard" },
-                new Category() { Id = 5, Name = "Guitar" }
+                new Category() { Id = 5, Name = "Gitarr" }
             );
 
             builder.Entity<Product>().HasData(
@@ -128,13 +125,16 @@ namespace WebAPI.Context
 
                 );
             builder.Entity<PaymentMethod>().HasData(
-                new PaymentMethod() { Id = 1, Name = "Swish" },
-                new PaymentMethod() { Id = 2, Name = "Konto" }
+                new PaymentMethod() { Id = 1, Name = "Kort" },
+                new PaymentMethod() { Id = 2, Name = "Swish" },
+                new PaymentMethod() { Id = 3, Name = "Faktura" },
+                new PaymentMethod() { Id = 4, Name = "Toapapper" }
+
                 );
             builder.Entity<Status>().HasData(
                 new Status() { Id = 1, Name = "Under behandling" },
-                new Status() { Id = 2, Name = "Förpackning" },
-                new Status() { Id = 3, Name = "Skickad" },
+                new Status() { Id = 2, Name = "Packas" },
+                new Status() { Id = 3, Name = "Skickade" },
                 new Status() { Id = 4, Name = "Levereras" }
                 );
 
