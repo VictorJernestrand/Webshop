@@ -254,7 +254,7 @@ namespace Webshop.Controllers
                 .FirstOrDefault()
                 .ToString();
 
-            var userName = token.Claims.Where(x => x.Type == "Name")
+            var userName = token.Claims.Where(x => x.Type == "UserName")
                 .Select(x => x.Value)
                 .FirstOrDefault()
                 .ToString();
@@ -269,7 +269,7 @@ namespace Webshop.Controllers
             {
                 new Claim(ClaimTypes.Email, userEmail),
                 new Claim(ClaimTypes.Name, userEmail),
-                new Claim("FullName", userName),
+                new Claim("UserName", userName),
                 new Claim(ClaimTypes.Role, userRole)
             };
 

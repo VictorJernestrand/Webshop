@@ -115,7 +115,7 @@ namespace WebAPI.Controllers
 
         [HttpPut]
         [Route("loginupdate/{email}")]
-        public async Task<ActionResult> UpdateLoginInfo(UpdateUserPasswordModel model, string email)
+        public async Task<IActionResult> UpdateLoginInfo(UpdateUserPasswordModel model, string email)
         {
             if (ModelState.IsValid)
             {
@@ -131,12 +131,14 @@ namespace WebAPI.Controllers
                     TokenCreatorService tokenService = new TokenCreatorService(_context, _configure);
 
                     var isAdmin = false;
-                    var newToken = tokenService.CreateToken(updatedUser, isAdmin);
-                    return Ok(newToken);
+
+                    var payload = tokenService.CreateToken(updatedUser, isAdmin, true);
+
+                    return Ok(payload);
                 }
             }
 
-            return Unauthorized();
+            return Unauthorized(new APIPayload());
         }
 
         // POST: api/Users

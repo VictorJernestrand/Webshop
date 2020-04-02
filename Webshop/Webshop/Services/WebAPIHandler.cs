@@ -127,7 +127,7 @@ namespace Webshop.Services
 
                 var responseString = await response.Content.ReadAsStringAsync();
 
-                return new APIResponseData() { Status = response, ResponseContent = responseString };
+                return new APIResponseData() { Status = response, ResponseContent = responseString, APIPayload = DeserializeTokens(responseString) };
             }
 
         }

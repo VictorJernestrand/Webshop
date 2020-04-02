@@ -205,7 +205,7 @@ namespace WebAPI.Controllers
 
                 // Send order-confirmation mail to customer
                 //MailService mail = new MailService();
-                bool test = await _mailService.SendAsync(user.Email, user.FirstName, "Orderbekräftelse", "Tack för din order sörrö", MailType.OrderConfirmation, newOrder.Id);
+                bool test = await _mailService.SendOrderConfirmationMailAsync(user.Email, user.FirstName, "Orderbekräftelse", newOrder.Id);
 
                 // Flag that the SQL-transaction has completed successfully
                 transaction.Complete();

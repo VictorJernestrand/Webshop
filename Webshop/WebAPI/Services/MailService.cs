@@ -1,15 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MimeKit; // Nuget package 'MailKit'
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using WebAPI.Models.Data;
 
 namespace WebAPI.Services
 {
-    public enum MailType { NewCustomer, ForgotPassword, OrderConfirmation, ContactForm }
 
     public class MailService
     {
@@ -22,43 +18,14 @@ namespace WebAPI.Services
             this._customerOrderService = customerOrderService;
         }
 
-
-        /// <summary>
-        /// Send an email
-        /// </summary>
-        /// <param name="recipientEmail">Customers email</param>
-        /// <param name="recipientName">Customers name</param>
-        /// <param name="subject">Email subject</param>
-        /// <param name="mailMessage">Email message</param>
-        /// <param name="mail">Enum MailType: NewCustomer, ForgotPassword, OrderConfirmation, ContactForm</param>
-        /// <returns></returns>
-        public async Task<bool> SendAsync(string recipientEmail, string recipientName, string subject, string mailMessage, MailType mail, int orderId = 0)
+        public async Task<bool> SendOrderConfirmationMailAsync(string recipientEmail, string recipientName, string subject, int orderId)
         {
-            // Mail-flag for determing if mail was sent or not.
-            var mailSent = false;
+            string template = Template();
+            template = template.Replace("{SUBJECT}", "Orderbekräftelse från RockStart");
+            template = template.Replace("{CUSTOMER_NAME}", recipientName);
+            template = template.Replace("{CUSTOMER_ORDER}", await BuildOrdersTable(orderId));
 
-            switch (mail)
-            {
-                case MailType.NewCustomer:
-                    mailSent = SendMail(recipientEmail, _config["Mail:Address"], _config["Mail:Name"], recipientName, subject, mailMessage);
-                    break;
-                //case MailType.ForgotPassword:
-                //    mailSent = SendMail(customerEmail, "rockstartare@gmail.com", "RockStart", customerName, subject, mailMessage);
-                //    break;
-                case MailType.OrderConfirmation:
-                    string template = Template();
-                    template = template.Replace("{SUBJECT}", subject);
-                    template = template.Replace("{CUSTOMER_NAME}", recipientName);
-                    template = template.Replace("{CUSTOMER_ORDER}", await BuildOrdersTable(orderId));
-
-                    mailSent = SendMail(recipientEmail, _config["Mail:Address"], _config["Mail:Name"], recipientName, subject, template, "html");
-                    break;
-                case MailType.ContactForm:
-                    mailSent = SendMail(_config["Mail:Address"], recipientEmail, recipientName, _config["Mail:Name"], subject, mailMessage);
-                    break;
-            }
-
-            return mailSent;
+            return SendMail(recipientEmail, _config["Mail:Address"], _config["Mail:Name"], recipientName, subject, template, "html");
         }
 
         private async Task<string> BuildOrdersTable(int orderId)
@@ -67,26 +34,22 @@ namespace WebAPI.Services
             var order = await _customerOrderService.CustomerOrderByIdAsync(orderId);
 
             StringBuilder builder = new StringBuilder();
-
             builder.Append($"<table>");
 
             decimal orderTotal = 0;
             foreach (var product in order)
             {
                 orderTotal += product.TotalProductCostDiscount;
-
                 builder.Append($"<tr>");
-                builder.Append($"<td style=\"width: 200px\"><a href=\"https://localhost:44364/Product/ProductDetail/" + product.ProductId + $"\">{product.ProductName}</a></td>");
-                builder.Append($"<td>{product.Amount} x {product.Price}</td>");
+                builder.Append($"<td><a href=\"#\">{product.ProductName}</a></td>");
+                builder.Append($"<td>{product.Amount} x {product.Price.ToString("C0")}</td>");
                 builder.Append($"<td>{(product.Price * product.Amount).ToString("C0")}</td>");
-                builder.Append($"<td>{(product.TotalProductCostDiscount).ToString("C0")}</td>");
+                builder.Append($"<td>{(orderTotal).ToString("C0")}</td>");
                 builder.Append($"</tr>");
             }
+
             builder.Append($"</table>");
-
-            builder.Append($"<div>{orderTotal.ToString("C0")}");
-
-
+            builder.Append($"<div><b>Totalt:</b> {orderTotal.ToString("C0")}</div>");
             return builder.ToString();
         }
 
@@ -102,6 +65,8 @@ namespace WebAPI.Services
                         <p>Hej {CUSTOMER_NAME}! Detta är en orderbekräftelse på att vi mottagit din order.</p>
                         <p>Din order:</p>
                         {CUSTOMER_ORDER}
+
+                        <p>Tack för att du handlat hos RockStart!</p>
                     </body>
                     </html>";
         }
@@ -140,7 +105,7 @@ namespace WebAPI.Services
                     client.Disconnect(true);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Handle error here, log...
                 return false;
