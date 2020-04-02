@@ -36,7 +36,14 @@
             <div class="card-body">
                 <h5 class="card-title">@Model.Name</h5>
                 <h6 class="card-subtitle mb-2 text-muted">@Model.BrandName - @Model.CategoryName</h6>
+                @if (Model.ActiveProduct == false)
+                {
+                    <a class="text-danger">Produkten är inaktiv</a>
+                }
+                else
+                { 
                 <a>&nbsp;</a>
+                }
                 @if (Model.Discount == 0)
                 {
                     <h5 class="card-title text-success">@Model.Price.ToString("C0")</h5>

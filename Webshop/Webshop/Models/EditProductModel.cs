@@ -37,5 +37,6 @@ namespace Webshop.Models
 
         [Required(ErrorMessage = "Ange rabatten i decimalform")]
         public string DiscountToConvert { get; set; }
-     }
+        public bool ActiveProduct { get; set; }
+    }
 }

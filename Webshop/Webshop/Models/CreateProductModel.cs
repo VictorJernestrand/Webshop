@@ -42,6 +42,8 @@ namespace Webshop.Models
 
         public string Specification { get; set; }
 
+        public bool ActiveProduct { get; set; }
+
         internal Task CopyToAsync(FileStream fileStream)
         {
             throw new NotImplementedException();

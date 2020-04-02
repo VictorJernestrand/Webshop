@@ -29,5 +29,8 @@ namespace Webshop.Models
 
         public decimal TotalProductCost { get; set; }
 
+      
+        
+
     }
 }
