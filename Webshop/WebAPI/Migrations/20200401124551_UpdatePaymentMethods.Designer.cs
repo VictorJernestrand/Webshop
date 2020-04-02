@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebAPI.Context;
 
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(WebAPIContext))]
-    partial class WebAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20200401124551_UpdatePaymentMethods")]
+    partial class UpdatePaymentMethods
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -313,9 +315,6 @@ namespace WebAPI.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("ActiveProduct")
-                        .HasColumnType("bit");
-
                     b.Property<int>("BrandId")
                         .HasColumnType("int");
 
@@ -361,7 +360,6 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 1,
-                            ActiveProduct = false,
                             BrandId = 2,
                             CategoryId = 5,
                             Description = "Black and white",
@@ -374,7 +372,6 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 2,
-                            ActiveProduct = false,
                             BrandId = 2,
                             CategoryId = 3,
                             Description = "Smooth",
@@ -387,7 +384,6 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 3,
-                            ActiveProduct = false,
                             BrandId = 2,
                             CategoryId = 3,
                             Description = "Blue bas",
@@ -400,7 +396,6 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 4,
-                            ActiveProduct = false,
                             BrandId = 1,
                             CategoryId = 3,
                             Description = "Advanced",
@@ -413,7 +408,6 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 5,
-                            ActiveProduct = false,
                             BrandId = 5,
                             CategoryId = 2,
                             Description = "For kids",
@@ -426,7 +420,6 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 6,
-                            ActiveProduct = false,
                             BrandId = 5,
                             CategoryId = 2,
                             Description = "For good players",
@@ -439,7 +432,6 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 7,
-                            ActiveProduct = false,
                             BrandId = 3,
                             CategoryId = 1,
                             Description = "Nice set of drums",
@@ -452,7 +444,6 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 8,
-                            ActiveProduct = false,
                             BrandId = 3,
                             CategoryId = 4,
                             Description = "Black and black",
@@ -465,7 +456,6 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 9,
-                            ActiveProduct = false,
                             BrandId = 3,
                             CategoryId = 4,
                             Description = "Old model",
@@ -478,7 +468,6 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 10,
-                            ActiveProduct = false,
                             BrandId = 4,
                             CategoryId = 3,
                             Description = "Digitalpiano",
@@ -491,7 +480,6 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 11,
-                            ActiveProduct = false,
                             BrandId = 4,
                             CategoryId = 5,
                             Description = "Traveling model",
@@ -504,7 +492,6 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 12,
-                            ActiveProduct = false,
                             BrandId = 3,
                             CategoryId = 4,
                             Description = "Our best keyboard",

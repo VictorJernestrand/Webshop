@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Webshop.Models;
 using Webshop.Services;
 
@@ -14,19 +15,28 @@ namespace WebAPI.Controllers
     {
         private readonly WebAPIHandler webAPI;
         private readonly WebAPIToken webAPIToken;
+
+        private readonly string _cartSessionCookie;
+
         public OrderViewModel orderviewmodel = new OrderViewModel();
+        public OrderAndPaymentMethods OrderAndPaymentMethods = new OrderAndPaymentMethods();
+
+        
+
+        //public OrderViewModel orderviewmodel = new OrderViewModel();
         public LoggedInUserName loggedInUserName = new LoggedInUserName();
 
-        public OrderController(WebAPIHandler webAPI, WebAPIToken webAPIToken)
+        public OrderController(WebAPIHandler webAPI, WebAPIToken webAPIToken, IConfiguration config)
         {
             this.webAPI = webAPI;
             this.webAPIToken = webAPIToken;
+            this._cartSessionCookie = config["CartSessionCookie:Name"];
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var cartId = HttpContext.Session.GetString(Common.CART_COOKIE_NAME);
+            var cartId = HttpContext.Session.GetString(_cartSessionCookie);
 
             // Does user have a shoppingcart Id?
             if (cartId == null)
@@ -60,7 +70,11 @@ namespace WebAPI.Controllers
                 return RedirectToAction("Index", "ShoppingCart");
             }
 
-            return View(orderviewmodel);
+            OrderAndPaymentMethods.OrderViewModel = orderviewmodel;
+
+            var token = await webAPIToken.New();
+            OrderAndPaymentMethods.User = await webAPI.GetOneAsync<User>(ApiURL.USERS + User.Identity.Name, token);
+            return View(OrderAndPaymentMethods);
         }
 
         [Authorize(Roles = "Admin")]
@@ -101,7 +115,7 @@ namespace WebAPI.Controllers
                 model.UserEmail = User.Identity.Name;
 
                 // Get cart id
-                var cartId = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
+                var cartId = Guid.Parse(HttpContext.Session.GetString(_cartSessionCookie));
 
                 // Send order to API
                 var token = await webAPIToken.New();
@@ -117,6 +131,37 @@ namespace WebAPI.Controllers
             TempData["PaymentMethodError"] = "Vänligen välj ett betalsätt";
             return RedirectToAction("Index");
         }
+
+
+        [HttpPost, ActionName("CreditCardPayment")]
+        [ValidateAntiForgeryToken]
+        public IActionResult PostCreditCardPayment([Bind]CreditCardModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    CreditCardModel creditCardPayment = new CreditCardModel()
+                    {
+                        CardNumber = model.CardNumber,
+                        CVC = model.CVC
+                    };
+
+                    return RedirectToAction(nameof(ThankYou));
+                }
+                return View(model);
+            }
+            catch
+            {
+                return View();
+            }
+        }
+        //public IActionResult CreditCardPayment()
+        //{
+
+        //    return View(creditCardModel);
+        //}
+
 
         public async Task<IActionResult> ThankYou()
         {

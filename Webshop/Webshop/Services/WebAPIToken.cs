@@ -17,7 +17,8 @@ namespace Webshop.Services
         //private readonly IHttpClientFactory clientFactory;
         //private readonly IConfiguration config;
 
-        private readonly string _tokenCookie;
+        private readonly string _jwtTokenCookie;
+        private readonly string _refreshTokenCookie;
         private readonly int _expireMonths;
 
         /// <summary>
@@ -31,9 +32,9 @@ namespace Webshop.Services
         {
             this.webAPI = webAPI;
             this.accessor = accessor;
-            //this.clientFactory = clientFactory;
-            //this.config = config;
-            this._tokenCookie = config["RefreshToken:Name"];
+
+            this._jwtTokenCookie = config["JwtSessionToken:Name"];
+            this._refreshTokenCookie = config["RefreshToken:Name"];
             this._expireMonths = int.Parse(config["RefreshToken:Expire"]);
         }
 
@@ -44,23 +45,52 @@ namespace Webshop.Services
         /// <returns></returns>
         public async Task<string> New()
         {
-            // Instantiate a new payload-object containing old JWT (Jason Web Token) from local cookie 'TastyCookie'
-            APIPayload payload = new APIPayload()
+            APIResponseData response = new APIResponseData();
+
+            if (SessionTokenRefresh == null)
             {
-                Token = TokenRefreshCookie // Get old JWT token from cookie
-            };
+                APIPayload payload = new APIPayload()
+                {
+                    RefreshToken = TokenRefreshCookie,
+                    UserEmail = accessor.HttpContext.User.Identity.Name
+                };
 
-            // Post payload object to API and request a new token.
-            // The API will validate the old JWT-token and return a new token if old JWT wasn't tampered with.
-            var token = await webAPI.PostAsync<APIPayload>(payload, "https://localhost:44305/api/tokenrequest/new");
+                response = await webAPI.PostAsync(payload, "https://localhost:44305/api/tokenrequest/refresh");
+            }
+            else
+            {
 
-            if (string.IsNullOrEmpty(token.ResponseContent))
-                throw new ArgumentNullException("Token was null!");
+                // Instantiate a new payload-object containing old JWT (Jason Web Token) from local cookie 'TastyCookie'
+                APIPayload payload = new APIPayload()
+                {
+                    //Token = TokenRefreshCookie // Get old JWT token from cookie
+                    Token = SessionTokenRefresh,
+                    RefreshToken = TokenRefreshCookie
+                };
+
+                // Post payload object to API and request a new token.
+                // The API will validate the old JWT-token and return a new token if old JWT wasn't tampered with.
+                response = await webAPI.PostAsync(payload, "https://localhost:44305/api/tokenrequest/new");
+            }
+
+            // Invalid token
+            if (!response.Status.IsSuccessStatusCode)
+            {
+                // Send request using refresh token
+            }
+
+            //if (string.IsNullOrEmpty(token.ResponseContent))
+            //{
+            //    throw new ArgumentNullException("Token was null!");
+            //}
 
             // Store new token in local cookie
-            TokenRefreshCookie = token.ResponseContent;
+            //TokenRefreshCookie = newToken.ResponseContent;
+            SessionTokenRefresh = response.APIPayload.Token;
 
-            return token.ResponseContent;
+
+            //var test = accessor.HttpContext.Session.GetString("TestCookie");
+            return response.APIPayload.Token;
         }
 
         /// <summary>
@@ -68,9 +98,21 @@ namespace Webshop.Services
         /// </summary>
         public string TokenRefreshCookie
         {
-            get { return accessor.HttpContext.Request.Cookies[_tokenCookie]; }
-            set { accessor.HttpContext.Response.Cookies.Append(_tokenCookie, value, Options(_expireMonths)); }
+            get { return accessor.HttpContext.Request.Cookies[_refreshTokenCookie]; }
+            set { accessor.HttpContext.Response.Cookies.Append(_refreshTokenCookie, value, Options(_expireMonths)); }
         }
+
+        public string SessionTokenRefresh
+        {
+            get { return accessor.HttpContext.Session.GetString(_jwtTokenCookie); }
+            set
+            {
+                accessor.HttpContext.Session.SetString(_jwtTokenCookie, value);
+                //accessor.HttpContext.Response.Cookies.Append(_tokenCookie, value, Options(_expireMonths));
+            }
+        }
+
+
 
         /// <summary>
         /// Predefined security options for cookies. Parameter value describes expiration in months from current date

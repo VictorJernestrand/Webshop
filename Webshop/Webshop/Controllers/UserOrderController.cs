@@ -30,7 +30,7 @@ namespace Webshop.Controllers
             // TODO: Add customer e-mail to API request for added security
 
             var token = await webAPIToken.New();
-            var orderDetails = await webAPI.GetOneAsync<OrderViewModel>(ApiURL.ORDERS + id, token);
+            var orderDetails = await webAPI.GetOneAsync<OrderViewModel>(ApiURL.ORDER_BY_ID + id, token);
 
             if (orderDetails != null)
                 return View(orderDetails);
