@@ -46,6 +46,20 @@
             <p><b>Tillverkare </b>@Model.BrandName</p>
             <p><b>Antal i lager </b>@Model.Quantity</p>
 
+            @*<div class="d-inline">
+            <a asp-action="AllProducts" class="btn btn-info mb-2 mr-2">Tillbaka till produkter</a>
+            <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-action="EditProduct" class="btn btn-primary mb-2 mr-2" asp-route-id="@Model.Id">Redigera</a>
+                <a asp-action="DeleteProduct" asp-route-id="@Model.Id" asp-controller="Product" class="btn btn-danger mb-2 mr-2">Radera</a>
+            }
+            else
+            {
+                <a class="btn btn-success mb-2 mr-2 text-white" style="font-weight: bold" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Lägg i kundvagn</a>
+            }
+        </div>*@
+
             <div class="d-inline">
                 <a asp-action="AllProducts" class="btn btn-info mb-2 mr-2">Tillbaka till produkter</a>
                 <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
@@ -54,11 +68,17 @@
                     <a asp-action="EditProduct" class="btn btn-primary mb-2 mr-2" asp-route-id="@Model.Id">Redigera</a>
                     <a asp-action="DeleteProduct" asp-route-id="@Model.Id" asp-controller="Product" class="btn btn-danger mb-2 mr-2">Radera</a>
                 }
+                else if (Model.ActiveProduct != true && !User.IsInRole("Admin"))
+                {
+                    <p>Produkten går inte längre att köpa</p>
+                    <a asp-action="Orderdeatails" asp-controller="UserOrder" class="btn btn-primary mb-2 mr-2">Gå tillbaka</a>
+                }
                 else
                 {
                     <a class="btn btn-success mb-2 mr-2 text-white" style="font-weight: bold" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Lägg i kundvagn</a>
                 }
             </div>
+
         </div>
 
 
