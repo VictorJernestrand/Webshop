@@ -234,60 +234,67 @@ namespace WebAPI.Controllers
                 StatusId = 1
             };
 
-            // Keep data consistant! Begin transaction!
-            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            try
             {
-                // Add order to Entity Framework
-                _context.Orders.Add(newOrder);
-                await _context.SaveChangesAsync();
-
-                // Get productinformation from shoppingcart
-                var productOrders = await _context.ShoppingCart.Include(x => x.Product)
-                    .Where(x => x.CartId == cartId && x.Amount > 0)
-                    .Select(x => new ProductOrder
-                    {
-                        OrderId = newOrder.Id,
-                        Price = x.Product.Price,
-                        Amount = x.Amount,
-                        ProductId = x.Product.Id,
-                        Discount = (decimal)x.Product.Discount,
-                    })
-                    .ToListAsync();
-
-                // Add all products to the ProductOrders-table
-                _context.ProductOrders.AddRange(productOrders);
-                await _context.SaveChangesAsync();
-
-                // Update product quantity
-                foreach(var item in productOrders)
+                // Keep data consistant! Begin transaction!
+                using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
-                    var product = _context.Products.Find(item.ProductId);
-
-                    product.Quantity = (product.Quantity - item.Amount >= 0) ?
-                                        product.Quantity -= item.Amount : 0;
-
-                    _context.Entry(product).State = EntityState.Modified;
+                    // Add order to Entity Framework
+                    _context.Orders.Add(newOrder);
                     await _context.SaveChangesAsync();
+
+                    // Get productinformation from shoppingcart
+                    var productOrders = await _context.ShoppingCart.Include(x => x.Product)
+                        .Where(x => x.CartId == cartId && x.Amount > 0)
+                        .Select(x => new ProductOrder
+                        {
+                            OrderId = newOrder.Id,
+                            Price = x.Product.Price,
+                            Amount = x.Amount,
+                            ProductId = x.Product.Id,
+                            Discount = (decimal)x.Product.Discount,
+                        })
+                        .ToListAsync();
+
+                    // Add all products to the ProductOrders-table
+                    _context.ProductOrders.AddRange(productOrders);
+                    await _context.SaveChangesAsync();
+
+                    // Update product quantity
+                    foreach (var item in productOrders)
+                    {
+                        var product = _context.Products.Find(item.ProductId);
+
+                        product.Quantity = (product.Quantity - item.Amount >= 0) ?
+                                            product.Quantity -= item.Amount : 0;
+
+                        _context.Entry(product).State = EntityState.Modified;
+                        await _context.SaveChangesAsync();
+                    }
+
+                    // Empty cart.
+                    List<ShoppingCart> cartProducts = await _context.ShoppingCart.Where(x => x.CartId == cartId).ToListAsync();
+                    _context.ShoppingCart.RemoveRange(cartProducts);
+                    _context.SaveChanges();
+
+                    // Keep cart clean by removing carts older than 3 days
+                    List<ShoppingCart> oldCarts = await _context.ShoppingCart.Where(x => x.TimeStamp.AddDays(3) <= DateTime.Now).ToListAsync();
+                    _context.ShoppingCart.RemoveRange(oldCarts);
+                    _context.SaveChanges();
+
+                    // Send order-confirmation mail to customer
+                    //MailService mail = new MailService();
+                    bool test = await _mailService.SendOrderConfirmationMailAsync(user.Email, user.FirstName, "Orderbekräftelse", newOrder.Id);
+
+                    // Flag that the SQL-transaction has completed successfully
+                    transaction.Complete();
+
+                    return CreatedAtAction("GetOrderById", new { id = newOrder.Id }, newOrder);
                 }
-
-                // Empty cart.
-                List<ShoppingCart> cartProducts = await _context.ShoppingCart.Where(x => x.CartId == cartId).ToListAsync();
-                _context.ShoppingCart.RemoveRange(cartProducts);
-                _context.SaveChanges();
-
-                // Keep cart clean by removing carts older than 3 days
-                List<ShoppingCart> oldCarts = await _context.ShoppingCart.Where(x => x.TimeStamp.AddDays(3) <= DateTime.Now).ToListAsync();
-                _context.ShoppingCart.RemoveRange(oldCarts);
-                _context.SaveChanges();
-
-                // Send order-confirmation mail to customer
-                //MailService mail = new MailService();
-                bool test = await _mailService.SendOrderConfirmationMailAsync(user.Email, user.FirstName, "Orderbekräftelse", newOrder.Id);
-
-                // Flag that the SQL-transaction has completed successfully
-                transaction.Complete();
-
-                return CreatedAtAction("GetOrderById", new { id = newOrder.Id }, newOrder);
+            }
+            catch (Exception ex)
+            {
+                return new Order();
             }
         }
 
