@@ -11,6 +11,8 @@ namespace WebAPI.Domain
         public string Token { get; set; }
 
         // Containts the RefreshToken stored in the Users table in the database
-        //public string RefreshToken { get; set; }
+        public string RefreshToken { get; set; }
+
+        public string UserEmail { get; set; }
     }
 }

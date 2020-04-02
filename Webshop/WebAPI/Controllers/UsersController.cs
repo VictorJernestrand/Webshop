@@ -52,6 +52,7 @@ namespace WebAPI.Controllers
 
         // GET: api/User/5
         //       [Authorize(Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpGet("{email}")]
         public async Task<ActionResult<User>> GetUser(string email)
         {
@@ -115,7 +116,7 @@ namespace WebAPI.Controllers
 
         [HttpPut]
         [Route("loginupdate/{email}")]
-        public async Task<ActionResult> UpdateLoginInfo(UpdateUserPasswordModel model, string email)
+        public async Task<IActionResult> UpdateLoginInfo(UpdateUserPasswordModel model, string email)
         {
             if (ModelState.IsValid)
             {
@@ -131,21 +132,22 @@ namespace WebAPI.Controllers
                     TokenCreatorService tokenService = new TokenCreatorService(_context, _configure);
 
                     var isAdmin = false;
-                    var newToken = tokenService.CreateToken(updatedUser, isAdmin);
-                    return Ok(newToken);
+
+                    var payload = tokenService.CreateToken(updatedUser, isAdmin, true);
+
+                    return Ok(payload);
                 }
             }
 
-            return Unauthorized();
+            return Unauthorized(new APIPayload());
         }
 
-        // POST: api/User
+        // POST: api/Users
         [HttpPost]
         [Route("Login")]
-        [Produces("text/plain")]
-        public async Task<ActionResult<User>> LoginUser(LoginModel model)
+        //[Produces("text/plain")]
+        public async Task<ActionResult<APIPayload>> LoginUser(LoginModel model)
         {
-
             // Get user by e-mail
             User user = await _context.Users.Where(x => x.Email == model.UserEmail).FirstOrDefaultAsync();
 
@@ -163,9 +165,9 @@ namespace WebAPI.Controllers
 
                 // Construct JWT token
                 TokenCreatorService tokenService = new TokenCreatorService(_context, _configure);
-                var result = tokenService.CreateToken(user, isAdmin);
+                var newToken = tokenService.CreateToken(user, isAdmin, true);
 
-                return Ok(result);
+                return Ok(newToken);
             }
 
             else
