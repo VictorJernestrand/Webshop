@@ -34,7 +34,9 @@ $(document).ready(function () {
 
 // Add items to cart using AJAX and fetch framework
 function AddCrapToCart(productId, name) {
-    console.log("Add to cart");
+
+    console.log(productId + ", " + name);
+
     // Declare new FormData object
     let formData = new FormData();
 
@@ -48,18 +50,18 @@ function AddCrapToCart(productId, name) {
         body: formData
     })
 
-        // Handle response
-        .then((response) => {
+    // Handle response
+    .then((response) => {
 
-            // If response was ok, update cart and display a message with the product name telling it was added to cart.
-            if (response.ok) {
-                UpdateCartButton();
-                DisplayResponseMessage(name);
-                IncreaseSingleProductInCart(productId);
-            } else {
-                alert("Skit också, något gick fel. Försök igen eller kontakta vår sketna support!");
-            }
-        });
+        // If response was ok, update cart and display a message with the product name telling it was added to cart.
+        if (response.ok) {
+            UpdateCartButton();
+            DisplayResponseMessage(name);
+            IncreaseSingleProductInCart(productId);
+        } else {
+            alert("Skit också, något gick fel. Försök igen eller kontakta vår sketna support!");
+        }
+    });
 }
 
 

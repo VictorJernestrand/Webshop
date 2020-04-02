@@ -11,7 +11,7 @@ namespace Webshop.Services
         public const string USER_NAME = "UserName";
 
         // Cart cookie
-        public const string CART_COOKIE_NAME = "CustomerCartSessionId";
+        public const string CART_COOKIE_NAME = "HeavyMetalCart";
     }
 
     public class ApiURL
@@ -40,6 +40,12 @@ namespace Webshop.Services
 
         // API-paths to order-controllers
         public const string ORDERS              = URL + "orders/";
+        public const string ORDER_BY_ID         = URL + "orders/id/";
         public const string ORDERS_BY_USER      = URL + "orders/userorders/";
+        public const string All_ORDERS_BY_STATUS= URL + "orders/allorders/";
+        public const string ORDERREQBYID        = URL + "orders/orderrequest/";
+
+        //API-path to status-controllers
+        public const string STATUS              = URL + "status/";
     }
 }

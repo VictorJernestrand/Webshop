@@ -1,35 +1,42 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Webshop.Context;
+using Microsoft.Extensions.Configuration;
 using Webshop.Models;
 using Webshop.Services;
 
 namespace WebAPI.Controllers
 {
+    [Authorize]
     public class OrderController : Controller
     {
         private readonly WebAPIHandler webAPI;
         private readonly WebAPIToken webAPIToken;
+
+        private readonly string _cartSessionCookie;
+
         public OrderViewModel orderviewmodel = new OrderViewModel();
         public OrderAndPaymentMethods OrderAndPaymentMethods = new OrderAndPaymentMethods();
 
-        public CreditCardModel creditCardModel { get; set; }
+        
 
+        public OrderViewModel orderviewmodel = new OrderViewModel();
         public LoggedInUserName loggedInUserName = new LoggedInUserName();
 
-        public OrderController(WebAPIHandler webAPI, WebAPIToken webAPIToken)
+        public OrderController(WebAPIHandler webAPI, WebAPIToken webAPIToken, IConfiguration config)
         {
             this.webAPI = webAPI;
             this.webAPIToken = webAPIToken;
+            this._cartSessionCookie = config["CartSessionCookie:Name"];
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var cartId = HttpContext.Session.GetString(Common.CART_COOKIE_NAME);
+            var cartId = HttpContext.Session.GetString(_cartSessionCookie);
 
             // Does user have a shoppingcart Id?
             if (cartId == null)
@@ -70,17 +77,45 @@ namespace WebAPI.Controllers
             return View(OrderAndPaymentMethods);
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> EditStatus(int Id)
+        {
+            var token = await webAPIToken.New();
+            var orderItems = await webAPI.GetOneAsync<OrderViewModel>(ApiURL.ORDER_BY_ID + Id, token);
+
+            orderItems.Statuses = await webAPI.GetAllAsync<Status>(ApiURL.STATUS);
+            return View(orderItems );
+
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> EditStatus([Bind]OrderViewModel model, int statusId)
+        {
+            var token = await webAPIToken.New();
+            var order = await webAPI.GetOneAsync<Order>(ApiURL.ORDERS + model.Id, token);
+
+            // Update status
+            order.StatusId = statusId;
+
+            // Save changes
+            var apiResult = await webAPI.UpdateAsync(order, ApiURL.ORDERS + model.Id, token);
+
+            TempData["StatusUpdate"] = true;
+            return RedirectToAction("EditStatus");
+        }
 
         [HttpPost]
         public async Task<IActionResult> Index([Bind]OrderViewModel model)
         {
             if (ModelState.IsValid)
             {
-                // Include the customers Email. It will be used as the userId in API
+                // Include customers Email. It will be used as userId in the API
                 model.UserEmail = User.Identity.Name;
 
                 // Get cart id
-                var cartId = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
+                var cartId = Guid.Parse(HttpContext.Session.GetString(_cartSessionCookie));
 
                 // Send order to API
                 var token = await webAPIToken.New();
@@ -133,6 +168,22 @@ namespace WebAPI.Controllers
             User user = await webAPI.GetOneAsync<User>(ApiURL.USERS + User.Identity.Name);
             loggedInUserName.Name = user.FirstName;
             return View(loggedInUserName);
+        }
+
+        [Authorize(Roles ="Admin")]
+        [HttpGet]
+        public async Task<IActionResult> OrderStatus(int? statusId)
+        {
+            if (statusId == null)
+                statusId = 1;
+
+            ProductOrderViewModel orders = new ProductOrderViewModel();
+            orders.Statuses = await webAPI.GetAllAsync<Status>(ApiURL.STATUS);
+
+            var token = await webAPIToken.New();
+            orders.Orders = await webAPI.GetAllAsync<AllUserOrders>(ApiURL.All_ORDERS_BY_STATUS + statusId, token);
+
+            return View(orders);
         }
 
     }
