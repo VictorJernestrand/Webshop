@@ -57,6 +57,9 @@ namespace WebAPI.Controllers
                     // Get user from database based on email and refresh token
                     var user = await _context.Users.Where(x => x.Email == email && x.RefreshToken == refreshToken).FirstOrDefaultAsync();
 
+                    if (user == null)
+                        return Unauthorized();
+
                     // User has a role?
                     bool isAdmin = await userManager.IsInRoleAsync(user, "Admin");
 

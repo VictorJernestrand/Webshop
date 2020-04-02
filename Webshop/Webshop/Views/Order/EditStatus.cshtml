@@ -1,0 +1,89 @@
+﻿@model OrderViewModel
+
+@{
+    ViewData["Title"] = "OrderStatus_test";
+}
+
+@if (TempData["StatusUpdate"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        Ordern har uppdaterats!
+    </div>
+}
+
+<h3>Uppdatera Order-Status</h3>
+
+<form asp-action="EditStatus" method="post">
+    <div class="form-group mx-sm-3 mb-2" style="width: 300px">
+        <input type="hidden" asp-for="Id" value="@Model.Id" />
+        <select name="statusId" class="form-control" style="width: 300px">
+            @if (Model.Statuses != null)
+            {
+                @foreach (var status in Model.Statuses)
+                {
+                <option value="@status.Id">@status.Name</option>
+                }
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-warning mb-2 mr-2">Uppdatera</button>
+</form>
+
+<hr />
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Produkt</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col">Kostnad</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Products != null)
+        {
+            @foreach (var product in Model.Products)
+            {
+                <tr>
+                    <td><img src="@Url.Content("~/Image/" + @product.Photo)" style="height: 60px; width: auto" /></td>
+                    <td><a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">@product.ProductName</a></td>
+                    <td>
+                        @product.Amount x @product.Price.ToString("C0")
+                        @if (product.Discount > 0)
+                        {
+                            <p style="font-size: small; color: green">-@((int)(product.Discount * 100))% Rabatt!</p>
+                        }
+                    </td>
+                    <td>
+                        @if (product.Discount == 0)
+                        {
+                            <p style="font-weight: bold">@product.TotalProductCost.ToString("C0")</p>
+                        }
+                        else
+                        {
+                            <p style="font-weight: bold">@product.TotalProductCostDiscount.ToString("C0")</p>
+                        }
+                    </td>
+                    <td>
+                        @if (product.QuantityInStock - product.Amount < 0)
+                        {
+                            <span><i class="fas fa-exclamation-triangle" style="color: orange"></i></span>
+                            <span style="font-size: small">I lager: @product.QuantityInStock</span>
+                        }
+                        else
+                        {
+                            <span><i class="fas fa-check" style="color: green"></i></span>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">Inga ordrar.</td>
+            </tr>
+        }
+</table>

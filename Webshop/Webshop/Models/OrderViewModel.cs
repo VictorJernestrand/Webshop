@@ -29,6 +29,8 @@ namespace Webshop.Models
 
         public List<PaymentMethod> paymentMethodlist { get; set; } = new List<PaymentMethod>();
 
+        public List<Status> Statuses { get; set; }
+
         public bool OrderContainsProductsOutOfStock { get; set; }
 
         public decimal OrderTotal { get; set; }

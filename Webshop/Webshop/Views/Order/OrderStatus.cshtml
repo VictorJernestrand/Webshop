@@ -1,0 +1,60 @@
+﻿@model ProductOrderViewModel
+@{
+    ViewData["Title"] = "OrderStatus";
+}
+
+<h1>OrderStatus</h1>
+
+<div class="row">
+    <div class="col-sm-12 col-md-3">
+        <ul class="list-group">
+        @if (Model.Statuses != null)
+        {
+            @foreach (var status in Model.Statuses)
+            {
+                <li class="list-group-item"><a asp-action="OrderStatus" asp-route-statusid="@status.Id">@Html.Raw(@status.Name)</a></li>
+            }
+        }
+        </ul>
+    </div>
+
+    <div class="col">
+
+        <table class="table thead-dark table-hover table-responsive-md">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">OrderDatum</th>
+                    <th scope="col">Produkter</th>
+                    <th scope="col">Kund</th>
+                    <th scope="col">Kr</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (Model.Orders != null && Model.Orders.Count > 0)
+                {
+                    @foreach (var order in Model.Orders)
+                    {
+                        <tr>
+                            <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                            <td>@order.Quantity</td>
+                            <td><a href="">@order.CustomerEmail</a></td>
+                            <td>@order.TotalCost.ToString("C0")</td>
+                            <td><a asp-action="EditStatus" asp-route-id="@order.OrderId" class="btn btn-secondary">Ändra Status</a></td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5">Inga ordrar</td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

@@ -23,7 +23,7 @@ namespace Webshop
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
             services.AddTransient<WebAPIToken>();
-            services.AddSingleton<WebAPIHandler>();
+            services.AddTransient<WebAPIHandler>();
 
             /* Old Identity Framwork settings.
             // Set email to be unique for each user
