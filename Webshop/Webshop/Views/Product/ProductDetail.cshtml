@@ -36,7 +36,7 @@
                     <a>&nbsp;</a>
                 }
                 <h5 class="card-title">@Model.Name</h5>
-                @if (Model.ActiveProduct == true)
+                @if (Model.ActiveProduct != false)
                 {
                     @if (Model.Discount == 0)
                     {
@@ -52,7 +52,7 @@
                     }
                 }
                 <p> </p>
-                @if (Model.ActiveProduct == true)
+                @if (Model.ActiveProduct != false)
                 {
                     <p>@Model.Description</p>
                     <p><b>Kategori </b>@Model.CategoryName</p>
@@ -87,7 +87,7 @@
                         <a asp-action="EditProduct" class="btn btn-primary mb-2 mr-2" asp-route-id="@Model.Id">Redigera</a>
                         <a asp-action="DeleteProduct" asp-route-id="@Model.Id" asp-controller="Product" class="btn btn-danger mb-2 mr-2">Radera</a>
                     }
-                    else if (Model.ActiveProduct != true && !User.IsInRole("Admin"))
+                    else if (Model.ActiveProduct == false && !User.IsInRole("Admin"))
                     {                      
                         <a onclick="goBack()" class="btn btn-primary mb-2 mr-2">Gå tillbaka till din order</a>
                     }
@@ -104,7 +104,7 @@
         </div>
     </div>
 </div>
-@if (Model.ActiveProduct == true)
+@if (Model.ActiveProduct != false)
 {
     <div class="container" style="padding : 10px ;">
         <ul class="nav nav-tabs">

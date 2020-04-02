@@ -86,7 +86,7 @@
 
         @foreach (var item in Model)
         {
-            @if (item.ActiveProduct == true && !User.IsInRole("Admin"))
+            @if (item.ActiveProduct != false && !User.IsInRole("Admin"))
             {
                 <partial name="_Productpartial" model="item" />
             }
