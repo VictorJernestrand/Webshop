@@ -37,7 +37,13 @@ namespace WebAPI.Controllers
         }
 
 
-        
+        [HttpGet("{Id}")]
+        public async Task<ActionResult<Order>> GetOneOrder(int Id)
+        {
+            return await _context.Orders.FindAsync(Id);
+        }
+
+
         [HttpGet]
         [Route("userorders/{customerEmail}")]
         public async Task<ActionResult<IEnumerable<AllUserOrders>>> GetAllUserOrderByOrderId(string customerEmail)
@@ -72,8 +78,9 @@ namespace WebAPI.Controllers
         }
 
 
-        // GET: api/Orders/5
-        [HttpGet("{id}")]
+        // GET: api/Orders/Id/5
+        [Route("id/{Id}")]
+        [HttpGet]
         public async Task<ActionResult<OrderViewModel>> GetOrderById(int id)
         {
             OrderViewModel orderViewModel = new OrderViewModel();
@@ -98,10 +105,80 @@ namespace WebAPI.Controllers
                 return NotFound();
             }
 
+            orderViewModel.Id = id;
             orderViewModel.Products = orderItems;
             orderViewModel.OrderTotal = orderItems.Sum(x => x.TotalProductCostDiscount);
 
             return Ok(orderViewModel);
+        }
+
+
+        [Route("allorders/{statusId}")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<AllUserOrders>>> GetAllOrders(int statusId)
+        {
+            
+            /*
+            // Collect orders by user id
+            var activeOrders = await _context.ProductOrders
+                .Include(x => x.Order)
+                .Select(x => new ProductOrderViewModel()
+                {
+                    orderId = x.OrderId,
+                    productId = x.ProductId,
+                    Quantity = x.Amount,
+                    price = x.Price,
+                    orderCreationDate = x.Order.OrderDate,
+                    orderstatus = x.Order.Status.Name,
+                    statusId = x.Order.Status.Id,
+                    statuslist = _context.Statuses.ToList()
+                })
+                .ToListAsync();
+
+            // Orders exist?
+            if (activeOrders == null)
+                return NotFound();
+
+            return Ok(activeOrders);
+            */
+
+            // Get all products
+            var productsOrders = await _context.ProductOrders.Include(x => x.Order)
+                .ThenInclude(x => x.User)
+                .Where(x => x.Order.StatusId == statusId)
+                .Select(x => new AllUserOrders
+                 {
+                     OrderId = x.Order.Id,
+                     OrderDate = x.Order.OrderDate,
+                     StatusId = x.Order.StatusId,
+                     CustomerName = x.Order.User.FirstName + " " + x.Order.User.LastName,
+                     CustomerEmail = x.Order.User.Email,
+                     Quantity = x.Amount,
+                     TotalCost = CalculateDiscount.NewPrice(x.Price * x.Amount, x.Discount)
+                })
+                .OrderByDescending(x => x.OrderDate)
+                .ToListAsync();
+
+            // Group orders by OrderId
+            var orders = productsOrders.GroupBy(x => x.OrderId).Select(x => new AllUserOrders
+            {
+                OrderId = x.First().OrderId,
+                OrderDate = x.First().OrderDate,
+                StatusId = x.First().StatusId,
+                CustomerName = x.First().CustomerName,
+                CustomerEmail = x.First().CustomerEmail,
+                Quantity = x.Sum(s => s.Quantity),
+                TotalCost = x.Sum(s => s.TotalCost)
+            }).ToList();
+
+            return Ok(orders);
+        }
+
+        [Route("orderrequest/{id}")]
+        [HttpGet]
+        public async Task<Order> GetAdminOrderById(int id)
+        {
+            return await _context.Orders.FindAsync(id);
         }
 
         // PUT: api/Orders/5
@@ -214,7 +291,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        // DELETE: api/Orders/5
+        // DELETE: api/Orders/5C:\Users\Nick\source\repos\Webshop\Webshop\WebAPI\Properties\
         [HttpDelete("{id}")]
         public async Task<ActionResult<Order>> DeleteOrder(int id)
         {
@@ -234,7 +311,6 @@ namespace WebAPI.Controllers
         {
             return _context.Orders.Any(e => e.Id == id);
         }
-
 
     }
 }

@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Webshop.Context;
 using Webshop.Models;
 using Webshop.Services;
 
 namespace WebAPI.Controllers
 {
+    [Authorize]
     public class OrderController : Controller
     {
         private readonly WebAPIHandler webAPI;
@@ -66,13 +67,41 @@ namespace WebAPI.Controllers
             return View(orderviewmodel);
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> EditStatus(int Id)
+        {
+            var token = await webAPIToken.New();
+            var orderItems = await webAPI.GetOneAsync<OrderViewModel>(ApiURL.ORDER_BY_ID + Id, token);
+
+            orderItems.Statuses = await webAPI.GetAllAsync<Status>(ApiURL.STATUS);
+            return View(orderItems );
+
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> EditStatus([Bind]OrderViewModel model, int statusId)
+        {
+            var token = await webAPIToken.New();
+            var order = await webAPI.GetOneAsync<Order>(ApiURL.ORDERS + model.Id, token);
+
+            // Update status
+            order.StatusId = statusId;
+
+            // Save changes
+            var apiResult = await webAPI.UpdateAsync(order, ApiURL.ORDERS + model.Id, token);
+
+            TempData["StatusUpdate"] = true;
+            return RedirectToAction("EditStatus");
+        }
 
         [HttpPost]
         public async Task<IActionResult> Index([Bind]OrderViewModel model)
         {
             if (ModelState.IsValid)
             {
-                // Include the customers Email. It will be used as the userId in API
+                // Include customers Email. It will be used as userId in the API
                 model.UserEmail = User.Identity.Name;
 
                 // Get cart id
@@ -98,6 +127,22 @@ namespace WebAPI.Controllers
             User user = await webAPI.GetOneAsync<User>(ApiURL.USERS + User.Identity.Name);
             loggedInUserName.Name = user.FirstName;
             return View(loggedInUserName);
+        }
+
+        [Authorize(Roles ="Admin")]
+        [HttpGet]
+        public async Task<IActionResult> OrderStatus(int? statusId)
+        {
+            if (statusId == null)
+                statusId = 1;
+
+            ProductOrderViewModel orders = new ProductOrderViewModel();
+            orders.Statuses = await webAPI.GetAllAsync<Status>(ApiURL.STATUS);
+
+            var token = await webAPIToken.New();
+            orders.Orders = await webAPI.GetAllAsync<AllUserOrders>(ApiURL.All_ORDERS_BY_STATUS + statusId, token);
+
+            return View(orders);
         }
 
     }
