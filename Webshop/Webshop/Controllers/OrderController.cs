@@ -10,7 +10,7 @@ using Webshop.Services;
 
 namespace WebAPI.Controllers
 {
-    [Authorize]
+ 
     public class OrderController : Controller
     {
         private readonly WebAPIHandler webAPI;
@@ -21,9 +21,6 @@ namespace WebAPI.Controllers
         public OrderViewModel orderviewmodel = new OrderViewModel();
         public OrderAndPaymentMethods OrderAndPaymentMethods = new OrderAndPaymentMethods();
 
-        
-
-        //public OrderViewModel orderviewmodel = new OrderViewModel();
         public LoggedInUserName loggedInUserName = new LoggedInUserName();
 
         public OrderController(WebAPIHandler webAPI, WebAPIToken webAPIToken, IConfiguration config)
@@ -106,20 +103,21 @@ namespace WebAPI.Controllers
             return RedirectToAction("EditStatus");
         }
 
+        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Index([Bind]OrderViewModel model)
+        public async Task<IActionResult> Index([Bind]OrderAndPaymentMethods model)
         {
             if (ModelState.IsValid)
             {
                 // Include customers Email. It will be used as userId in the API
-                model.UserEmail = User.Identity.Name;
+                model.OrderViewModel.UserEmail = User.Identity.Name;
 
                 // Get cart id
                 var cartId = Guid.Parse(HttpContext.Session.GetString(_cartSessionCookie));
 
                 // Send order to API
                 var token = await webAPIToken.New();
-                var apiResult = await webAPI.PostAsync(model, ApiURL.ORDERS + cartId, token);
+                var apiResult = await webAPI.PostAsync(model.OrderViewModel, ApiURL.ORDERS + cartId, token);
 
                 if (apiResult.Status.IsSuccessStatusCode)
                     return RedirectToAction(nameof(ThankYou));
@@ -132,7 +130,7 @@ namespace WebAPI.Controllers
             return RedirectToAction("Index");
         }
 
-
+        [Authorize]
         [HttpPost, ActionName("CreditCardPayment")]
         [ValidateAntiForgeryToken]
         public IActionResult PostCreditCardPayment([Bind]CreditCardModel model)
@@ -156,6 +154,7 @@ namespace WebAPI.Controllers
                 return View();
             }
         }
+
         //public IActionResult CreditCardPayment()
         //{
 
@@ -163,11 +162,10 @@ namespace WebAPI.Controllers
         //}
 
 
-        public async Task<IActionResult> ThankYou()
+
+        public IActionResult ThankYou()
         {
-            User user = await webAPI.GetOneAsync<User>(ApiURL.USERS + User.Identity.Name);
-            loggedInUserName.Name = user.FirstName;
-            return View(loggedInUserName);
+            return View();
         }
 
         [Authorize(Roles ="Admin")]
