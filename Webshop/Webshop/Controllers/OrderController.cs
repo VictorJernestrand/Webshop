@@ -10,7 +10,7 @@ using Webshop.Services;
 
 namespace WebAPI.Controllers
 {
-    [Authorize]
+ 
     public class OrderController : Controller
     {
         private readonly WebAPIHandler webAPI;
@@ -102,6 +102,7 @@ namespace WebAPI.Controllers
             return RedirectToAction("EditStatus");
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Index([Bind]OrderAndPaymentMethods model)
         {
@@ -128,7 +129,7 @@ namespace WebAPI.Controllers
             return RedirectToAction("Index");
         }
 
-
+        [Authorize]
         [HttpPost, ActionName("CreditCardPayment")]
         [ValidateAntiForgeryToken]
         public IActionResult PostCreditCardPayment([Bind]CreditCardModel model)
@@ -155,8 +156,6 @@ namespace WebAPI.Controllers
 
         public IActionResult ThankYou()
         {
-            //User user = await webAPI.GetOneAsync<User>(ApiURL.USERS + User.Identity.Name);
-            //loggedInUserName.Name = user.FirstName;
             return View();
         }
 
