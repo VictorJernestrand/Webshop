@@ -20,6 +20,7 @@ namespace WebAPI.Controllers
 
         public OrderViewModel orderviewmodel = new OrderViewModel();
         public OrderAndPaymentMethods OrderAndPaymentMethods = new OrderAndPaymentMethods();
+
         public LoggedInUserName loggedInUserName = new LoggedInUserName();
 
         public OrderController(WebAPIHandler webAPI, WebAPIToken webAPIToken, IConfiguration config)
@@ -153,6 +154,14 @@ namespace WebAPI.Controllers
                 return View();
             }
         }
+
+        //public IActionResult CreditCardPayment()
+        //{
+
+        //    return View(creditCardModel);
+        //}
+
+
 
         public IActionResult ThankYou()
         {
