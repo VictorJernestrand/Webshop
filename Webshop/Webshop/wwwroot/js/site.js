@@ -229,3 +229,8 @@ function DisableBuyButton() {
 $(document).ready(function () {
     UpdateCartButton();
 })
+
+// Go back to previously page (Used in ProductDetail View)
+function goBack() {
+    window.history.back();
+}

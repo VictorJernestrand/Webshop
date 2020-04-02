@@ -71,7 +71,7 @@
                 else if (Model.ActiveProduct != true && !User.IsInRole("Admin"))
                 {
                     <p>Produkten går inte längre att köpa</p>
-                    <a asp-action="Orderdeatails" asp-controller="UserOrder" class="btn btn-primary mb-2 mr-2">Gå tillbaka</a>
+                    <a onclick="goBack()" class="btn btn-primary mb-2 mr-2">Gå tillbaka</a>
                 }
                 else
                 {
