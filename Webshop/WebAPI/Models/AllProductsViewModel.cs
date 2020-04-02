@@ -34,6 +34,7 @@ namespace WebAPI.Models
             //Brand = product.Brand;
             FullDescription = product.FullDescription;
             Specification = product.Specification;
+            ActiveProduct = product.ActiveProduct;
             
         }
 
@@ -56,6 +57,7 @@ namespace WebAPI.Models
         public Category Category { get; set; }
         public Brand Brand { get; set; }
         public string Specification { get; set; }
+        public bool ActiveProduct { get; set; }
 
     }
 }

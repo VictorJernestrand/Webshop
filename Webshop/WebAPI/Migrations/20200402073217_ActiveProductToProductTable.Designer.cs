@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebAPI.Context;
 
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(WebAPIContext))]
-    partial class WebAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20200402073217_ActiveProductToProductTable")]
+    partial class ActiveProductToProductTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -213,7 +215,7 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Trummor"
+                            Name = "Drum set"
                         },
                         new
                         {
@@ -233,7 +235,7 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 5,
-                            Name = "Gitarr"
+                            Name = "Guitar"
                         });
                 });
 
@@ -287,22 +289,12 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Kort"
-                        },
-                        new
-                        {
-                            Id = 2,
                             Name = "Swish"
                         },
                         new
                         {
-                            Id = 3,
-                            Name = "Faktura"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Toapapper"
+                            Id = 2,
+                            Name = "Konto"
                         });
                 });
 
@@ -600,12 +592,12 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 2,
-                            Name = "Packas"
+                            Name = "Förpackning"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Skickade"
+                            Name = "Skickad"
                         },
                         new
                         {

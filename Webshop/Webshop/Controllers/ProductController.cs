@@ -83,7 +83,9 @@ namespace Webshop.Controllers
                         Description = model.Description,
                         FullDescription = model.FullDescription,
                         Specification = model.Specification,
-                        Discount = model.Discount
+                        Discount = model.Discount,
+                        ActiveProduct = model.ActiveProduct
+                        
                     };
 
                     if (file != null)
@@ -187,7 +189,8 @@ namespace Webshop.Controllers
                         Photo = model.Photo,
                         FullDescription = model.FullDescription,
                         Specification = model.Specification,
-                        Discount = Convert.ToSingle(model.Discount.ToString().Replace('.', ','))
+                        Discount = Convert.ToSingle(model.Discount.ToString().Replace('.', ',')),
+                        ActiveProduct = model.ActiveProduct
                     };
 
                     // Set category folder name
