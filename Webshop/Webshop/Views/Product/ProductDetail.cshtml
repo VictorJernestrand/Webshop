@@ -23,30 +23,48 @@
         <div class="col-xs-6 col-sm-6 " style="text-align: right;">
             <img src="@Url.Content("~/Image/" + Model.Photo)" style="max-height: 200px; width: auto" alt="Finns ingen bild än">
         </div>
-    <div class="col-xs-6 col-sm-6">
+        <div class="col-xs-6 col-sm-6">
 
-        <div class="container" style="text-align: center;">
-            <h5 class="card-title">@Model.Name</h5>
-            @*<h5 class="card-title text-success" style="margin-bottom: 30px">@Model.Price.ToString("C0")</h5>*@
-            @if (Model.Discount == 0)
-            {
-                <h5 class="card-title text-success">@Model.Price.ToString("C0")</h5>
-            }
-            else
-            {
-                <span style="font-size: small; text-decoration: line-through">@Model.Price.ToString("C0")</span>
-                <h5 class="card-title text-success">
-                    @Model.DiscountPrice.ToString("C0")
-                    <span style="font-size: small">-@((int)(Model.Discount * 100))%</span>
-                </h5>
-            }
-            <p> </p>
-            <p>@Model.Description</p>
-            <p><b>Kategori </b>@Model.CategoryName</p>
-            <p><b>Tillverkare </b>@Model.BrandName</p>
-            <p><b>Antal i lager </b>@Model.Quantity</p>
+            <div class="container" style="text-align: center;">
 
-            @*<div class="d-inline">
+                @if (Model.ActiveProduct == false)
+                {
+                    <h5 style="color:red">Produkten finns inte längre i vårt sortiment</h5>
+                }
+                else
+                {
+                    <a>&nbsp;</a>
+                }
+                <h5 class="card-title">@Model.Name</h5>
+                @if (Model.ActiveProduct == true)
+                {
+                    @if (Model.Discount == 0)
+                    {
+                        <h5 class="card-title text-success">@Model.Price.ToString("C0")</h5>
+                    }
+                    else
+                    {
+                        <span style="font-size: small; text-decoration: line-through">@Model.Price.ToString("C0")</span>
+                        <h5 class="card-title text-success">
+                            @Model.DiscountPrice.ToString("C0")
+                            <span style="font-size: small">-@((int)(Model.Discount * 100))%</span>
+                        </h5>
+                    }
+                }
+                <p> </p>
+                @if (Model.ActiveProduct == true)
+                {
+                    <p>@Model.Description</p>
+                    <p><b>Kategori </b>@Model.CategoryName</p>
+                    <p><b>Tillverkare </b>@Model.BrandName</p>
+                    <p><b>Antal i lager </b>@Model.Quantity</p>
+                }
+                else
+                {
+                    <a> &nbsp;</a>
+                }
+
+                @*<div class="d-inline">
             <a asp-action="AllProducts" class="btn btn-info mb-2 mr-2">Tillbaka till produkter</a>
             <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
             @if (User.IsInRole("Admin"))
@@ -60,59 +78,62 @@
             }
         </div>*@
 
-            <div class="d-inline">
-                <a asp-action="AllProducts" class="btn btn-info mb-2 mr-2">Tillbaka till produkter</a>
-                <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
-                @if (User.IsInRole("Admin"))
-                {
-                    <a asp-action="EditProduct" class="btn btn-primary mb-2 mr-2" asp-route-id="@Model.Id">Redigera</a>
-                    <a asp-action="DeleteProduct" asp-route-id="@Model.Id" asp-controller="Product" class="btn btn-danger mb-2 mr-2">Radera</a>
-                }
-                else if (Model.ActiveProduct != true && !User.IsInRole("Admin"))
-                {
-                    <p>Produkten går inte längre att köpa</p>
-                    <a onclick="goBack()" class="btn btn-primary mb-2 mr-2">Gå tillbaka</a>
-                }
-                else
-                {
-                    <a class="btn btn-success mb-2 mr-2 text-white" style="font-weight: bold" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Lägg i kundvagn</a>
-                }
-            </div>
+                <div class="d-inline">
 
-        </div>
+                    <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="AllProducts" class="btn btn-info mb-2 mr-2">Tillbaka till produkter</a>
+                        <a asp-action="EditProduct" class="btn btn-primary mb-2 mr-2" asp-route-id="@Model.Id">Redigera</a>
+                        <a asp-action="DeleteProduct" asp-route-id="@Model.Id" asp-controller="Product" class="btn btn-danger mb-2 mr-2">Radera</a>
+                    }
+                    else if (Model.ActiveProduct != true && !User.IsInRole("Admin"))
+                    {                      
+                        <a onclick="goBack()" class="btn btn-primary mb-2 mr-2">Gå tillbaka till din order</a>
+                    }
+                    else
+                    {
+                        <a asp-action="AllProducts" class="btn btn-info mb-2 mr-2">Tillbaka till produkter</a>
+                        <a class="btn btn-success mb-2 mr-2 text-white" style="font-weight: bold" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Lägg i kundvagn</a>
+                    }
+                </div>
+
+            </div>
 
 
         </div>
     </div>
 </div>
+@if (Model.ActiveProduct == true)
+{
+    <div class="container" style="padding : 10px ;">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a href="#produktinformation" class="nav-link active" data-toggle="tab"> Produktinformation</a>
+            </li>
+            <li>
+                <a href="#specifikationer" class="nav-link" data-toggle="tab"> Specifikationer</a>
+            </li>
+            <li>
+                <a href="#kundomdömen" class="nav-link" data-toggle="tab"> Kundomdömen</a>
+            </li>
+        </ul>
 
-    <div class="container" style="padding : 10px ;" >
-    <ul class="nav nav-tabs" >
-    <li class="nav-item" >
-    <a href="#produktinformation" class="nav-link active" data-toggle="tab" > Produktinformation</a >
-    </li >
-    <li >
-    <a href="#specifikationer" class="nav-link" data-toggle="tab" > Specifikationer</a >
-    </li >
-    <li >
-    <a href="#kundomdömen" class="nav-link" data-toggle="tab" > Kundomdömen</a >
-    </li >
-    </ul >
-
-    <div class="tab-content " >
-    <div role="tabpanel" class="tab-pane active" id="produktinformation" >
-        <p style="padding : 5px 15px;">
-            @Html.Raw(HttpUtility.HtmlDecode(Model.FullDescription))
-        </p>
-    </div >
-    <div role="tabpanel" class="tab-pane" id="specifikationer" >
-        <p style="padding : 5px 15px;">
-            @Html.Raw(HttpUtility.HtmlDecode(Model.Specification))
-        </p>
-    </div >
-    <div class="tab-pane" id="kundomdömen" >
-    <p style="padding : 5px 15px;" > bla bla bla bla bla</p >
-    </div >
-    </div >
-    </div >
+        <div class="tab-content ">
+            <div role="tabpanel" class="tab-pane active" id="produktinformation">
+                <p style="padding : 5px 15px;">
+                    @Html.Raw(HttpUtility.HtmlDecode(Model.FullDescription))
+                </p>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="specifikationer">
+                <p style="padding : 5px 15px;">
+                    @Html.Raw(HttpUtility.HtmlDecode(Model.Specification))
+                </p>
+            </div>
+            <div class="tab-pane" id="kundomdömen">
+                <p style="padding : 5px 15px;"> bla bla bla bla bla</p>
+            </div>
+        </div>
+    </div>
+}
 

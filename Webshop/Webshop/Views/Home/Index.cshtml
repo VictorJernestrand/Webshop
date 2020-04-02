@@ -30,9 +30,9 @@
         background: grey;
     }
 
-    ol.carousel-indicators li.active {
+        ol.carousel-indicators li.active {
             background: gainsboro;
-    }
+        }
 
     .carousel-item img {
         width: auto;
@@ -43,6 +43,7 @@
     .carousel-control-next-icon {
         background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='gray' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E");
     }
+
     .carousel-control-prev-icon {
         background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='gray' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E");
     }
@@ -52,86 +53,86 @@
 <partial name="_AddToCartMessagePartial" />
 
 
-            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="2000" style="background-color: white; width: 100%; height: 550px;">
-                <ol class="carousel-indicators">
-                    @foreach (var x in Model)
-                    { 
-                      @if (x.Discount > 0)
-                        {
-                        <li data-target="#carouselExampleIndicators" data-slide-to="@i" class="@(i == 0 ? "active" : string.Empty)"></li>
-                        i++;
-                         }     
-                    }
-                </ol>
+<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="2000" style="background-color: white; width: 100%; height: 550px;">
+    <ol class="carousel-indicators">
+        @foreach (var x in Model)
+        {
+            @if (x.Discount > 0)
+            {
+                <li data-target="#carouselExampleIndicators" data-slide-to="@i" class="@(i == 0 ? "active" : string.Empty)"></li>
+                i++;
+            }
+        }
+    </ol>
 
-                <div class="carousel-inner">
-                    @foreach (var x in Model)
-                    {                        
-                        @if (x.Discount > 0)
-                            {
-                                if (a == 0)
-                                {
+    <div class="carousel-inner">
+        @foreach (var x in Model)
+        {
+            @if (x.Discount > 0)
+            {
+                if (a == 0)
+                {
 
-                                    <div class="carousel-item active ">
-                                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@x.Id">
-                                            <img src="@Url.Content("~/Image/" + x.Photo)" style="width: auto; height: 400px" alt="First slide">
-                                        </a>
-                                        <div class="carousel-caption">
-                                            <h5 style=" color: black">@x.Name</h5>
-                                            <p style="font-size:small; color: black; margin-bottom: 0px; text-decoration: line-through">
-                                                @x.Price.ToString("C0")
-                                            </p>
-                                            <span id="discount" style="font-size:small; color: red">
-                                                -@((int)(x.Discount * 100))%
-                                            </span>
-                                            <ins style="    color: green;
+                    <div class="carousel-item active ">
+                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@x.Id">
+                            <img src="@Url.Content("~/Image/" + x.Photo)" style="width: auto; height: 400px" alt="First slide">
+                        </a>
+                        <div class="carousel-caption">
+                            <h5 style=" color: black">@x.Name</h5>
+                            <p style="font-size:small; color: black; margin-bottom: 0px; text-decoration: line-through">
+                                @x.Price.ToString("C0")
+                            </p>
+                            <span id="discount" style="font-size:small; color: red">
+                                -@((int)(x.Discount * 100))%
+                            </span>
+                            <ins style="    color: green;
     font-size: 30px;
     text-decoration: none;
     padding: 1em 1em 1em .5em;">
-                                                <span>@x.DiscountPrice.ToString("C0")</span>
-                                            </ins>
+                                <span>@x.DiscountPrice.ToString("C0")</span>
+                            </ins>
 
-                                        </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="carousel-item ">
-                                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@x.Id">
-                                            <img src="@Url.Content("~/Image/" + x.Photo)" style="width: auto; height: 400px" alt="First slide">
-                                        </a>
-                                        <div class="carousel-caption">
-                                            <h5 style="color: black">@x.Name</h5>
-                                            <p style="font-size:small; color: black; margin-bottom: 0px; text-decoration: line-through">
-                                                @x.Price.ToString("C0")
-                                            </p>
-                                            <span id="discount" style="font-size:small; color: red">
-                                                -@((int)(x.Discount * 100))%
-                                            </span>
-                                            <ins style="        color: green;
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="carousel-item ">
+                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@x.Id">
+                            <img src="@Url.Content("~/Image/" + x.Photo)" style="width: auto; height: 400px" alt="First slide">
+                        </a>
+                        <div class="carousel-caption">
+                            <h5 style="color: black">@x.Name</h5>
+                            <p style="font-size:small; color: black; margin-bottom: 0px; text-decoration: line-through">
+                                @x.Price.ToString("C0")
+                            </p>
+                            <span id="discount" style="font-size:small; color: red">
+                                -@((int)(x.Discount * 100))%
+                            </span>
+                            <ins style="        color: green;
         font-size: 30px;
         text-decoration: none;
         padding: 1em 1em 1em .5em;">
-                                                <span>@x.DiscountPrice.ToString("C0")</span>
-                                            </ins>
-                                        </div>
-                                    </div>
-                                }
-                                a++;
-                            }
-                        }
+                                <span>@x.DiscountPrice.ToString("C0")</span>
+                            </ins>
+                        </div>
                     </div>
+                }
+                a++;
+            }
+        }
+    </div>
 
-                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="false"></span>
-                    <span class="sr-only" style="color:gray">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="false"></span>
-                    <span class="sr-only" style="color:gray">Next</span>
-                </a>
-            </div>
-   
+    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+        <span class="sr-only" style="color:gray">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="false"></span>
+        <span class="sr-only" style="color:gray">Next</span>
+    </a>
+</div>
+
 
 
 <script>
@@ -142,12 +143,31 @@
     }
 </script>
 
+@*<div class="container">
+        <div class=" row justify-content-center">
+
+            @foreach (var item in Model)
+            {
+                <partial name="_Productpartial" model="item" />
+            }
+        </div>
+        <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
+    </div>*@
+
 <div class="container">
     <div class=" row justify-content-center">
 
         @foreach (var item in Model)
         {
-            <partial name="_Productpartial" model="item" />
+            @if (item.ActiveProduct == true && !User.IsInRole("Admin"))
+            {
+                <partial name="_Productpartial" model="item" />
+            }
+
+            @if (User.IsInRole("Admin"))
+            {
+                <partial name="_Productpartial" model="item" />
+            }
         }
     </div>
     <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
