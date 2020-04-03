@@ -20,17 +20,15 @@
     };
 }
 
-@*<form asp-action="Index" method="post" asp-controller="Order">*@
-
     <div class="form-group">
-        <input asp-for="CardNumber" class="form-control" placeholder="Kortnummer" required />
+        <input asp-for="CardNumber" class="form-control" pattern=".{19,}" maxlength="19" placeholder="Kortnummer" id="creditCardnumber" required />
         <span asp-validation-for="CardNumber" class="text-danger"></span>
     </div>
 
     <div class="form-group d-flex justify-content-between">
 
         <select class="form-control" required>
-            <option>Välj månad</option>
+            <option value="">Välj månad</option>
             @foreach (var month in months)
             {
                 <option>@month</option>
@@ -38,7 +36,7 @@
         </select>
 
         <select class="form-control ml-2" required>
-            <option>År</option>
+            <option value="">År</option>
             @for (var year = DateTime.Now.Year; year < DateTime.Now.AddYears(10).Year; year++)
             {
                 <option>@year</option>
@@ -48,19 +46,21 @@
     </div>
 
     <div class="form-group">
-        <input asp-for="CVC" class="form-control" maxlength="3" placeholder="CVC" id="creditCardnumber" required />
+        <input asp-for="CVC" class="form-control" maxlength="3" placeholder="CVC" id="cvcNumber" required />
         <span asp-validation-for="CVC" class="text-danger"></span>
     </div>
 
     <div class="form-group" style="text-align: center;">
-        <input type="submit" value="Betala" class="btn btn-success" asp-action="Index" />
+        <input type="submit" @*onclick="SubmitPayment()"*@ value="Betala" class="btn btn-success" />
     </div>
-
-@*</form>*@
 
 
 <script>
-    document.getElementById("creditCardnumber").addEventListener("keyup", function () {
+    document.getElementById("cvcNumber").addEventListener("keyup", function () {
         this.value = this.value.replace(/[^\d]/, '');
     });
+
+        document.getElementById('creditCardnumber').addEventListener('input', function (event) {
+  event.target.value = event.target.value.replace(/[^\dA-Z]/g, '').replace(/(.{4})/g, '$1 ').trim();
+});
 </script>
