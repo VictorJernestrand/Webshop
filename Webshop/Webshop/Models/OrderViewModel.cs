@@ -11,7 +11,8 @@ namespace Webshop.Models
     {
       
         public int Id { get; set; }
-        //public int StatusId { get; set; }
+        
+        public int OrderStatusId { get; set; }
 
         [Required(ErrorMessage = "Välj Payment Method")]
         public int PaymentMethodId { get; set; }

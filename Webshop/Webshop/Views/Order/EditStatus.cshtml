@@ -1,7 +1,7 @@
 ﻿@model OrderViewModel
 
 @{
-    ViewData["Title"] = "OrderStatus_test";
+    ViewData["Title"] = "OrderStatus";
 }
 
 @if (TempData["StatusUpdate"] != null)
@@ -21,8 +21,15 @@
             {
                 @foreach (var status in Model.Statuses)
                 {
-                <option value="@status.Id">@status.Name</option>
-                }
+                    @if (status.Id == Model.OrderStatusId)
+                    {
+                        <option value="@status.Id" selected>@status.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@status.Id">@status.Name</option>
+                    }
+                 }
             }
         </select>
     </div>
