@@ -84,7 +84,7 @@
             </tr>
         }
 </table>
-<div class="row">
+<div class="row" style="display: inline">
     <div class="col ">
         <div class="text-success float-right" style="margin: 4px, 20px, 4px, 20px; font-size: 2em">@Model.OrderViewModel.OrderTotal.ToString("C0")</div>
     </div>
@@ -105,14 +105,18 @@
                     Stämmer inte adressen? <a href="#">ändra här</a>
                 </div>
             </div>
+            <div class="form-group" style="margin-top: 17px">
+                <button href="#" class="btn btn-warning" asp-action="Index" asp-controller="ShoppingCart">Gå tillbaka till kundkorgen</button>
+                @*<input type="submit" value="Pay us now! Dammit!" class="btn btn-primary" />*@
+            </div>
         </div>
 
-        <div class="col-md-4">
-            <form asp-action="Index" method="post" asp-controller="Order">
+        <div class="col-md-4" style="margin-top: -10px">
+            <form asp-action="Index" method="post" asp-controller="Order" id="PayUsNow">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <div class="form-group">
-                    <label asp-for="OrderViewModel.PaymentMethodId" class="control-label">Betalning Method</label>
+                    <label asp-for="OrderViewModel.PaymentMethodId" class="control-label">Betalsätt</label>
 
                     <select asp-for="OrderViewModel.PaymentMethodId" class="form-control" id="paymentMethodDropdown">
 
@@ -132,12 +136,6 @@
                 </div>
 
 
-
-
-                <div class="form-group">
-                    <button href="#" class="btn btn-warning" asp-action="Index" asp-controller="ShoppingCart">Gå tillbaka till kundkorgen</button>
-                    <input type="submit" value="Pay us now! Dammit!" class="btn btn-primary" />
-                </div>
 
 
             </form>
@@ -185,4 +183,8 @@
 
         //document.getElementById("creditCardPayment").style.display = "block";
     });
+
+    function SubmitPayment() {
+        document.getElementById("PayUsNow").submit();
+    }
 </script>
