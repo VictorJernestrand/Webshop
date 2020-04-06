@@ -78,6 +78,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> EditStatus(int Id)
         {
+            var test = ApiURL.ORDER_BY_ID + Id;
             var token = await webAPIToken.New();
             var orderItems = await webAPI.GetOneAsync<OrderViewModel>(ApiURL.ORDER_BY_ID + Id, token);
 

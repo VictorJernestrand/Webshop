@@ -34,6 +34,7 @@ namespace WebAPI.Services
                         Price = x.Price,
                         Amount = x.Amount,
                         Discount = x.Discount,
+                        QuantityInStock = x.Product.Quantity,
                         TotalProductCost = (x.Price * x.Amount),
                         TotalProductCostDiscount = CalculateDiscount.NewPrice((x.Price * x.Amount), x.Discount)
                     })
