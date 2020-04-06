@@ -77,8 +77,17 @@
 
         @foreach (var item in Model)
         {
-            <partial name="_Productpartial" model="item" />
+            @if (item.ActiveProduct != false && !User.IsInRole("Admin"))
+            {
+                <partial name="_Productpartial" model="item" />
+            }
+
+            @if (User.IsInRole("Admin"))
+            {
+                <partial name="_Productpartial" model="item" />
+            }
         }
+
     </div>
     <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
 </div>
