@@ -84,21 +84,7 @@ namespace WebAPI.Controllers
         public async Task<ActionResult<OrderViewModel>> GetOrderById(int id)
         {
             OrderViewModel orderViewModel = new OrderViewModel();
-            var orderItems = await _customerOrderService.CustomerOrderByIdAsync(id);// await  await CustomerOrderByIdAsync(id);
-            //var orderItems = await _context.ProductOrders.Include(x => x.Product)
-            //    .Where(x => x.OrderId == id)
-            //    .Select(x => new OrderItemsModel
-            //    {
-            //        ProductId = x.Product.Id,
-            //        ProductName = x.Product.Name,
-            //        Photo = x.Product.Photo,
-            //        Price = x.Price,
-            //        Amount = x.Amount,
-            //        Discount = x.Discount,
-            //        TotalProductCost = (x.Price * x.Amount),
-            //        TotalProductCostDiscount = CalculateDiscount.NewPrice((x.Price * x.Amount), x.Discount)
-            //    })
-            //    .ToListAsync();
+            var orderItems = await _customerOrderService.CustomerOrderByIdAsync(id);
 
             if (orderItems == null)
             {
@@ -106,6 +92,7 @@ namespace WebAPI.Controllers
             }
 
             orderViewModel.Id = id;
+            orderViewModel.OrderStatusId = _context.Orders.Find(id).StatusId;
             orderViewModel.Products = orderItems;
             orderViewModel.OrderTotal = orderItems.Sum(x => x.TotalProductCostDiscount);
 
@@ -117,30 +104,6 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AllUserOrders>>> GetAllOrders(int statusId)
         {
-            
-            /*
-            // Collect orders by user id
-            var activeOrders = await _context.ProductOrders
-                .Include(x => x.Order)
-                .Select(x => new ProductOrderViewModel()
-                {
-                    orderId = x.OrderId,
-                    productId = x.ProductId,
-                    Quantity = x.Amount,
-                    price = x.Price,
-                    orderCreationDate = x.Order.OrderDate,
-                    orderstatus = x.Order.Status.Name,
-                    statusId = x.Order.Status.Id,
-                    statuslist = _context.Statuses.ToList()
-                })
-                .ToListAsync();
-
-            // Orders exist?
-            if (activeOrders == null)
-                return NotFound();
-
-            return Ok(activeOrders);
-            */
 
             // Get all products
             var productsOrders = await _context.ProductOrders.Include(x => x.Order)

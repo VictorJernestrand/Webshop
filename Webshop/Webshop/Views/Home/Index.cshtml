@@ -143,20 +143,8 @@
     }
 </script>
 
-@*<div class="container">
-        <div class=" row justify-content-center">
-
-            @foreach (var item in Model)
-            {
-                <partial name="_Productpartial" model="item" />
-            }
-        </div>
-        <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
-    </div>*@
-
 <div class="container">
     <div class=" row justify-content-center">
-
         @foreach (var item in Model)
         {
             @if (item.ActiveProduct != false && !User.IsInRole("Admin"))
