@@ -33,6 +33,7 @@ namespace WebAPI.Context
         public DbSet<ProductOrder> ProductOrders { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<ShoppingCart> ShoppingCart { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -90,6 +91,15 @@ namespace WebAPI.Context
                 entity.Property(x => x.CartId).IsRequired();
                 entity.Property(x => x.ProductId).IsRequired();
                 entity.Property(x => x.Amount).IsRequired();
+            });
+
+            builder.Entity<Rating>(entity =>
+            {
+                entity.Property(x => x.UserId).IsRequired();
+                entity.Property(x => x.ProductId).IsRequired();
+                entity.Property(x => x.RateDate).IsRequired();
+                entity.Property(x => x.Score).IsRequired();
+                entity.Property(x => x.Comment).IsRequired().HasMaxLength(200);
             });
 
             builder.Entity<Brand>().HasData(

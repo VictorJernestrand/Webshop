@@ -1,0 +1,9 @@
+﻿.nav-pills > li a.active {
+    background-color: #262b2e !important;
+    background-image: radial-gradient(#808080, 262b2e) !important;
+    color: white !important;
+}
+
+.nav-pills li a {
+    color: white !important;
+}

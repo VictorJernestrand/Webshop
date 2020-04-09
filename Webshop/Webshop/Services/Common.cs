@@ -47,5 +47,11 @@ namespace Webshop.Services
 
         //API-path to status-controllers
         public const string STATUS              = URL + "status/";
+
+        // API-path to ratings-controllers
+        public const string RATINGS_BY_PRODUCT_ID = URL + "ratings/product/";
+        public const string RATING_BY_ID        = URL + "ratings/";
+        public const string RATINGS_POST        = URL + "ratings/";
+
     }
 }

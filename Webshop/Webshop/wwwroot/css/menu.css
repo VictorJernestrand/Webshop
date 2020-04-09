@@ -17,6 +17,11 @@
     padding: 0px;
 }
 
+#cartbutton {
+    background-color: #76c788;
+    text-shadow: 1px 1px #262b2e;
+}
+
 #shoppingcart {
     background-color: #262b2e;
     border-radius: 4px;

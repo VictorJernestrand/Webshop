@@ -74,8 +74,15 @@ namespace Webshop.Models
 
         public List<Brand> Brands { get; set; }
 
+        public List<Rating> Ratings { get; set; }
+
+        public Rating NewRating { get; set; }
+
         public string Specification { get; set; }
+
         public bool ActiveProduct { get; set; }
+
+        public float TotalRatingScore { get; set; }
 
         // public List<Product> productsDiscountlist { get; set; } = new List<Product>();
 
