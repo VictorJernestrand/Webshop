@@ -102,9 +102,10 @@
 
                 @if (User.IsInRole("Admin"))
                 {
-                    <a asp-action="AllProducts" class="btn btn-info mb-2 mr-2">Tillbaka till produkter</a>
-                    <a asp-action="EditProduct" class="btn btn-primary mb-2 mr-2" asp-route-id="@Model.Id">Redigera</a>
-                    <a asp-action="DeleteProduct" asp-route-id="@Model.Id" asp-controller="Product" class="btn btn-danger mb-2 mr-2">Radera</a>
+                    <div class="mt-2">
+                        <a asp-action="EditProduct" class="btn btn-primary mb-2 mr-2" asp-route-id="@Model.Id">Redigera</a>
+                        <a asp-action="DeleteProduct" asp-route-id="@Model.Id" asp-controller="Product" class="btn btn-danger mb-2 mr-2">Radera</a>
+                    </div>
                 }
                 else if (Model.ActiveProduct == false && !User.IsInRole("Admin"))
                 {
@@ -112,7 +113,7 @@
                 }
                 else
                 {
-                    <a class="btn btn-success mt-2 mr-2 text-white" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Lägg i kundvagnen</a>
+                    <a class="btn btn-success mt-2 text-white" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Lägg i kundvagnen</a>
                 }
             </div>
 
@@ -140,11 +141,11 @@
 
     <div class="tab-content">
 
-        <div class="tab-pane fade show active" id="nav-productinfo" role="tabpanel" aria-labelledby="nav-home-tab">
+        <div class="tab-pane fade show active rating_comment p-3 mt-2 rounded" id="nav-productinfo" role="tabpanel" aria-labelledby="nav-home-tab">
             @Html.Raw(HttpUtility.HtmlDecode(Model.FullDescription))
         </div>
 
-        <div class="tab-pane fade" id="nav-specification" role="tabpanel" aria-labelledby="nav-profile-tab">
+        <div class="tab-pane fade rating_comment p-3 mt-2 rounded" id="nav-specification" role="tabpanel" aria-labelledby="nav-profile-tab">
             @Html.Raw(HttpUtility.HtmlDecode(Model.Specification))
         </div>
 
@@ -153,7 +154,7 @@
             @*Did the customer rate this product? If not, allow user to rate!*@
             @if (User.Identity.IsAuthenticated && (Model.Ratings == null || !Model.Ratings.Any(x => x.UserEmail == User.Identity.Name)))
             {
-                <form style="max-width: 500px" asp-controller="Ratings" asp-action="index">
+                <form id="rating_form" asp-controller="Ratings" asp-action="index">
 
                     <div class="form-group">
                         <input type="hidden" asp-for="@Model.NewRating.ProductId" value="@Model.Id" />
