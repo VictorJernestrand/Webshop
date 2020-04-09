@@ -7,3 +7,31 @@
 .nav-pills li a {
     color: white !important;
 }
+
+.product_price {
+    color: #7fe095;
+}
+
+.old_price {
+    font-size: small;
+    text-decoration: line-through;
+}
+
+.dicount {
+    font-size: small;
+}
+
+#detail_image {
+    object-fit: contain;
+    height: 300px;
+    width: 400px;
+    background-color: #fff;
+}
+
+#rating_form {
+    max-width: 500px;
+}
+
+.rating_comment {
+    background-color: rgba(255, 255, 255, 0.1);
+}

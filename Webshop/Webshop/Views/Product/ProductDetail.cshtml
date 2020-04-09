@@ -37,7 +37,7 @@
 <div class="row">
 
     <div class="col-sm-12 col-md-6 d-flex justify-content-center align-items-center overflow-hidden rounded">
-        <img src="@Url.Content("~/Image/" + Model.Photo)" class="rounded shadow" style="object-fit: contain; height: 300px; width: 400px; background-color: #fff" alt="@Model.Name">
+        <img src="@Url.Content("~/Image/" + Model.Photo)" class="rounded shadow" id="detail_image" alt="@Model.Name">
     </div>
 
     <div class="col-sm-12 col-md-6 pl-sm-4">
@@ -57,13 +57,13 @@
             {
                 @if (Model.Discount == 0)
                 {
-                    <h5 style="color: #7fe095">@Model.Price.ToString("C0")</h5>
+                    <h5 class="product_price">@Model.Price.ToString("C0")</h5>
                 }
                 else
                 {
-                    <span style="font-size: small; text-decoration: line-through">@Model.Price.ToString("C0")</span>
-                    <h5 style="color: #7fe095">@Model.DiscountPrice.ToString("C0")
-                    <span style="font-size: small"> -@((int)(Model.Discount* 100))%</span>
+                    <span class="old_price">@Model.Price.ToString("C0")</span>
+                    <h5 class="product_price">@Model.DiscountPrice.ToString("C0")
+                        <span class="discount"> -@((int)(Model.Discount* 100))%</span>
                     </h5>
                 }
             }
@@ -85,7 +85,7 @@
                         <td><b>I lager:</b></td>
                         <td>@if (@Model.Quantity > 0)
                             {
-                            <span style="color: #7fe095"><i class="fas fa-check"></i></span> @Model.Quantity
+                            <span class="product_price"><i class="fas fa-check"></i></span> @Model.Quantity
                             }
                             else
                             {
@@ -95,24 +95,6 @@
                      </tr>
                </table>
             }
-            @*else
-            {
-                <a> &nbsp;</a>
-            }*@
-
-            @*<div class="d-inline">
-                    <a asp-action="AllProducts" class="btn btn-info mb-2 mr-2">Tillbaka till produkter</a>
-                    <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <a asp-action="EditProduct" class="btn btn-primary mb-2 mr-2" asp-route-id="@Model.Id">Redigera</a>
-                        <a asp-action="DeleteProduct" asp-route-id="@Model.Id" asp-controller="Product" class="btn btn-danger mb-2 mr-2">Radera</a>
-                    }
-                    else
-                    {
-                        <a class="btn btn-success mb-2 mr-2 text-white" style="font-weight: bold" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Lägg i kundvagn</a>
-                    }
-                </div>*@
 
             <div class="d-inline d-flex flex-nowrap">
 
@@ -201,7 +183,7 @@
                 {
                     var nrOfemptyStars = 5 - rating.Score;
 
-                    <div class="card mb-2" style="background-color: rgba(255, 255, 255, 0.1)">
+                    <div class="card mb-2 rating_comment">
                         <div class="card-body">
 
                             @*Print score*@

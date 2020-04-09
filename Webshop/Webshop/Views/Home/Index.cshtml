@@ -15,15 +15,15 @@
 
 <partial name="_AddToCartMessagePartial" />
 
-<div id="carouselExampleIndicators" class="carousel slide rounded d-flex align-items-md-center mt-5 mb-5 p-2" data-ride="carousel" data-interval="2000" style="background-color: transparent; width: 100%; height: 420px; background-color: rgba(255, 255, 255, 0.08)">
-    <ol class="carousel-indicators" style="bottom: -10px">
+<div id="rockstart-carousel" class="carousel slide rounded d-flex align-items-md-center mt-5 mb-5 p-2" data-ride="carousel" data-interval="2000" >
+    <ol class="carousel-indicators">
 
         @foreach (var x in Model)
         {
             @if (x.Discount > 0)
             {
                 var active = (i == 0) ? "class=\"active\"" : "";
-                <li data-target="#carouselExampleIndicators" data-slide-to="@i" @Html.Raw(active)></li>
+                <li data-target="#rockstart-carousel" data-slide-to="@i" @Html.Raw(active)></li>
                 i++;
             }
         }
@@ -42,16 +42,16 @@
                 <div class="carousel-item @active">
                     <div class="row">
                         <div class="col-sm-12 col-md-8 col-lg-7 d-flex justify-content-center justify-content-md-end align-items-center rounded overflow-hidden">
-                            <div style="max-width: 400px" class="shadow">
+                            <div id="carousel_product" class="shadow">
                                 <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@product.Id">
-                                    <img src="@Url.Content("~/Image/" + product.Photo)" class="rounded" style="object-fit: contain; height: 250px; width: 100%; background-color: #fff">
+                                    <img src="@Url.Content("~/Image/" + product.Photo)" class="rounded">
                                 </a>
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-4 col-lg-5 d-flex justify-content-center justify-content-md-start">
-                            <div style="width: 290px">
+                            <div id="carousel_info_container">
                                 <h3>@product.Name</h3>
-                                <p card-subtitle mb-2" style="margin: 0px; color: #bdb8ae">@product.BrandName - @product.CategoryName</p>
+                                <p class="card-subtitle mb-2">@product.BrandName - @product.CategoryName</p>
 
                                 @{
                                     var ratedScoreRounded = Math.Round(product.TotalRatingScore);
@@ -80,11 +80,11 @@
     </div>
 
     <div class="d-none d-lg-block">
-        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <a class="carousel-control-prev" href="#rockstart-carousel" role="button" data-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="sr-only" style="color:gray">Previous</span>
         </a>
-        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <a class="carousel-control-next" href="#rockstart-carousel" role="button" data-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="sr-only" style="color:gray">Next</span>
         </a>
