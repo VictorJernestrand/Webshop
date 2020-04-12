@@ -60,10 +60,30 @@ footer ul {
         transition: all .2s linear
     }
 
-        .social-icons a:active, .social-icons a:focus, .social-icons a:hover {
-            color: #fff;
-            background-color: #29aafe
-        }
+footer a:link {
+    color: #6389ab;
+}
+
+/* visited link */
+footer a:visited {
+    color: #6389ab;
+}
+
+/* mouse over link */
+footer a:hover {
+    color: #fff;
+}
+
+/* selected link */
+footer a:active {
+    color: #fff;
+}
+
+
+    .social-icons a:active, .social-icons a:focus, .social-icons a:hover {
+        color: #fff;
+        background-color: #29aafe
+    }
 
     .social-icons a.facebook:hover {
         background-color: #3b5998
