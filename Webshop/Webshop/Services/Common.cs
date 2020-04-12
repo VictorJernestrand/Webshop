@@ -20,6 +20,7 @@ namespace Webshop.Services
 
         // API-paths to User-controllers
         public const string USERS               = URL + "users/";
+        public const string USER_BY_ID          = URL + "users/userid/";
         public const string USERS_LOGIN         = URL + "users/login/";
         public const string USERS_REGISTER      = URL + "users/register/";
         public const string USERS_LOGIN_UPDATE  = URL + "users/loginupdate/";

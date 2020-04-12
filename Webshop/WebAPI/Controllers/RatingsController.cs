@@ -57,7 +57,7 @@ namespace WebAPI.Controllers
                 return NotFound();
             }
 
-            return rating;
+            return Ok(rating);
         }
 
         // PUT: api/Ratings/5
@@ -134,7 +134,7 @@ namespace WebAPI.Controllers
             _context.Ratings.Remove(rating);
             await _context.SaveChangesAsync();
 
-            return rating;
+            return Ok(rating);
         }
 
         private bool RatingExists(int id)
