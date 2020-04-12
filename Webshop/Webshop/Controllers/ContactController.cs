@@ -14,7 +14,7 @@ namespace Webshop.Controllers
     public class ContactController : Controller
     {
         private readonly IConfiguration _config;
-        public ContactModel ContactModel { get; set; }
+        public ContactModel ContactModel = new ContactModel();
         public ContactController(IConfiguration config)
         {
             this._config = config;
@@ -62,34 +62,35 @@ namespace Webshop.Controllers
             {
                 var body = "<p>Email From: {0} ({1})</p><p>Message:</p><p>{2}</p>";
                 var message = new MailMessage();
-                message.To.Add(new MailAddress("umaeitce@gmail.com"));  // replace with valid value 
-                message.From = new MailAddress(model.Email);  // replace with valid value
-                message.Subject = "Kund klagamål";
-                message.Body = string.Format(body, model.FirstName+""+model.LastName, model.Email, model.Message);
+                message.To.Add(new MailAddress(_config["Mail:Address"]));
+                message.From = new MailAddress(model.Email);
+                message.Subject = "Kund klagomål";
+                message.Body = string.Format(body, model.FirstName + "" + model.LastName, model.Email, model.Message);
                 message.IsBodyHtml = true;
 
                 using (var smtp = new SmtpClient())
                 {
                     var credential = new NetworkCredential
                     {
-                        UserName = _config["Mail:Address"],  // replace with valid value
-                        Password = _config["Mail:Password"]  // replace with valid value
+                        UserName = _config["Mail:Address"],
+                        Password = _config["Mail:Password"]
                     };
                     smtp.Credentials = credential;
                     smtp.Host = _config["Mail:SMTP"];
-                    smtp.Port =Convert.ToInt32(_config["Mail:Port"]);
+                    smtp.Port = Convert.ToInt32(_config["Mail:Port"]);
                     smtp.EnableSsl = true;
                     await smtp.SendMailAsync(message);
-                    // return RedirectToAction("Sent");
-
-                    return View();
+                    //TempData["MessageSuccess"] = "Our customer support will into the issue. Thanks for contacting us";
+                    //return RedirectToAction("Index");
                 }
 
-
-                
-
             }
-            return View(model);
+            else
+            {
+                return RedirectToAction("Contact", model);
+            }
+            TempData["MessageSuccess"] = "Our customer support will into the issue. Thanks for contacting us";
+            return RedirectToAction("Index");
         }
     
     }
