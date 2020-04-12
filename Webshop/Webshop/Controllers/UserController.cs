@@ -202,7 +202,7 @@ namespace Webshop.Controllers
                     {
                         await SetAuthCookie(apiResult.APIPayload);
                     }
-
+                   // return Redirect(returnUrl);
                     TempData["UpdateSuccess"] = "Din information har uppdaterats!";
                     return RedirectToAction(nameof(EditUser));
                 }

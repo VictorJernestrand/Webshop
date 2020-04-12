@@ -56,7 +56,7 @@ namespace Webshop.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Contact(ContactModel model)
+        public async Task<ActionResult> Index(ContactModel model)
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +87,7 @@ namespace Webshop.Controllers
             }
             else
             {
-                return RedirectToAction("Contact", model);
+                return RedirectToAction("Index", model);
             }
             TempData["MessageSuccess"] = "Our customer support will into the issue. Thanks for contacting us";
             return RedirectToAction("Index");
