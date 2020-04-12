@@ -137,6 +137,40 @@ namespace WebAPI.Controllers
             return Ok(orders);
         }
 
+        /*
+        [Route("orderitems/{orderId}")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<OrderItemsModel>>> GetOrderItemsByOrderId(int orderId)
+        {
+            var test = _context.Orders.Find(orderId);
+
+            try
+            {
+                var orderItems = await _context.ProductOrders.Include(x => x.Product)
+                    .Where(x => x.OrderId == orderId)
+                    .Select(x => new OrderItemsModel
+                    {
+                        ProductId = x.Product.Id,
+                        ProductName = x.Product.Name,
+                        Photo = x.Product.Photo,
+                        Price = x.Price,
+                        Amount = x.Amount,
+                        Discount = x.Discount,
+                        QuantityInStock = x.Product.Quantity,
+                        TotalProductCost = (x.Price * x.Amount),
+                        TotalProductCostDiscount = CalculateDiscount.NewPrice((x.Price * x.Amount), x.Discount)
+                    })
+                    .ToListAsync();
+
+                return Ok(orderItems);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+        */
+
         [Route("orderrequest/{id}")]
         [HttpGet]
         public async Task<Order> GetAdminOrderById(int id)

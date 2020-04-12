@@ -203,7 +203,7 @@ namespace Webshop.Services
         /// <typeparam name="T"></typeparam>
         /// <param name="response"></param>
         /// <returns></returns>
-        private async Task<T> DeserializeJSON<T>(HttpResponseMessage response)
+        public async Task<T> DeserializeJSON<T>(HttpResponseMessage response)
         {
             using (var responseStream = await response.Content.ReadAsStreamAsync())
             {
@@ -216,6 +216,18 @@ namespace Webshop.Services
                 
                 return post;
             }
+        }
+
+        public T DeserializeJSON<T>(string jsonString)
+        {
+            var post = JsonSerializer.Deserialize<T>(jsonString,
+                new JsonSerializerOptions()
+                {
+                    PropertyNameCaseInsensitive = true
+                }
+            );
+
+            return post;
         }
 
 

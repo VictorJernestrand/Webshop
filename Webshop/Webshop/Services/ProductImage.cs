@@ -61,7 +61,7 @@ namespace Webshop.Services
             {
 
                 // Set name of file using productId.!
-                var fileName = idproductId + "_" + _file.FileName;
+                var fileName = idproductId + "_" + _file.FileName.Replace(" ", "");
 
                 // Set full path to new image
                 var fullFilePath = Path.Combine(_categoryFolderPath, fileName);
@@ -73,7 +73,7 @@ namespace Webshop.Services
                 }
 
                 // Was the file stored successfully? Return path to image
-                return ImageExist(fullFilePath) ? Path.Combine(_folderName, fileName) : null;
+                return ImageExist(fullFilePath) ? Path.Combine(_folderName, fileName).Replace('\\', '/') : null;
             }
             
             return null;
@@ -93,7 +93,7 @@ namespace Webshop.Services
                 {
                     // Move file and return the new location as string if successful!
                     File.Move(currentImageLocation, newImageLocation);
-                    return ImageExist(newImageLocation) ? Path.Combine(_folderName, _currentImage) : null;
+                    return ImageExist(newImageLocation) ? Path.Combine(_folderName, _currentImage).Replace('\\', '/') : null;
                 }
 
                 return null;
@@ -107,12 +107,13 @@ namespace Webshop.Services
 
         public void DeleteImage(string pathToImage)
         {
-            if (string.IsNullOrEmpty(pathToImage) || !ImageExist(pathToImage))
+            pathToImage = pathToImage.Replace('/', '\\');
+            var wwwPathToImage = Path.Combine(_categoryFolderPath, pathToImage);
+
+            if (string.IsNullOrEmpty(pathToImage) || !ImageExist(wwwPathToImage))
                 return;
 
-            var fullPath = Path.Combine(_categoryFolderPath, pathToImage);
-
-            File.Delete(fullPath);
+            File.Delete(wwwPathToImage);
         }
     }
 }

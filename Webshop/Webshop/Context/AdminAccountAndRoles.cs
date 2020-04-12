@@ -7,9 +7,10 @@ using Webshop.Models;
 
 namespace Webshop.Context
 {
+    /*
     // User-roles
     enum role { Admin, Manager, User }
-
+    
     public class AdminAccountAndRoles
     {
         public static async Task Initialize(WebshopContext context, UserManager<User> userManager, RoleManager<AppRole> roleManager)
@@ -59,5 +60,5 @@ namespace Webshop.Context
             }
 
         }
-    }
+    }*/
 }

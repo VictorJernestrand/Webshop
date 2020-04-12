@@ -40,6 +40,32 @@ a {
     overflow: hidden;
 }
 
+hr {
+    border-top-color: #fff;
+    opacity: 0.1;
+}
+
+
+table a:link {
+    color: #f78300;
+}
+
+/* visited link */
+table a:visited {
+    color: #f78300;
+}
+
+/* mouse over link */
+table a:hover {
+    color: #fff;
+}
+
+/* selected link */
+table a:active {
+    color: #fff;
+}
+
+
 /*----------------------------------------------*/
 /*html {
   font-size: 14px;
@@ -68,16 +94,23 @@ button.accept-policy {
   line-height: inherit;
 }
 
-/*---------------------------------------------------------*/
-html {
-    position: relative;
-    min-height: 100%;
-}
-
 * {
     box-sizing: border-box;
 }
 
+#wrapper {
+    min-height: 100vh;
+    margin: 0 auto -380px; /* Must be same height as footer! */
+}
+
+#wrapper > div {
+    padding-bottom: 440px; /* space between wrapper and footer*/
+}
+
+/*#main {
+    padding-bottom: 440px;
+    border: 1px solid #f00;
+}*/
  /*Position text in the middle of the page/image 
 .bg-text {
     background-color: rgb(0,0,0);  Fallback color 
@@ -95,17 +128,20 @@ html {
     text-align: center;
 }*/
 
-
-
-.footer {
+main {
+    /*padding-bottom: 300px;*/
+    /*padding-bottom: 440px;
+    border: 1px solid #f00;*/
+}
+/*.footer {
+    position: absolute;
     bottom: 0px;
     width: 100%;
     text-align: center;
-    /*white-space: nowrap;*/
-    line-height: 60px; /* Vertically center the text there */
+    line-height: 60px;
     background-color: white;
    
-}
+}*/
 
 
 
@@ -341,7 +377,7 @@ h3.h3 {
     width: auto;
 }
 
-#product-detail {
+.product-detail {
     color: #ff69b4;
 }
 

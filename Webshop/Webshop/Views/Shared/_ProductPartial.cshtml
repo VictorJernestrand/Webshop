@@ -10,15 +10,15 @@
                 @if (!User.IsInRole("Admin"))
                 {
                     <ul class="actions">
-                        <li><a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@Model.Id" data-tip="Visa" id="product-detail"><i class="far fa-eye"></i></a></li>
+                        <li><a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@Model.Id" data-tip="Visa" class="product-detail"><i class="far fa-eye"></i></a></li>
                     </ul>
-                    <button class="btn add-to-cart" onclick="AddCrapToCart(@Model.Id, '@Model.Name')"><i class="fas fa-cart-arrow-down"></i> Köp skiten!</button>
+                    <button class="btn add-to-cart" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Köp skiten!</button>
                 }
                 else
                 {
                     <ul class="actions">
-                        <li><a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@Model.Id" data-tip="Visa" id="product-detail"><i class="far fa-eye"></i></a></li>
-                        <li><a asp-controller="Product" asp-action="EditProduct" asp-route-id="@Model.Id" data-tip="Ändra" id="product-edit"><i class="far fa-edit"></i></a></li>
+                        <li><a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@Model.Id" data-tip="Visa" class="product-detail"><i class="far fa-eye"></i></a></li>
+                        <li><a asp-controller="Product" asp-action="EditProduct" asp-route-id="@Model.Id" data-tip="Ändra" class="product-edit"><i class="far fa-edit"></i></a></li>
                         <li><a class="text-danger" asp-controller="Product" asp-action="DeleteProduct" asp-route-id="@Model.Id" data-tip="Ta bort"><i class="fas fa-trash-alt"></i></a></li>
                     </ul>
                 }
@@ -47,6 +47,10 @@
                 }
 
             </div>
+
+
+
+
             @*<div class="card text-center shadow bg-white rounded border-0">
         <div class="product-grid2">
             <div class="product-image2" style="overflow: hidden">

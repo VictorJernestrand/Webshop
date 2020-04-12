@@ -9,7 +9,8 @@
 <div class="alert alert-success" role="alert">
     <h4 class="alert-heading">Hårdrock, @User.Claims.Where(x => x.Type == "UserName").Select(x => x.Value).FirstOrDefault()!</h4>
     <p>Tack för att du handlat hos RockStart! Kom tillbaka för mer bra skit!</p>
-    <hr>
+    <p>En orderbekräftelse har skickats till din e-postadress.</p>
+    <hr />
     <p class="mb-0">Följ din order på <a asp-controller="UserOrder" asp-action="Index">mina-sidor</a>.</p>
 </div>
 

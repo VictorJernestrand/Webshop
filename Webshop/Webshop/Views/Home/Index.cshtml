@@ -42,14 +42,14 @@
                 <div class="carousel-item @active">
                     <div class="row">
                         <div class="col-sm-12 col-md-8 col-lg-7 d-flex justify-content-center justify-content-md-end align-items-center rounded overflow-hidden">
-                            <div id="carousel_product" class="shadow">
+                            <div class="shadow carousel_product">
                                 <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@product.Id">
-                                    <img src="@Url.Content("~/Image/" + product.Photo)" class="rounded">
+                                    <img src="@Url.Content("~/Image/" + product.Photo)" class="rounded" alt="@product.Name">
                                 </a>
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-4 col-lg-5 d-flex justify-content-center justify-content-md-start">
-                            <div id="carousel_info_container">
+                            <div class="carousel_info_container">
                                 <h3>@product.Name</h3>
                                 <p class="card-subtitle mb-2">@product.BrandName - @product.CategoryName</p>
 

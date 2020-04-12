@@ -35,7 +35,7 @@ $(document).ready(function () {
 // Add items to cart using AJAX and fetch framework
 function AddCrapToCart(productId, name) {
 
-    console.log(productId + ", " + name);
+    //console.log(productId + ", " + name);
 
     // Declare new FormData object
     let formData = new FormData();
@@ -172,6 +172,12 @@ function UpdateBuyButton() {
 
 // Update amount for each product in the view (index.cshtml) for ShoppingCart
 function IncreaseSingleProductInCart(productId) {
+
+    var cartProduct = document.getElementById('cartProductId_' + productId);
+
+    if (cartProduct == null)
+        return;
+
     let total = parseInt(document.getElementById('cartProductId_' + productId).innerHTML) + 1;
 
     if (total > 0) {

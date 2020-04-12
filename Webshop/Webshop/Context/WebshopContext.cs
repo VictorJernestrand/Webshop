@@ -12,6 +12,7 @@ using Webshop.Models.Data;
 
 namespace Webshop.Context
 {
+    /*
     public class WebshopContext : IdentityDbContext<User, AppRole, int>
     {
         //public DbSet<User> Users { get; set; }
@@ -137,7 +138,7 @@ namespace Webshop.Context
                 new Status() { Id = 4, Name = "Levereras" }
                 );
 
-
+    
         }        
         
         
@@ -146,6 +147,6 @@ namespace Webshop.Context
         
 
 
-    }
+    }*/
 
 }
