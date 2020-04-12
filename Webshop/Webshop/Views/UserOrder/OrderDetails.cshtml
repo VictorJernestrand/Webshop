@@ -16,13 +16,13 @@
             <th scope="col">Pris</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody style="color:white">
         @foreach (var product in Model.Products)
         {
         <tr>
             <td><img src="@Url.Content("~/Image/" + product.Photo)" alt="@product.ProductName" style="height: 60px; width: auto" /></td>
             <td><a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">@product.ProductName</a></td>
-            <td>
+            <td >
                 @product.Amount x @product.Price.ToString("C0")
                 @if (product.Discount > 0)
                 {
