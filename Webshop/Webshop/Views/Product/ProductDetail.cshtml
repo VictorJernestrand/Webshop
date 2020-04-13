@@ -45,7 +45,9 @@
     <div class="row">
 
         <div class="col-sm-12 col-md-6 d-flex justify-content-center align-items-center overflow-hidden rounded">
-            <img src="@Url.Content("~/Image/" + Model.Photo)" class="rounded shadow" id="detail_image" alt="@Model.Name">
+            <div style="max-width: 375px; overflow: hidden;" class="rounded">
+                <img src="@Url.Content("~/Image/" + Model.Photo)" class="rounded shadow" id="detail_image" alt="@Model.Name">
+            </div>
         </div>
 
         <div class="col-sm-12 col-md-6 pl-sm-4">
