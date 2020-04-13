@@ -6,14 +6,15 @@
 }
 
 .carousel_product {
-    max-width: 400px;
+    max-width: 376px;
 }
 
 #rockstart-carousel .carousel_product img {
     display: block;
     object-fit: contain;
     height: 250px;
-    width: 100%;
+    /*width: 100%;*/
+    width: 376px;
     background-color: #fff;
 }
 

@@ -45,6 +45,9 @@ hr {
     opacity: 0.1;
 }
 
+table thead-dark {
+    background-color: #262b2e;
+}
 
 table a:link {
     color: #f78300;
@@ -73,7 +76,6 @@ table a:active {
 @media (min-width: 768px) {
     html {
         font-size: 16px;
-
         overflow-y: scroll;
     }
 }
@@ -133,22 +135,88 @@ main {
     /*padding-bottom: 440px;
     border: 1px solid #f00;*/
 }
-/*.footer {
-    position: absolute;
-    bottom: 0px;
-    width: 100%;
-    text-align: center;
-    line-height: 60px;
-    background-color: white;
-   
-}*/
 
 
+.crossed-price {
+    text-decoration: line-through;
+    font-size: small;
+}
+
+.price_color {
+    color: #7fe095;
+}
+
+.product-thumbnail {
+    display: block;
+    object-fit: contain;
+    height: 60px;
+    width: 90px;
+    background-color: #fff;
+}
+
+/********************* Tables **********************/
+#CartContent {
+    border-collapse: separate;
+    border-spacing: 0px 1px;
+}
+
+    #CartContent tr {
+        background-color: rgba(255, 255, 255, 0.08);
+        border-radius: 4px;
+    }
+
+    /* Give first td element a fixed width */
+    #CartContent > td {
+        max-width: 90px;
+    }
+
+    /* Select all td elements except first one */
+    #CartContent td:nth-child(n+2) {
+        vertical-align: middle;
+    }
+
+    /* select all tc elements except first 3 */
+    #CartContent td:nth-child(n+4) {
+        width: 24px;
+    }
+
+    #CartContent .decrease {
+        background-color: transparent;
+        border: none;
+        outline: none;
+        color: #fff;
+    }
+
+    #CartContent .increase {
+        background-color: transparent;
+        border: none;
+        outline: none;
+        color: #7fe095;
+    }
 
 
 
 /********************* Products view **********************/
-/*
+#checkout {
+    border-collapse: separate;
+    border-spacing: 0px 1px;
+    min-width: 100%;
+}
+
+    #checkout tbody tr {
+        background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    #checkout > td {
+        width: 90px;
+    }
+
+    #checkout td {
+        vertical-align: middle;
+    }
+
+        /********************* Products view **********************/
+        /*
 h3.h3 {
     text-align: center;
     margin: 1em;
@@ -346,8 +414,7 @@ h3.h3 {
     }
 }
 */
-
-.product {
+        .product {
     position: relative;
     overflow: hidden;
     background-color: #262b2e !important;
@@ -369,13 +436,15 @@ h3.h3 {
     height: 250px;
     margin: 10px;
     background: #fff;
-    /*background-color: rgba(255,255,255, 0.4);  Black w/opacity/see-through */
 }
 
-.product-image img {
-    height: 250px;
-    width: auto;
-}
+    .product-image img {
+        object-fit: contain;
+        height: 250px;
+        width: auto;
+        /*max-width: 100%;
+        height: auto;*/
+    }
 
 .product-detail {
     color: #ff69b4;

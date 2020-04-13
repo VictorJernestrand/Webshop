@@ -11,35 +11,44 @@
     </div>
 }
 
-<h3>Uppdatera Order-Status</h3>
+<h3 class="mt-3 mb-3">Uppdatera Status</h3>
+<hr />
 
-<form asp-action="EditStatus" method="post" style="color:white">
-    <div class="form-group mx-sm-3 mb-2" style="width: 300px">
-        <input type="hidden" asp-for="Id" value="@Model.Id" />
-        <select name="statusId" class="form-control" style="width: 300px">
-            @if (Model.Statuses != null)
-            {
-                @foreach (var status in Model.Statuses)
-                {
-                    @if (status.Id == Model.OrderStatusId)
+<div class="container">
+    <form asp-action="EditStatus" method="post">
+
+        <div class="row">
+            <div class="form-group col-xs-12 col-sm-4">
+                <input type="hidden" asp-for="Id" value="@Model.Id" />
+                <select name="statusId" class="form-control">
+                    @if (Model.Statuses != null)
                     {
-                        <option  value="@status.Id" selected>@status.Name</option>
+                        @foreach (var status in Model.Statuses)
+                        {
+                            @if (status.Id == Model.OrderStatusId)
+                            {
+                                <option value="@status.Id" selected>@status.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@status.Id">@status.Name</option>
+                            }
+                        }
                     }
-                    else
-                    {
-                        <option  value="@status.Id">@status.Name</option>
-                    }
-                 }
-            }
-        </select>
-    </div>
-    <button type="submit" class="btn btn-warning mb-2 mr-2">Uppdatera</button>
+                </select>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-8">
+                <button type="submit" class="btn btn-warning">Uppdatera</button>
+            </div>
+        </div>
 </form>
+</div>
 
 <hr />
 
-<table class="table">
-    <thead class="thead-dark">
+<table class="table table-borderless table-responsive-sm">
+    <thead class="text-white">
         <tr>
             <th scope="col">Produkt</th>
             <th scope="col"></th>
@@ -54,35 +63,34 @@
             @foreach (var product in Model.Products)
             {
                 <tr>
-                    <td><img src="@Url.Content("~/Image/" + @product.Photo)" style="height: 60px; width: auto" /></td>
-                    <td><a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">@product.ProductName</a></td>
-                    <td>
+                    <td class="align-middle"><img src="@Url.Content("~/Image/" + @product.Photo)" class="product-thumbnail img-fluid rounded" /></td>
+                    <td class="align-middle"><a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">@product.ProductName</a></td>
+                    <td class="align-middle">
                         @product.Amount x @product.Price.ToString("C0")
                         @if (product.Discount > 0)
                         {
-                            <p style="font-size: small; color: green">-@((int)(product.Discount * 100))% Rabatt!</p>
+                            <br /><span class="price_color small">-@((int)(product.Discount * 100))% Rabatt!</span>
                         }
                     </td>
-                    <td>
+                    <td class="align-middle">
                         @if (product.Discount == 0)
                         {
-                            <p style="font-weight: bold">@product.TotalProductCost.ToString("C0")</p>
+                            <span class="font-weight-bold">@product.TotalProductCost.ToString("C0")</span>
                         }
                         else
                         {
-                            <p style="        font-weight: bold
-">@product.TotalProductCostDiscount.ToString("C0")</p>
+                            <span class="font-weight-bold">@product.TotalProductCostDiscount.ToString("C0")</span>
                         }
                     </td>
-                    <td>
+                    <td class="align-middle">
                         @if (product.QuantityInStock - product.Amount < 0)
                         {
                             <span><i class="fas fa-exclamation-triangle" style="color: orange"></i></span>
-                            <span style="font-size: small">I lager: @product.QuantityInStock</span>
+                            <span class="small">I lager: @product.QuantityInStock</span>
                         }
                         else
                         {
-                            <span><i class="fas fa-check" style="color: green"></i></span>
+                            <span><i class="fas fa-check price_color"></i></span>
                         }
                     </td>
                 </tr>

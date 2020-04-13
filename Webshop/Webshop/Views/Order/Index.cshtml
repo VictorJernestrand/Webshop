@@ -35,10 +35,10 @@
     </div>
 }
 
-<h3>Kassan</h3>
+<h3 class="mt-3 mb-3">Kassan</h3>
 <hr />
 
-<table class="table table-responsive-sm table-borderless text-white" style="border-collapse: separate; border-spacing: 0px 1px; min-width: 100%">
+<table class="table table-responsive-sm table-borderless text-white" id="checkout">
     <thead>
         <tr>
             <th scope="col">Produkt</th>
@@ -51,35 +51,35 @@
     <tbody>
         @foreach (var product in Model.OrderViewModel.Products)
         {
-            <tr style="background-color: rgba(255, 255, 255, 0.08)">
-                <td style="width: 80px"><img src="@Url.Content("~/Image/" + @product.Photo)" style="object-fit: contain; height: 60px; width: 80px; background-color: #fff" class="rounded" /></td>
-                <td style="vertical-align: middle"><a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">@product.ProductName</a></td>
-                <td style="vertical-align: middle">
+            <tr>
+                <td><img src="@Url.Content("~/Image/" + @product.Photo)" class="product-thumbnail img_fluid rounded" /></td>
+                <td><a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">@product.ProductName</a></td>
+                <td>
                     @product.Amount x @product.Price.ToString("C0")
                     @if (product.Discount > 0)
                     {
-                        <span style="font-size: small; color: green">-@((int)(product.Discount * 100))% Rabatt!</span>
+                        <br /><span class="price_color small">-@((int)(product.Discount * 100))% Rabatt!</span>
                     }
                 </td>
-                <td style="vertical-align: middle">
+                <td>
                     @if (product.Discount == 0)
                     {
-                        <span style="font-weight: bold; color: #7fe095">@product.TotalProductCost.ToString("C0")</span>
+                        <span class="price_color font-weight-bold">@product.TotalProductCost.ToString("C0")</span>
                     }
                     else
                     {
-                        <span style="font-weight: bold; color: #7fe095">@product.TotalProductCostDiscount.ToString("C0")</span>
+                        <span class="price_color font-weight-bold">@product.TotalProductCostDiscount.ToString("C0")</span>
                     }
                 </td>
-                <td style="vertical-align: middle">
+                <td>
                     @if (product.QuantityInStock - product.Amount < 0)
                     {
                         <span><i class="fas fa-exclamation-triangle" style="color: orange"></i></span>
-                        <span style="font-size: small">I lager: @product.QuantityInStock</span>
+                        <span class="small">I lager: @product.QuantityInStock</span>
                     }
                     else
                     {
-                        <span><i class="fas fa-check" style="color: #7fe095"></i></span>
+                        <span><i class="fas fa-check price_color"></i></span>
                     }
                 </td>
             </tr>
@@ -92,10 +92,9 @@
 
 <div class="row" style="display: inline">
     <div class="col ">
-        <div class="float-right" style="margin: 4px, 20px, 4px, 20px; font-size: 1.5em; color: #7fe095">@Model.OrderViewModel.OrderTotal.ToString("C0")</div>
+        <div class="float-right price_color" style="font-size: 1.5em">@Model.OrderViewModel.OrderTotal.ToString("C0")</div>
     </div>
 </div>
-
 
 <h3 class="mt-3 mb-3">Adress och Betalning &raquo;</h3>
 <hr />

@@ -34,14 +34,14 @@
                 {
                     @if (Model.Discount == 0)
                     {
-                        <h5 style="color: #7fe095; margin-top: 1.5em">@Model.Price.ToString("C0")</h5>
+                        <h5 class="price_color" style="margin-top: 1.5em">@Model.Price.ToString("C0")</h5>
                     }
                     else
                     {
-                        <span style="font-size: small; text-decoration: line-through">@Model.Price.ToString("C0")</span>
-                        <h5 style="color: #7fe095">
+                        <span class="crossed-price">@Model.Price.ToString("C0")</span>
+                        <h5 class="price_color">
                             @Model.DiscountPrice.ToString("C0")
-                            <span style="font-size: small">-@((int)(Model.Discount * 100))%</span>
+                            <span class="small">-@((int)(Model.Discount * 100))%</span>
                         </h5>
                     }
                 }
