@@ -21,10 +21,18 @@
         Ditt kundomdöme har sparats.
     </div>
 }
+
 @if (TempData["NewRatingFailed"] != null)
 {
     <div class="alert alert-warning" role="alert">
         Du har redan gett ett kundomdöme för denna produkt.
+    </div>
+}
+
+@if (TempData["RatingDeleted"] != null)
+{
+    <div class="alert alert-warning" role="alert">
+        @TempData["RatingDeleted"]
     </div>
 }
 
@@ -34,184 +42,194 @@
 
 <div class="container">
 
-<div class="row">
+    <div class="row">
 
-    <div class="col-sm-12 col-md-6 d-flex justify-content-center align-items-center overflow-hidden rounded">
-        <img src="@Url.Content("~/Image/" + Model.Photo)" class="rounded shadow" id="detail_image" alt="@Model.Name">
-    </div>
+        <div class="col-sm-12 col-md-6 d-flex justify-content-center align-items-center overflow-hidden rounded">
+            <div style="max-width: 375px; overflow: hidden;" class="rounded">
+                <img src="@Url.Content("~/Image/" + Model.Photo)" class="rounded shadow" id="detail_image" alt="@Model.Name">
+            </div>
+        </div>
 
-    <div class="col-sm-12 col-md-6 pl-sm-4">
+        <div class="col-sm-12 col-md-6 pl-sm-4">
 
-        <div class="container">
+            <div class="container">
 
-            @if (Model.ActiveProduct == false)
-            {
-                <h5 style="color:red">Produkten finns inte längre i vårt sortiment</h5>
-            }
-            else
-            {
-                <a>&nbsp;</a>
-            }
-            <h5>@Model.Name</h5>
-            @if (Model.ActiveProduct != false)
-            {
-                @if (Model.Discount == 0)
+                @if (Model.ActiveProduct == false)
                 {
-                    <h5 class="product_price">@Model.Price.ToString("C0")</h5>
+                    <h5 style="color:red">Produkten finns inte längre i vårt sortiment</h5>
                 }
                 else
                 {
-                    <span class="old_price">@Model.Price.ToString("C0")</span>
-                    <h5 class="product_price">@Model.DiscountPrice.ToString("C0")
-                        <span class="discount"> -@((int)(Model.Discount* 100))%</span>
-                    </h5>
+                    <a>&nbsp;</a>
                 }
-            }
-            <p> </p>
-            @if (Model.ActiveProduct != false)
-            {
-                <p>@Model.Description</p>
-
-                <table>
-                    <tr>
-                        <td><b>Kategori:</b></td>
-                        <td>@Model.CategoryName</td>
-                    </tr>
-                    <tr>
-                        <td><b>Tillverkare:</b></td>
-                        <td>@Model.BrandName</td>
-                    </tr>
-                    <tr>
-                        <td><b>I lager:</b></td>
-                        <td>@if (@Model.Quantity > 0)
-                            {
-                            <span class="product_price"><i class="fas fa-check"></i></span> @Model.Quantity
-                            }
-                            else
-                            {
-                                <span>slut</span>
-                            }
-                        </td>
-                     </tr>
-               </table>
-            }
-
-            <div class="d-inline d-flex flex-nowrap">
-
-                <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
-
-                @if (User.IsInRole("Admin"))
+                <h5>@Model.Name</h5>
+                @if (Model.ActiveProduct != false)
                 {
-                    <div class="mt-2">
-                        <a asp-action="EditProduct" class="btn btn-primary mb-2 mr-2" asp-route-id="@Model.Id">Redigera</a>
-                        <a asp-action="DeleteProduct" asp-route-id="@Model.Id" asp-controller="Product" class="btn btn-danger mb-2 mr-2">Radera</a>
-                    </div>
+                    @if (Model.Discount == 0)
+                    {
+                        <h5 class="product_price">@Model.Price.ToString("C0")</h5>
+                    }
+                    else
+                    {
+                        <span class="old_price">@Model.Price.ToString("C0")</span>
+                        <h5 class="product_price">
+                            @Model.DiscountPrice.ToString("C0")
+                            <span class="discount"> -@((int)(Model.Discount* 100))%</span>
+                        </h5>
+                    }
                 }
-                else if (Model.ActiveProduct == false && !User.IsInRole("Admin"))
+                <p> </p>
+                @if (Model.ActiveProduct != false)
                 {
-                    <a onclick="goBack()" class="btn btn-primary mt-2">Gå tillbaka till din order</a>
+                    <p>@Model.Description</p>
+
+                    <table>
+                        <tr>
+                            <td><b>Kategori:</b></td>
+                            <td>@Model.CategoryName</td>
+                        </tr>
+                        <tr>
+                            <td><b>Tillverkare:</b></td>
+                            <td>@Model.BrandName</td>
+                        </tr>
+                        <tr>
+                            <td><b>I lager:</b></td>
+                            <td>
+                                @if (@Model.Quantity > 0)
+                                {
+                                    <span class="product_price"><i class="fas fa-check"></i></span> @Model.Quantity
+                                }
+                                else
+                                {
+                                    <span>slut</span>
+                                }
+                            </td>
+                        </tr>
+                    </table>
                 }
-                else
-                {
-                    <a class="btn btn-success mt-2 text-white" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Lägg i kundvagnen</a>
-                }
+
+                <div class="d-inline d-flex flex-nowrap">
+
+                    <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="mt-2">
+                            <a asp-action="EditProduct" class="btn btn-primary mb-2 mr-2" asp-route-id="@Model.Id">Redigera</a>
+                            <a asp-action="DeleteProduct" asp-route-id="@Model.Id" asp-controller="Product" class="btn btn-danger mb-2 mr-2">Radera</a>
+                        </div>
+                    }
+                    else if (Model.ActiveProduct == false && !User.IsInRole("Admin"))
+                    {
+                        <a onclick="goBack()" class="btn btn-primary mt-2">Gå tillbaka till din order</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-success mt-2 text-white" onclick="AddCrapToCart(@Model.Id, '@Model.Name')">Lägg i kundvagnen</a>
+                    }
+                </div>
+
             </div>
 
-    </div>
 
-
-</div>
-</div>
+        </div>
     </div>
+</div>
 @if (Model.ActiveProduct != false)
 {
     <div class="container mt-5">
 
-    <ul class="nav nav-pills flex-column flex-sm-row">
-        <li class="nav-item">
-            <a class="nav-link active" href="#nav-productinfo" data-toggle="tab">Produktinformation</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#nav-specification" data-toggle="tab">Specifikationer</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#nav-ratings" data-toggle="tab">Kundrecensioner (@((Model.Ratings != null) ? Model.Ratings.Count : 0))</a>
-        </li>
-    </ul>
+        <ul class="nav nav-pills flex-column flex-sm-row">
+            <li class="nav-item">
+                <a class="nav-link active" href="#nav-productinfo" id="fulldescription-tab" data-toggle="tab">Produktinformation</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#nav-specification" id="specification-tab" data-toggle="tab">Specifikationer</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#nav-ratings" id="ratings-tab" data-toggle="tab">Kundrecensioner (@((Model.Ratings != null) ? Model.Ratings.Count : 0))</a>
+            </li>
+        </ul>
 
-    <div class="tab-content">
+        <div class="tab-content">
 
-        <div class="tab-pane fade show active rating_comment p-3 mt-2 rounded" id="nav-productinfo" role="tabpanel" aria-labelledby="nav-home-tab">
-            @Html.Raw(HttpUtility.HtmlDecode(Model.FullDescription))
-        </div>
+            <div class="tab-pane fade show active rating_comment p-3 mt-2 rounded" id="nav-productinfo" role="tabpanel" aria-labelledby="fulldescription-tab">
+                @Html.Raw(HttpUtility.HtmlDecode(Model.FullDescription))
+            </div>
 
-        <div class="tab-pane fade rating_comment p-3 mt-2 rounded" id="nav-specification" role="tabpanel" aria-labelledby="nav-profile-tab">
-            @Html.Raw(HttpUtility.HtmlDecode(Model.Specification))
-        </div>
+            <div class="tab-pane fade rating_comment p-3 mt-2 rounded" id="nav-specification" role="tabpanel" aria-labelledby="specification-tab">
+                @Html.Raw(HttpUtility.HtmlDecode(Model.Specification))
+            </div>
 
-        <div class="tab-pane fade pt-2" id="nav-ratings" role="tabpanel" aria-labelledby="nav-contact-tab">
+            <div class="tab-pane fade pt-2" id="nav-ratings" role="tabpanel" aria-labelledby="ratings-tab">
 
-            @*Did the customer rate this product? If not, allow user to rate!*@
-            @if (User.Identity.IsAuthenticated && (Model.Ratings == null || !Model.Ratings.Any(x => x.UserEmail == User.Identity.Name)))
-            {
-                <form id="rating_form" asp-controller="Ratings" asp-action="index">
-
-                    <div class="form-group">
-                        <input type="hidden" asp-for="@Model.NewRating.ProductId" value="@Model.Id" />
-                        <label asp-for="@Model.NewRating.Comment">Ditt omdöme:</label>
-                        <textarea class="form-control" asp-for="@Model.NewRating.Comment" rows="2" placeholder="Tyck till om @Model.Name här"></textarea>
-                    </div>
-                    <div class="form-group mb-2">
-                        <label asp-for="@Model.NewRating.Score">Betyg:</label>
-                        <select class="form-control" asp-for="@Model.NewRating.Score">
-                            <option value="5">5 av 5</option>
-                            <option value="4">4 av 5</option>
-                            <option value="3">3 av 5</option>
-                            <option value="2">2 av 5</option>
-                            <option value="1">1 av 5</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary form-control">Spara</button>
-                    </div>
-                </form>
-            }
-
-
-            @if (Model.Ratings != null && Model.Ratings.Count > 0)
-            {
-                @foreach (var rating in Model.Ratings)
+                @*Did the customer rate this product? If not, allow user to rate!*@
+                @if (User.Identity.IsAuthenticated && User.IsInRole("User") && (Model.Ratings == null || !Model.Ratings.Any(x => x.UserEmail == User.Identity.Name)))
                 {
-                    var nrOfemptyStars = 5 - rating.Score;
+                    <form id="rating_form" asp-controller="Ratings" asp-action="index">
 
-                    <div class="card mb-2 rating_comment">
-                        <div class="card-body">
-
-                            @*Print score*@
-                            @for (var i = 0; i < rating.Score; i++)
-                            {
-                                <i class="fas fa-star" style="color: gold"></i>
-                            }
-
-                            @*Print empty stars to make up a row of total 5 stars*@
-                            @for (var i = 0; i < nrOfemptyStars; i++)
-                            {
-                                <i class="far fa-star" style="color: gold"></i>
-                            }
-
-                            <h6 class="card-subtitle mb-2 pt-2 text-muted">@rating.RateDate.ToShortDateString() av @rating.UserName </h6>
-                            <p class="card-text">@rating.Comment</p>
-
+                        <div class="form-group">
+                            <input type="hidden" asp-for="@Model.NewRating.ProductId" value="@Model.Id" />
+                            <label asp-for="@Model.NewRating.Comment">Ditt omdöme:</label>
+                            <textarea class="form-control" asp-for="@Model.NewRating.Comment" rows="2" placeholder="Tyck till om @Model.Name här"></textarea>
                         </div>
-                    </div>
+                        <div class="form-group mb-2">
+                            <label asp-for="@Model.NewRating.Score">Betyg:</label>
+                            <select class="form-control" asp-for="@Model.NewRating.Score">
+                                <option value="5">5 av 5</option>
+                                <option value="4">4 av 5</option>
+                                <option value="3">3 av 5</option>
+                                <option value="2">2 av 5</option>
+                                <option value="1">1 av 5</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary form-control">Spara</button>
+                        </div>
+                    </form>
                 }
-            }
-            else
-            {
-                <p>Inga kundomdömen finns. Bli den första att tycka till!</p>
-            }
+
+
+                @if (Model.Ratings != null && Model.Ratings.Count > 0)
+                {
+                    @foreach (var rating in Model.Ratings)
+                    {
+                        var nrOfemptyStars = 5 - rating.Score;
+
+                        <div class="card mb-2 rating_comment">
+                            <div class="card-body">
+
+                                @*Display delete-button for admin*@
+                                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                                {
+                                    <a asp-action="Delete" asp-controller="Ratings" asp-route-id="@rating.Id" class="text-white"><i class="fas fa-trash-alt float-right"></i></a>
+                                }
+
+                                @*Print score*@
+                                @for (var i = 0; i < rating.Score; i++)
+                                {
+                                    <i class="fas fa-star" style="color: gold"></i>
+                                }
+
+                                @*Print empty stars to make up a row of total 5 stars*@
+                                @for (var i = 0; i < nrOfemptyStars; i++)
+                                {
+                                    <i class="far fa-star" style="color: gold"></i>
+                                }
+
+                                <h6 class="card-subtitle mb-2 pt-2 text-muted">@rating.RateDate.ToShortDateString() av @rating.UserName</h6>
+                                <p class="card-text">@rating.Comment</p>
+
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>Inga kundomdömen finns. Bli den första att tycka till!</p>
+                }
+            </div>
         </div>
-    </div>
     </div>
 }
 

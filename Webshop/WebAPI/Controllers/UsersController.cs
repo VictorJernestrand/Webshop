@@ -49,9 +49,33 @@ namespace WebAPI.Controllers
             return await _context.Users.ToListAsync();
         }
 
-
         // GET: api/User/5
-        //       [Authorize(Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        [HttpGet]
+        [Route("userid/{id}")]
+        public async Task<ActionResult<User>> GetUserById(int id)
+        {
+            var user = await _context.Users.Where(x => x.Id == id)
+                .Select(x => new
+                {
+                    x.Email,
+                    x.FirstName,
+                    x.LastName,
+                    x.PhoneNumber,
+                    x.StreetAddress,
+                    x.ZipCode,
+                    x.City
+                }).FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
+        }
+
+        // GET: api/User/user@email.com
         [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpGet("{email}")]
         public async Task<ActionResult<User>> GetUser(string email)

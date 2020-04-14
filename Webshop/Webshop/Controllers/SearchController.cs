@@ -9,11 +9,13 @@ namespace Webshop.Controllers
     public class SearchController : Controller
     {
         private readonly WebAPIHandler webAPI;
+        private readonly WebAPIToken webAPIToken;
         public List<AllProductsViewModel> allproducts;
 
-        public SearchController( WebAPIHandler webAPI)
+        public SearchController(WebAPIHandler webAPI, WebAPIToken webAPIToken)
         {
             this.webAPI = webAPI;
+            this.webAPIToken = webAPIToken;
         }
 
         public async Task<ActionResult<IEnumerable<AllProductsViewModel>>> Index(string searchtext)
@@ -23,8 +25,17 @@ namespace Webshop.Controllers
             // Anything to search for
             if (searchtext != null)
             {
-                // Send a request to API
-                products = await webAPI.GetAllAsync<AllProductsViewModel>(ApiURL.SEARCH + searchtext.ToLower());
+                // Admin search
+                if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    var token = await webAPIToken.New();
+                    products = await webAPI.GetAllAsync<AllProductsViewModel>(ApiURL.SEARCH_ADMIN + searchtext.ToLower(), token);
+                }
+                else
+                {
+                    products = await webAPI.GetAllAsync<AllProductsViewModel>(ApiURL.SEARCH + searchtext.ToLower());
+                }
+
                 return View(products);
             }
 

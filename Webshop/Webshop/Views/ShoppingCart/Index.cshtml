@@ -15,66 +15,77 @@
 
 {
     <div class="alert alert-warning" role="alert">
-        @TempData["LoginNeeded"] Klick <a asp-action="Login" asp-controller="User">här</a> för logga in
+        @TempData["LoginNeeded"] Klicka <a asp-action="Login" asp-controller="User">här</a> för att logga in
     </div>
 }
+
+
+<h3 class="mt-3 mb-3">Kundvagnen</h3>
+<hr />
 
 @if (Model != null && Model.Count() > 0)
 {
 
-    <table class="table" id="CartContent" style="color:white">
-        @foreach (var product in Model)
-        {
-            <tr id="DumpCrap_@product.ShoppingCartId">
-                <td>
-                    <a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">
-                        <img src="@Url.Content("~/Image/" + product.Photo)" style="height: 80px; width: auto" />
-                    </a>
-                </td>
-                <td>@product.Name</td>
-                <td>
-                    @if (product.Discount == 0)
-                    {
-                        @product.Price.ToString("C0")
-                    }
-                    else
-                    {
-                        <span style="text-decoration: line-through">@product.Price.ToString("C0")</span>
-                        <span>@product.DiscountPrice.ToString("C0")</span>
-                    }
-                </td>
+<table class="table table-responsive-xs table-responsive-sm table-borderless text-white mx-auto" id="CartContent">
+    @foreach (var product in Model)
+    {
+        <tr id="DumpCrap_@product.ShoppingCartId">
+            <td>
+                <a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">
+                    <img src="@Url.Content("~/Image/" + product.Photo)" alt="@product.Name" class="product-thumbnail rounded" />
+                </a>
+            </td>
+            <td>
+                <a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">@product.Name</a>
+            </td>
+            <td class="text-center">
+                @if (product.Discount == 0)
+                {
+                    <span class="price_color">@product.Price.ToString("C0")</span>
+                }
+                else
+                {
+                    <div class="crossed-price">@product.Price.ToString("C0")</div>
+                    <div class="price_color">@product.DiscountPrice.ToString("C0")</div>
+                }
+            </td>
 
-                <td>
-                    @if (@product.Amount == 0)
-                    {
-                        <button class="btn btn-warning" onclick="RemoveCrapFromCart(@product.ShoppingCartId, @product.ProductId)" id="DecreaseBtn_@product.ProductId" disabled><i class="fas fa-minus-square"></i></button>
-                    }
-                    else
-                    {
-                        <button class="btn btn-warning" onclick="RemoveCrapFromCart(@product.ShoppingCartId, @product.ProductId)" id="DecreaseBtn_@product.ProductId"><i class="fas fa-minus-square"></i></button>
-                    }
-                </td>
-                <td class="productCounter" id="cartProductId_@product.ProductId">@product.Amount</td>
-                <td><button class="btn btn-success" onclick="AddCrapToCart(@product.ProductId, null)" id="IncreaseBtn_@product.ProductId"><i class="fas fa-plus-square"></i></button></td>
-                <td><button class="btn btn-outline-danger" onclick="DeleteCrapFromCart(@product.ShoppingCartId)"><i class="fas fa-dumpster-fire"></i></button></td>
-            </tr>
-        }
+            <td>
+                @if (@product.Amount == 0)
+                {
+                    <button onclick="RemoveCrapFromCart(@product.ShoppingCartId, @product.ProductId)" id="DecreaseBtn_@product.ProductId" disabled class="decrease"><i class="fas fa-minus-circle"></i></button>
+                }
+                else
+                {
+                    <button onclick="RemoveCrapFromCart(@product.ShoppingCartId, @product.ProductId)" id="DecreaseBtn_@product.ProductId" class="decrease"><i class="fas fa-minus-circle"></i></button>
+                }
+            </td>
+            <td class="productCounter text-center" id="cartProductId_@product.ProductId">@product.Amount</td>
+            <td><button onclick="AddCrapToCart(@product.ProductId, null)" id="IncreaseBtn_@product.ProductId" class="increase"><i class="fas fa-plus-circle"></i></button></td>
+            <td><button onclick="DeleteCrapFromCart(@product.ShoppingCartId)" class="decrease"><i class="fas fa-trash-alt"></i></button></td>
+        </tr>
+    }
+
     </table>
-    <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
-    <div>
 
+    <hr />
+
+    <div class="pb-5">
+        <a class="btn btn-dark float-left text-white" asp-controller="Product" asp-action="AllProducts"><i class="fas fa-caret-left"></i> Fortsätt Shoppa snålis</a>
+        @if (Model.Any(x => x.Amount > 0))
+        {
+            <button class="btn btn-success float-right" id="CashOut" onclick="location.href = '/order'">Gå vidare till kassan <i class="fas fa-caret-right"></i></button>
+        }
+        else
+        {
+            <button class="btn btn-success float-right" id="CashOut" onclick="location.href = '/order'" disabled>Gå vidare till kassan <i class="fas fa-caret-right"></i></button>
+        }
     </div>
 
-    <a class="btn btn-warning" asp-controller="Product" asp-action="AllProducts">Fortsätt Shoppa snålis</a>
-    @if (Model.Any(x => x.Amount > 0))
-    {
-        <button class="btn btn-success" id="CashOut" onclick="location.href = '/order'">Gå till kassan</button>
-    }
-    else
-    {
-        <button class="btn btn-success" id="CashOut" onclick="location.href = '/order'" disabled>Gå till kassan</button>
-        }
-    }
+    @* Fetched by AJAX *@
+    <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
+
+}
 else
 {
     <div class="alert alert-warning" role="alert">

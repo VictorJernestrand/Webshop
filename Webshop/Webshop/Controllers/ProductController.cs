@@ -85,9 +85,19 @@ namespace Webshop.Controllers
                         Specification = model.Specification,
                         Discount = model.Discount,
                         ActiveProduct = model.ActiveProduct
-                        
                     };
 
+                    // Request token
+                    var token = await webAPIToken.New();
+
+                    // Store product
+                    var apiResonse = await webAPI.PostAsync(newProduct, ApiURL.PRODUCTS, token);
+
+                    // Deserialize API response content and get ID of newly created product
+                    var newProductId = webAPI.DeserializeJSON<AllProductsViewModel>(apiResonse.ResponseContent).Id;
+                    newProduct.Id = newProductId;
+
+                    // Store image in www root folder with unique product Id
                     if (file != null)
                     {
                         // Set category folder name
@@ -98,9 +108,8 @@ namespace Webshop.Controllers
                         newProduct.Photo = productImage.StoreImage(newProduct.Id);
                     }
 
-                    // Request token
-                    var token = await webAPIToken.New();
-                    var apiResonse = await webAPI.PostAsync(newProduct, ApiURL.PRODUCTS, token);
+                    // Update product with image
+                    var response = webAPI.UpdateAsync<Product>(newProduct, ApiURL.PRODUCTS + newProduct.Id, token);
                 }               
 
                else
@@ -150,11 +159,18 @@ namespace Webshop.Controllers
 
         public async Task<IActionResult> ProductDetail(int id)
         {
-            // Get product and ratings by product id
-            var product = await webAPI.GetOneAsync<AllProductsViewModel>(ApiURL.PRODUCTS + id);
-            product.Ratings = await webAPI.GetAllAsync<Rating>(ApiURL.RATINGS_BY_PRODUCT_ID + id);
-
-            return View(product);
+            try
+            {
+                // Get product and ratings by product id
+                var product = await webAPI.GetOneAsync<AllProductsViewModel>(ApiURL.PRODUCTS + id);
+                product.Ratings = await webAPI.GetAllAsync<Rating>(ApiURL.RATINGS_BY_PRODUCT_ID + id);
+                return View(product);
+            }
+            catch
+            {
+                // Do something
+                return RedirectToAction("Error", "Home");
+            }
         }
 
         [Authorize(Roles = "Admin")]

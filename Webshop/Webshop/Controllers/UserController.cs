@@ -27,13 +27,15 @@ namespace Webshop.Controllers
 
         private WebAPIHandler webAPI;
         private readonly IConfiguration config;
+        private readonly IHttpContextAccessor accessor;
         private WebAPIToken webAPIToken;
 
-        public UserController(WebAPIToken webAPIToken, WebAPIHandler webAPIHandler, IConfiguration config)
+        public UserController(WebAPIToken webAPIToken, WebAPIHandler webAPIHandler, IConfiguration config, IHttpContextAccessor accessor)
         {
             // Instantiate a new WebAPIHandler object
             this.webAPI = webAPIHandler;
             this.config = config;
+            this.accessor = accessor;
             this.webAPIToken = webAPIToken;
         }
 
@@ -204,7 +206,11 @@ namespace Webshop.Controllers
                     }
                    // return Redirect(returnUrl);
                     TempData["UpdateSuccess"] = "Din information har uppdaterats!";
-                    return RedirectToAction(nameof(EditUser));
+
+                    if (accessor.HttpContext.Request.Query["order"] != "order")
+                        return RedirectToAction(nameof(EditUser));
+                    else
+                        return RedirectToAction("Index", "Order");
                 }
                 else
                 {

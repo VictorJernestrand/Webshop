@@ -2,30 +2,40 @@
 @{
     ViewData["Title"] = "OrderStatus";
 }
-<h1>Orderstatus</h1>
+
+<h3 class="mt-3 mb-3">Orderhantering</h3>
+<hr />
+
 <div class="row">
-    <div class="col-sm-12 col-md-3">
+    <div class="col-xs-12 col-sm-12 col-md-3">
         <ul class="list-group">
         @if (Model.Statuses != null)
         {
             @foreach (var status in Model.Statuses)
             {
-                <li class="list-group-item"><a asp-action="OrderStatus" asp-route-statusid="@status.Id">@Html.Raw(@status.Name)</a></li>
+                <li class="list-group-item">
+                    <a asp-action="OrderStatus" asp-route-statusid="@status.Id">@Html.Raw(@status.Name)</a>
+                </li>
             }
         }
         </ul>
     </div>
 
-    <div class="col">
+    <div class="col-xs-12 col-sm-12 col-md-9">
+        @{ 
+            int.TryParse(Context.Request.Query["statusid"], out int statusId);
+            var statusName = Model.Statuses[(statusId - 1 < 0) ? 0 : statusId - 1].Name;
+        }
+        <h3>@statusName</h3>
 
-        <table class="table thead-dark  table-responsive-md">
-            <thead class="thead-dark">
+        <table class="table table-borderless table-responsive-sm">
+            <thead class="text-white">
                 <tr>
-                    <th scope="col">OrderDatum</th>
-                    <th scope="col">Produkter</th>
+                    <th scope="col">Datum</th>
+                    <th scope="col">Antal</th>
                     <th scope="col">Kund</th>
                     <th scope="col">Kr</th>
-                    <th scope="col">Status</th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
 
@@ -35,11 +45,11 @@
                     @foreach (var order in Model.Orders)
                     {
                         <tr>
-                            <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
-                            <td>@order.Quantity</td>
-                            <td><a href="">@order.CustomerEmail</a></td>
-                            <td>@order.TotalCost.ToString("C0")</td>
-                            <td><a asp-action="EditStatus" asp-route-id="@order.OrderId" class="btn btn-secondary">Ändra Status</a></td>
+                            <td class="align-middle">@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                            <td class="align-middle">@order.Quantity</td>
+                            <td class="align-middle small"><a href="">@order.CustomerEmail</a></td>
+                            <td class="align-middle">@order.TotalCost.ToString("C0")</td>
+                            <td class="align-middle"><a asp-action="EditStatus" asp-route-id="@order.OrderId" class="btn btn-dark">Ändra</a></td>
                         </tr>
                     }
                 }
@@ -50,9 +60,8 @@
                     </tr>
                 }
             </tbody>
-
         </table>
-
     </div>
-
 </div>
+
+<hr />

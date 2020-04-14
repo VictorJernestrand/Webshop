@@ -5,23 +5,26 @@
     background-color: rgba(255, 255, 255, 0.08)
 }
 
-#carousel_product {
-    max-width: 400px;
+.carousel_product {
+    max-width: 375px;
+    overflow: hidden;
 }
 
-#rockstart-carousel #carousel_product img {
-    display: block;
+#rockstart-carousel .carousel_product img {
+    /*display: block;*/
     object-fit: contain;
     height: 250px;
-    width: 100%;
+    /*min-width: 100%;*/
+    width: 376px;
     background-color: #fff;
+    /*border: 1px solid #262b2e;*/
 }
 
-#carousel_info_container {
+.carousel_info_container {
     width: 290px;
 }
 
-#carousel_info_container card-subtitle {
+.carousel_info_container card-subtitle {
     margin: 0px;
     color: #bdb8ae;
 }
