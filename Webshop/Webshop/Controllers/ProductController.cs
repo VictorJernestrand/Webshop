@@ -159,11 +159,18 @@ namespace Webshop.Controllers
 
         public async Task<IActionResult> ProductDetail(int id)
         {
-            // Get product and ratings by product id
-            var product = await webAPI.GetOneAsync<AllProductsViewModel>(ApiURL.PRODUCTS + id);
-            product.Ratings = await webAPI.GetAllAsync<Rating>(ApiURL.RATINGS_BY_PRODUCT_ID + id);
-
-            return View(product);
+            try
+            {
+                // Get product and ratings by product id
+                var product = await webAPI.GetOneAsync<AllProductsViewModel>(ApiURL.PRODUCTS + id);
+                product.Ratings = await webAPI.GetAllAsync<Rating>(ApiURL.RATINGS_BY_PRODUCT_ID + id);
+                return View(product);
+            }
+            catch
+            {
+                // Do something
+                return RedirectToAction("Error", "Home");
+            }
         }
 
         [Authorize(Roles = "Admin")]

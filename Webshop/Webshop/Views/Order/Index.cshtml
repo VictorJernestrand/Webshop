@@ -35,6 +35,13 @@
     </div>
 }
 
+@if (TempData["UpdateSuccess"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["UpdateSuccess"]
+    </div>
+}
+
 <h3 class="mt-3 mb-3">Kassan</h3>
 <hr />
 
@@ -110,7 +117,7 @@
                     <p>@Model.User.FirstName @Model.User.LastName</p>
                     <p>@Model.User.StreetAddress</p>
                     <p>@Model.User.ZipCode, @Model.User.City</p>
-                    Stämmer inte adressen? <a asp-action="EditUser" asp-controller="User">ändra här</a>
+                    Stämmer inte adressen? <a asp-action="EditUser" asp-controller="User" asp-route-order="order">ändra här</a>
                 </div>
             </div>
         </div>
