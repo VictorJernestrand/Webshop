@@ -33,6 +33,7 @@ namespace Webshop.Services
         public const string BRANDS              = URL + "brands/";
         public const string PAYMENTS            = URL + "payments/";
         public const string SEARCH              = URL + "products/search/";
+        public const string SEARCH_ADMIN        = URL + "products/adminsearch/";
 
         // API-paths to cart-controllers
         public const string CARTS               = URL + "carts/";

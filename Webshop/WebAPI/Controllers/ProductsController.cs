@@ -104,7 +104,32 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<AllProductsViewModel>> searchProduct(string searchTerm)
         {
+            // TODO: Fix so users can only search on active products!
+            searchTerm = searchTerm.ToLower();
 
+            var searchResult = await _context.Products.Include(x => x.Category)
+                .Include(x => x.Brand)
+                .Where(x => x.ActiveProduct == true &&
+                    (x.Name.ToLower().Contains(searchTerm) ||
+                    x.Brand.Name.ToLower().Contains(searchTerm) ||
+                    x.Category.Name.ToLower().Contains(searchTerm) ||
+                    x.Description.ToLower().Contains(searchTerm) ||
+                    x.FullDescription.ToLower().Contains(searchTerm) ||
+                    x.Specification.ToLower().Contains(searchTerm))
+                    )
+                .Select(x => new AllProductsViewModel(x))
+                .ToListAsync();
+
+            return Ok(searchResult);
+        }
+
+
+        // GET: api/Products/search/tjolahopp
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        [Route("adminsearch/{searchTerm}")]
+        [HttpGet]
+        public async Task<ActionResult<AllProductsViewModel>> adminSearchProduct(string searchTerm)
+        {
             // TODO: Fix so users can only search on active products!
             searchTerm = searchTerm.ToLower();
 
@@ -115,14 +140,12 @@ namespace WebAPI.Controllers
                     x.Category.Name.ToLower().Contains(searchTerm) ||
                     x.Description.ToLower().Contains(searchTerm) ||
                     x.FullDescription.ToLower().Contains(searchTerm) ||
-                    x.Specification.ToLower().Contains(searchTerm)
-                    )
+                    x.Specification.ToLower().Contains(searchTerm))
                 .Select(x => new AllProductsViewModel(x))
                 .ToListAsync();
 
             return Ok(searchResult);
         }
-
 
         // GET: api/Products/5
         [Route("category/{Id}")]
