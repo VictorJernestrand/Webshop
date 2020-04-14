@@ -103,40 +103,17 @@
         <div class="col-12">
             <a>FullBeskrivning</a>
             <textarea asp-for="FullDescription" id="editor" placeholder="Full produktbeskrivning här..."></textarea>
-            <script>
-                ClassicEditor
-                    .create(document.querySelector('#editor'))
-                    .then(editor => {
-                        console.log(editor);
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
-            </script>
-            <p>	&nbsp;</p>
+            <p>&nbsp;</p>
+
             <a>Specifikationer</a>
-
-            <textarea asp-for="Specification" id="editor2" placeholder="Produktens specifikationer här..."></textarea>
-            <script>
-                ClassicEditor
-                    .create(document.querySelector('#editor2'))
-                    .then(editor => {
-                        console.log(editor);
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
-            </script>
-
+            <textarea asp-for="Specification" id="editor2" placeholder="Produktens specifikationer här..."></textarea>          
             <a>	&nbsp;</a>
+
             <div class="form-group">
                 <input type="submit" value="Spara" class="btn btn-primary" />
             </div>
-
         </div>
-
     </div>
-
 </form>
 
 <div>
