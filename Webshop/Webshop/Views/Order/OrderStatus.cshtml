@@ -18,7 +18,7 @@
 
     <div class="col">
 
-        <table class="table thead-dark table-hover table-responsive-md">
+        <table class="table thead-dark  table-responsive-md">
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">OrderDatum</th>
@@ -29,7 +29,7 @@
                 </tr>
             </thead>
 
-            <tbody>
+            <tbody style="color:white">
                 @if (Model.Orders != null && Model.Orders.Count > 0)
                 {
                     @foreach (var order in Model.Orders)

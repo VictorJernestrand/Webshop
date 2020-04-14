@@ -100,7 +100,7 @@
                 <span asp-validation-for="Photo" class="text-danger"></span>
             </div>
             <a>FullBeskrivning</a>
-            <textarea asp-for="FullDescription" id="editor"></textarea>
+            <textarea asp-for="FullDescription" id="editor" placeholder="Full produktbeskrivning här..."></textarea>
             <script>
                 ClassicEditor
                     .create(document.querySelector('#editor'))
@@ -114,7 +114,7 @@
             <p>	&nbsp;</p>
             <a>Specifikationer</a>
 
-            <textarea asp-for="Specification" id="editor2"></textarea>
+            <textarea asp-for="Specification" id="editor2" placeholder="Produktens specifikationer här..."></textarea>
             <script>
                 ClassicEditor
                     .create(document.querySelector('#editor2'))

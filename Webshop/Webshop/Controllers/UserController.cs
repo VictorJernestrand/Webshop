@@ -202,7 +202,7 @@ namespace Webshop.Controllers
                     {
                         await SetAuthCookie(apiResult.APIPayload);
                     }
-
+                   // return Redirect(returnUrl);
                     TempData["UpdateSuccess"] = "Din information har uppdaterats!";
                     return RedirectToAction(nameof(EditUser));
                 }
@@ -255,6 +255,12 @@ namespace Webshop.Controllers
                 .FirstOrDefault()
                 .ToString();
 
+            var userId = token.Claims.Where(x => x.Type == "UserId")
+                .Select(x => x.Value)
+                .FirstOrDefault()
+                .ToString();
+
+
             var userName = token.Claims.Where(x => x.Type == "UserName")
                 .Select(x => x.Value)
                 .FirstOrDefault()
@@ -269,6 +275,7 @@ namespace Webshop.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, userEmail),
+                new Claim("UserId", userId),
                 new Claim(ClaimTypes.Name, userEmail),
                 new Claim("UserName", userName),
                 new Claim(ClaimTypes.Role, userRole)

@@ -61,7 +61,7 @@
 
 
 <h1>Alla Produkter</h1>
-<div align="right">
+@*<div align="right">
     @if (User.IsInRole("Admin"))
     {
 
@@ -70,10 +70,10 @@
         </a>
 
     }
-</div>
+</div>*@
 
 <div class="container">
-    <div class=" row justify-content-center">
+    <div class="row">
 
         @foreach (var item in Model)
         {

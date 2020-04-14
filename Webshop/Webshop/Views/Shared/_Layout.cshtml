@@ -5,14 +5,21 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Webshop</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />*@
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/menu.css" />
+    <link rel="stylesheet" href="~/css/darkmode.css" />
+    <link rel="stylesheet" href="~/css/productdetails.css" />
+    <link rel="stylesheet" href="~/css/carousel.css" />
 
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    @*<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>*@
+    @*<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>*@
     <script src="https://cdn.ckeditor.com/ckeditor5/17.0.0/classic/ckeditor.js"></script>
+    <script src="~/lib/jquery/jquery.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
 
 </head>
 <body>
@@ -29,7 +36,7 @@
 
                 <form method="get" asp-controller="Search" asp-action="Index" class="col d-flex justify-content-center align-items-center">
                     <div class="input-group">
-                        <input type="text" autofocus name="searchtext" class="form-control" placeholder="fan letar du efter?" aria-label="fan letar du efter?" aria-describedby="button-addon2" id="searcher" />
+                        <input type="text" autofocus name="searchtext" class="form-control" placeholder="sök här" aria-label="fan letar du efter?" aria-describedby="button-addon2" id="searcher" />
                         <div class="input-group-append">
                             <button class="btn btn-secondary" type="submit" id="button-addon2"><i class="fas fa-search"></i></button>
                         </div>
@@ -44,10 +51,13 @@
                             <div id="cartTotalCost"></div>
                         </div>
 
-                        <div class="d-inline; d-flex align-items-center">
-                            <div>
-                                <a asp-action="Index" asp-controller="ShoppingCart" class="btn btn-success">Vagnen <i class="fas fa-cart-arrow-down"></i></a>
-                            </div>
+                        <div>
+                            <a asp-action="Index" asp-controller="ShoppingCart" class="btn btn-success" id="cartbutton">
+                                <div class="row">
+                                    <div class="col d-none d-md-block p-0 pl-4">Vagnen</div>
+                                    <div class="col p-0 pl-4 pr-4 pl-md-1"><i class="fas fa-cart-arrow-down"></i></div>
+                                </div>
+                            </a>
                         </div>
 
                     </div>
@@ -108,8 +118,11 @@
 
     </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @*<script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://kit.fontawesome.com/a59e8a19b5.js" crossorigin="anonymous"></script>
 

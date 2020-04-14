@@ -9,142 +9,91 @@
 
 @{
     ViewData["Title"] = "Rock★Start";
-}
-
-@{
     int i = 0;
-}
-@{
     int a = 0;
 }
 
-<style>
-    .carousel-caption {
-        position: relative;
-        left: auto;
-        right: auto;
-    }
-
-    ol.carousel-indicators li {
-        border-radius: 50%;
-        background: grey;
-    }
-
-        ol.carousel-indicators li.active {
-            background: gainsboro;
-        }
-
-    .carousel-item img {
-        width: auto;
-        margin: auto;
-        display: block;
-    }
-
-    .carousel-control-next-icon {
-        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='gray' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E");
-    }
-
-    .carousel-control-prev-icon {
-        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='gray' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E");
-    }
-</style>
-<h3>Startsidan</h3>
-
 <partial name="_AddToCartMessagePartial" />
 
-
-<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="2000" style="background-color: white; width: 100%; height: 550px;">
+<div id="rockstart-carousel" class="carousel slide rounded d-flex align-items-md-center mt-5 mb-5 p-2" data-ride="carousel" data-interval="2000" >
     <ol class="carousel-indicators">
+
         @foreach (var x in Model)
         {
             @if (x.Discount > 0)
             {
-                <li data-target="#carouselExampleIndicators" data-slide-to="@i" class="@(i == 0 ? "active" : string.Empty)"></li>
+                var active = (i == 0) ? "class=\"active\"" : "";
+                <li data-target="#rockstart-carousel" data-slide-to="@i" @Html.Raw(active)></li>
                 i++;
             }
         }
     </ol>
 
     <div class="carousel-inner">
-        @foreach (var x in Model)
+
+        @foreach (var product in Model)
         {
-            @if (x.Discount > 0)
+
+            if (product.Discount > 0)
             {
-                if (a == 0)
-                {
+                var active = (a == 0) ? "active" : "";
+                a++;
 
-                    <div class="carousel-item active ">
-                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@x.Id">
-                            <img src="@Url.Content("~/Image/" + x.Photo)" style="width: auto; height: 400px" alt="First slide">
-                        </a>
-                        <div class="carousel-caption">
-                            <h5 style=" color: black">@x.Name</h5>
-                            <p style="font-size:small; color: black; margin-bottom: 0px; text-decoration: line-through">
-                                @x.Price.ToString("C0")
-                            </p>
-                            <span id="discount" style="font-size:small; color: red">
-                                -@((int)(x.Discount * 100))%
-                            </span>
-                            <ins style="    color: green;
-    font-size: 30px;
-    text-decoration: none;
-    padding: 1em 1em 1em .5em;">
-                                <span>@x.DiscountPrice.ToString("C0")</span>
-                            </ins>
+                <div class="carousel-item @active">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-8 col-lg-7 d-flex justify-content-center justify-content-md-end align-items-center rounded overflow-hidden">
+                            <div id="carousel_product" class="shadow">
+                                <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@product.Id">
+                                    <img src="@Url.Content("~/Image/" + product.Photo)" class="rounded">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-4 col-lg-5 d-flex justify-content-center justify-content-md-start">
+                            <div id="carousel_info_container">
+                                <h3>@product.Name</h3>
+                                <p class="card-subtitle mb-2">@product.BrandName - @product.CategoryName</p>
 
+                                @{
+                                    var ratedScoreRounded = Math.Round(product.TotalRatingScore);
+                                    var emptyStars = 5 - ratedScoreRounded;
+                                    for (var j = 0; j < ratedScoreRounded; j++)
+                                    {
+                                        <i class="fas fa-star" style="color: gold"></i>
+                                    }
+
+                                    for (var j = 0; j < emptyStars; j++)
+                                    {
+                                        <i class="far fa-star" style="color: gold"></i>
+                                    }
+                                }
+
+                                <span>@product.TotalRatingScore.ToString("0.0").Replace(',','.') / 5</span>
+                                <br />
+                                <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@product.Id" class="btn btn-info float-right float-md-left mt-md-2">Mer Info &raquo;</a>
+                            </div>
                         </div>
                     </div>
-                }
-                else
-                {
-                    <div class="carousel-item ">
-                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@x.Id">
-                            <img src="@Url.Content("~/Image/" + x.Photo)" style="width: auto; height: 400px" alt="First slide">
-                        </a>
-                        <div class="carousel-caption">
-                            <h5 style="color: black">@x.Name</h5>
-                            <p style="font-size:small; color: black; margin-bottom: 0px; text-decoration: line-through">
-                                @x.Price.ToString("C0")
-                            </p>
-                            <span id="discount" style="font-size:small; color: red">
-                                -@((int)(x.Discount * 100))%
-                            </span>
-                            <ins style="        color: green;
-        font-size: 30px;
-        text-decoration: none;
-        padding: 1em 1em 1em .5em;">
-                                <span>@x.DiscountPrice.ToString("C0")</span>
-                            </ins>
-                        </div>
-                    </div>
-                }
+                </div>
                 a++;
             }
         }
     </div>
 
-    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="false"></span>
-        <span class="sr-only" style="color:gray">Previous</span>
-    </a>
-    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="false"></span>
-        <span class="sr-only" style="color:gray">Next</span>
-    </a>
+    <div class="d-none d-lg-block">
+        <a class="carousel-control-prev" href="#rockstart-carousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only" style="color:gray">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#rockstart-carousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only" style="color:gray">Next</span>
+        </a>
+    </div>
+
 </div>
 
-
-
-<script>
-    function Multiply() {
-        let num1 = document.getElementById("discount").value;
-        let num2 = 10;
-        document.getElementById("result").innerHTML = num1 * num2;
-    }
-</script>
-
 <div class="container">
-    <div class=" row justify-content-center">
+    <div class="row">
         @foreach (var item in Model)
         {
             @if (item.ActiveProduct != false && !User.IsInRole("Admin"))

@@ -59,5 +59,7 @@ namespace WebAPI.Models
         public string Specification { get; set; }
         public bool ActiveProduct { get; set; }
 
+        public float TotalRatingScore { get; set; }
+
     }
 }
