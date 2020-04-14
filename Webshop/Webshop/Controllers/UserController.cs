@@ -204,7 +204,7 @@ namespace Webshop.Controllers
                     {
                         await SetAuthCookie(apiResult.APIPayload);
                     }
-
+                   // return Redirect(returnUrl);
                     TempData["UpdateSuccess"] = "Din information har uppdaterats!";
 
                     if (accessor.HttpContext.Request.Query["order"] != "order")
