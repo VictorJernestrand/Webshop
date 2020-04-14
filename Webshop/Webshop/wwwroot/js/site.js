@@ -240,3 +240,23 @@ $(document).ready(function () {
 function goBack() {
     window.history.back();
 }
+
+// Editor for product FullDescription
+ClassicEditor
+    .create(document.querySelector('#editor'))
+    .then(editor => {
+        console.log(editor);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+
+// Editor for product specification
+ClassicEditor
+    .create(document.querySelector('#editor2'))
+    .then(editor => {
+        console.log(editor);
+    })
+    .catch(error => {
+        console.error(error);
+    });
