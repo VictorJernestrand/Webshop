@@ -50,10 +50,23 @@
     height: auto;
 }
 
+
+
 /* Override bootstraps navbar backgorund-color */
 .navbar {
     background-color: #262b2e;
 }
+
+.sticky {
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+    /* Add some top padding to the page content to prevent sudden quick movement (as the navigation bar gets a new position at the top of the page (position:fixed and top:0) */
+    /*.sticky + .content {
+        padding-top: 60px;
+    }*/
 
 /* Override fontawesome's hamburger icon */
 .fa-hamburger {
