@@ -1,13 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Webshop.Context;
-using Webshop.Models;
-using Webshop.Interfaces;
 
 namespace Webshop.Services
 {
@@ -75,7 +67,7 @@ namespace Webshop.Services
                 // Was the file stored successfully? Return path to image
                 return ImageExist(fullFilePath) ? Path.Combine(_folderName, fileName).Replace('\\', '/') : null;
             }
-            
+
             return null;
         }
 

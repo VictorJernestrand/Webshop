@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebApi.Models;
 using WebAPI.Context;
 using WebAPI.Domain;
 using WebAPI.Models;
@@ -48,7 +47,7 @@ namespace WebAPI.Controllers
 
         [Route("content/{customerCartId}")]
         [HttpGet]
-        public ActionResult<IEnumerable<ShoppingCartModel>> GetCartContent(string customerCartId)
+        public ActionResult<IEnumerable<OrderItemsModel>> GetCartContent(string customerCartId)
         {
             // TODO: Validate cart Id here and return an error code if id is not valid.
 
@@ -56,11 +55,11 @@ namespace WebAPI.Controllers
 
             var cartContent = _context.ShoppingCart.Include(x => x.Product)
                 .Where(x => x.CartId == cartId)
-                .Select(x => new ShoppingCartModel
+                .Select(x => new OrderItemsModel
                 {
                     ShoppingCartId = x.Id,
                     ProductId = x.Product.Id,
-                    Name = x.Product.Name,
+                    ProductName = x.Product.Name,
                     Price = x.Product.Price,
                     DiscountPrice = CostWithDiscount(x.Product.Price, (decimal)x.Product.Discount),
                     Discount = x.Product.Discount,
@@ -204,7 +203,7 @@ namespace WebAPI.Controllers
                     Amount = x.Amount,
                     QuantityInStock = x.Product.Quantity,
                     Price = x.Product.Price,
-                    Discount = (decimal)x.Product.Discount,
+                    Discount = x.Product.Discount,
                     UnitPriceWithDiscount = CostWithDiscount(x.Product.Price, (decimal)x.Product.Discount),
                     TotalProductCostDiscount = TotalCost(x.Amount, x.Product.Price, (decimal)x.Product.Discount),
                     TotalProductCost = x.Product.Price * x.Amount

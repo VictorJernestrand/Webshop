@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Webshop.Models;
 
 namespace Webshop.Controllers
@@ -26,7 +23,7 @@ namespace Webshop.Controllers
 
         //[HttpPost, ActionName("Index")]
         //[ValidateAntiForgeryToken]
-      //  public IActionResult PostMessage([Bind]ContactModel model)
+        //  public IActionResult PostMessage([Bind]ContactModel model)
         //{
         //    try
         //    {
@@ -53,7 +50,7 @@ namespace Webshop.Controllers
 
 
 
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Index(ContactModel model)
@@ -92,6 +89,6 @@ namespace Webshop.Controllers
             TempData["MessageSuccess"] = "Our customer support will into the issue. Thanks for contacting us";
             return RedirectToAction("Index");
         }
-    
+
     }
 }

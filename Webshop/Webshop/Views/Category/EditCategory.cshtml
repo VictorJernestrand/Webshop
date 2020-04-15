@@ -1,4 +1,4 @@
-﻿@model Webshop.Models.EditCategoryModel
+﻿@model Category
 
 @{
     ViewData["Title"] = "Kategori";
@@ -39,6 +39,9 @@
         @TempData["DeletedCategoryFail"]
     </div>
 }
+
+<h3 class="mt-3 mb-3">Kategorier</h3>
+<hr />
 
 <span asp-validation-for="Name" class="text-danger" style="margin-left: 30px"></span>
 <form asp-action="EditCategory" method="post">

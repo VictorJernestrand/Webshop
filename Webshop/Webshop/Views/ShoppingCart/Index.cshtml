@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ShoppingCartModel>
+﻿@model IEnumerable<OrderItemsModel>
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @functions{
     public string GetAntiXsrfRequestToken()
@@ -32,11 +32,11 @@
         <tr id="DumpCrap_@product.ShoppingCartId">
             <td>
                 <a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">
-                    <img src="@Url.Content("~/Image/" + product.Photo)" alt="@product.Name" class="product-thumbnail rounded" />
+                    <img src="@Url.Content("~/Image/" + product.Photo)" alt="@product.ProductName" class="product-thumbnail rounded" />
                 </a>
             </td>
             <td>
-                <a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">@product.Name</a>
+                <a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">@product.ProductName</a>
             </td>
             <td class="text-center">
                 @if (product.Discount == 0)

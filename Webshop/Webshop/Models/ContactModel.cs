@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Webshop.Models
 {
@@ -10,17 +6,17 @@ namespace Webshop.Models
     {
         [Required(ErrorMessage = "Ange e-postadress")]
         [EmailAddress]
-      [RegularExpression(@"^[a-z\d._%+-]+@[a-z\d.-]+\.[a-z]{2,}$", ErrorMessage = "E-postadressen är ogiltig")]
+        [RegularExpression(@"^[a-z\d._%+-]+@[a-z\d.-]+\.[a-z]{2,}$", ErrorMessage = "E-postadressen är ogiltig")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Namn kan inte vara tomt")]
         [MaxLength(30)]
-      //[RegularExpression(@"^\p{L}+[ \s]?\p{L}+$", ErrorMessage = "Förnamnet innehåller ogiltiga tecken")]
+        //[RegularExpression(@"^\p{L}+[ \s]?\p{L}+$", ErrorMessage = "Förnamnet innehåller ogiltiga tecken")]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Namn kan inte vara tomt")]
         [MaxLength(30)]
-      // [RegularExpression(@"^\p{L}+[ \s]?\p{L}+$", ErrorMessage = "Efternamnet innehåller ogiltiga tecken")]
+        // [RegularExpression(@"^\p{L}+[ \s]?\p{L}+$", ErrorMessage = "Efternamnet innehåller ogiltiga tecken")]
         public string LastName { get; set; }
         [Required(ErrorMessage = "Meddelandet kan inte vara tomt")]
         [MaxLength(1000)]

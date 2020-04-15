@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Webshop.Context;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Webshop.Models;
-using Microsoft.AspNetCore.Hosting;
 using Webshop.Services;
 
 namespace Webshop.Controllers
@@ -34,7 +33,7 @@ namespace Webshop.Controllers
         public async Task<ActionResult<List<AllProductsViewModel>>> Index(int catid)
         {
             List<AllProductsViewModel> categoryViewList = await webAPI.GetAllAsync<AllProductsViewModel>(ApiURL.PRODUCTS_IN_CAT + catid);
-            return View(categoryViewList);                
+            return View(categoryViewList);
         }
 
         // Get all products
@@ -59,8 +58,8 @@ namespace Webshop.Controllers
         public async Task<IActionResult> CreateProduct()
         {
             allProductsViewModel.Categories = await webAPI.GetAllAsync<Category>(ApiURL.CATEGORIES);
-            allProductsViewModel.Brands     = await webAPI.GetAllAsync<Brand>(ApiURL.BRANDS);
-            return View(allProductsViewModel);           
+            allProductsViewModel.Brands = await webAPI.GetAllAsync<Brand>(ApiURL.BRANDS);
+            return View(allProductsViewModel);
         }
 
         [Authorize(Roles = "Admin")]
@@ -110,27 +109,27 @@ namespace Webshop.Controllers
 
                     // Update product with image
                     var response = webAPI.UpdateAsync<Product>(newProduct, ApiURL.PRODUCTS + newProduct.Id, token);
-                }               
+                }
 
-               else
-               {
+                else
+                {
                     model.Categories = await webAPI.GetAllAsync<Category>(ApiURL.CATEGORIES);
                     model.Brands = await webAPI.GetAllAsync<Brand>(ApiURL.BRANDS);
                     TempData["Errors"] = "Fyll i formuläret ordentligt";
                     return View(model);
                 }
 
-                TempData["Succesmsg"] = $"Great!! {model.Name} skapad i databasen"; 
+                TempData["Succesmsg"] = $"Great!! {model.Name} skapad i databasen";
                 return RedirectToAction("AllProducts", "Product");
 
             }
             catch
             {
                 TempData["Database error"] = "Sorry!! Något gick fel när du lägger Data till databasen";
-                return RedirectToAction("CreateProduct", "Product");              
+                return RedirectToAction("CreateProduct", "Product");
             }
         }
-       
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProductConfirmed(int? Id)
@@ -169,9 +168,9 @@ namespace Webshop.Controllers
         public async Task<IActionResult> EditProduct(int id)
         {
             // Get data from API
-            var EditProductModel        = await webAPI.GetOneAsync<AllProductsViewModel>(ApiURL.PRODUCTS + id);
+            var EditProductModel = await webAPI.GetOneAsync<AllProductsViewModel>(ApiURL.PRODUCTS + id);
             EditProductModel.Categories = await webAPI.GetAllAsync<Category>(ApiURL.CATEGORIES);
-            EditProductModel.Brands     = await webAPI.GetAllAsync<Brand>(ApiURL.BRANDS);
+            EditProductModel.Brands = await webAPI.GetAllAsync<Brand>(ApiURL.BRANDS);
 
             return View(EditProductModel);
         }
@@ -217,7 +216,7 @@ namespace Webshop.Controllers
                     }
 
                     // If category was changed, move existing product photo to selected folder
-                    else if(productInDB.CategoryId != model.CategoryId)
+                    else if (productInDB.CategoryId != model.CategoryId)
                     {
                         // Move image to new location
                         ProductImage productImage = new ProductImage(environment.WebRootPath, folderName, editproduct.Photo);
@@ -233,7 +232,7 @@ namespace Webshop.Controllers
                 {
                     // TODO: Separate this to its own method?
                     model.Categories = await webAPI.GetAllAsync<Category>(ApiURL.CATEGORIES);
-                    model.Brands     = await webAPI.GetAllAsync<Brand>(ApiURL.BRANDS);
+                    model.Brands = await webAPI.GetAllAsync<Brand>(ApiURL.BRANDS);
                     return View(model);
                 }
 
@@ -250,7 +249,7 @@ namespace Webshop.Controllers
 
         // Get category name by Id
         private async Task<string> GetCategoryName(int id)
-        { 
+        {
             var category = await webAPI.GetOneAsync<Category>(ApiURL.CATEGORIES + id);
             return category.Name;
         }

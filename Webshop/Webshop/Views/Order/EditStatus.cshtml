@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "OrderStatus";
+
+    int.TryParse(Context.Request.Query["statusid"], out int statusId);
 }
 
 @if (TempData["StatusUpdate"] != null)
@@ -83,15 +85,28 @@
                         }
                     </td>
                     <td class="align-middle">
-                        @if (product.QuantityInStock - product.Amount < 0)
+
+                        @switch (Model.OrderStatusId)
                         {
-                            <span><i class="fas fa-exclamation-triangle" style="color: orange"></i></span>
-                            <span class="small">I lager: @product.QuantityInStock</span>
-                        }
-                        else
-                        {
-                            <span><i class="fas fa-check price_color"></i></span>
-                        }
+                            case 1:
+                            case 2:
+                                @if (product.QuantityInStock + product.Amount < 0)
+                                {
+                                    <span><i class="fas fa-exclamation-triangle" style="color: orange"></i></span>
+                                    <span class="small">I lager: @product.QuantityInStock</span>
+                                }
+                                else
+                                {
+                                    <span><i class="fas fa-check price_color"></i></span>
+                                }
+                                break;
+                            case 3:
+                                <span>Skickad</span>
+                                break;
+                            default:
+                                <span>Avslutad</span>
+                                break;
+                         }
                     </td>
                 </tr>
             }

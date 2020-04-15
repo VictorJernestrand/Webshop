@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 using Webshop.Models;
 using Webshop.Services;
 
@@ -35,7 +33,7 @@ namespace Webshop.Controllers
 
             // Get rating by id
             var rating = await webAPI.GetOneAsync<Rating>(ApiURL.RATING_BY_ID + id, token);
-            
+
             // Get user by id
             rating.User = await webAPI.GetOneAsync<User>(ApiURL.USER_BY_ID + rating.UserId, token);
 

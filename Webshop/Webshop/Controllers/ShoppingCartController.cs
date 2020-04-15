@@ -1,11 +1,11 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Webshop.Models;
-using Webshop.Services;
-using Webshop.Models.Data;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Threading.Tasks;
+using Webshop.Models;
+using Webshop.Models.Data;
+using Webshop.Services;
 
 namespace Webshop.Controllers
 {
@@ -26,7 +26,7 @@ namespace Webshop.Controllers
             if (HttpContext.Session.GetString(_cartSessionCookie) != null)
             {
                 var cartId = HttpContext.Session.GetString(_cartSessionCookie);
-                var result = await webAPI.GetAllAsync<ShoppingCartModel>("https://localhost:44305/api/carts/content/" + cartId);
+                var result = await webAPI.GetAllAsync<OrderItemsModel>("https://localhost:44305/api/carts/content/" + cartId);
                 return View(result);
             }
 
@@ -62,7 +62,7 @@ namespace Webshop.Controllers
             // Remove product from cart!!
             if (HttpContext.Session.GetString(_cartSessionCookie) != null)
                 await webAPI.PostAsync<int>(id, "https://localhost:44305/api/carts/remove/product");
-                
+
             return Ok();
         }
 

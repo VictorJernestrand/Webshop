@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Webshop.Models
 {
@@ -22,8 +19,8 @@ namespace Webshop.Models
         public List<AllUserOrders> Orders { get; set; }
         public List<Status> Statuses { get; set; }
 
-        public int orderid { get; set; }
-        public int statusid { get; set; }
+        //public int orderid { get; set; }
+        //public int statusid { get; set; }
 
     }
 }

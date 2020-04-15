@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -17,10 +15,10 @@ namespace Webshop.Services
         private readonly HttpClient _clientFactory;
 
         // Set headers and values
-        const string ACCEPT_HEADER      = "Accept";
-        const string USER_AGENT_HEADER  = "User-Agent";
-        const string USER_AGENT_VALUE   = "WebshopProject";
-        const string ACCEPT_VALUE       = "application/json";
+        const string ACCEPT_HEADER = "Accept";
+        const string USER_AGENT_HEADER = "User-Agent";
+        const string USER_AGENT_VALUE = "WebshopProject";
+        const string ACCEPT_VALUE = "application/json";
 
         /// <summary>
         /// Instantiate a new WebAPIHandler with a IHttpClientFactory parameter.
@@ -117,7 +115,7 @@ namespace Webshop.Services
             using (var request = new HttpRequestMessage(HttpMethod.Put, webApiPath))
             {
                 // Send JWT authentication token
-                if(token != null)
+                if (token != null)
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var serialized = JsonSerializer.Serialize(obj);
@@ -145,7 +143,7 @@ namespace Webshop.Services
             using (var request = new HttpRequestMessage(HttpMethod.Delete, webApiPath))
             {
                 if (token != null)
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 response = await _clientFactory.SendAsync(request);
             }
@@ -213,7 +211,7 @@ namespace Webshop.Services
                         PropertyNameCaseInsensitive = true
                     }
                 );
-                
+
                 return post;
             }
         }
@@ -240,7 +238,7 @@ namespace Webshop.Services
                     PropertyNameCaseInsensitive = true
                 });
 
-               return post;
+                return post;
             }
             catch (Exception)
             {

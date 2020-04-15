@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Webshop.Controllers
@@ -14,12 +10,12 @@ namespace Webshop.Controllers
         public IActionResult CustomErrorCode(int statusCode)
         {
             // Interface IStatusCodeReExecuteFeature gives path and querystring the user tried to access
-            var errorInfo = HttpContext.Features.Get<IStatusCodeReExecuteFeature>();
+            // var errorInfo = HttpContext.Features.Get<IStatusCodeReExecuteFeature>();
 
             // Handle error codes
             if (statusCode == 404)
             {
-                ViewBag.ErrorMessage = @$"Skitsidan ""{errorInfo.OriginalPath}"" du försöker komma åt finns inte.";
+                ViewBag.ErrorMessage = @$"Skitsidan du försöker komma åt finns inte.";
             }
             else
             {
@@ -34,7 +30,7 @@ namespace Webshop.Controllers
         public IActionResult UnhandledExceptionHandler()
         {
             // Interface IExceptionHandlerPathFeature gives information about path and exception errors 
-            var errorPath = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+            // var errorPath = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
 
             ViewBag.ErrorMessage = "Det där sket sig! Det verkar som att du försöker komma åt något som inte finns.";
             return View("PageNotFound");

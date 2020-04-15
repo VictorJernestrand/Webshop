@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Webshop.Context;
 using Webshop.Models;
 using Webshop.Services;
 
@@ -18,7 +13,8 @@ namespace Webshop.Controllers
     {
         private readonly WebAPIHandler webAPI;
         private readonly WebAPIToken webAPIToken;
-        EditBrandModel BrandModel = new EditBrandModel();
+
+        public Brand BrandModel = new Brand();
 
         public BrandController(WebAPIHandler webAPI, WebAPIToken webAPIToken, IHttpClientFactory clientFactory)
         {
@@ -37,12 +33,12 @@ namespace Webshop.Controllers
                 BrandModel.Id = brand.Id;
                 BrandModel.Name = brand.Name;
             }
-            
+
             return View(BrandModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([Bind]EditBrandModel model)
+        public async Task<IActionResult> Edit([Bind]Brand model)
         {
             //model.BrandsCollection = context.Brands.ToList();
             model.BrandsCollection = await webAPI.GetAllAsync<Brand>("https://localhost:44305/api/brands");
@@ -51,33 +47,33 @@ namespace Webshop.Controllers
             {
                 //try
                 //{
-                    // If Brand contains an Id, update it, else create new brand!
-                    if (model.Id > 0)
+                // If Brand contains an Id, update it, else create new brand!
+                if (model.Id > 0)
+                {
+                    var brand = model.BrandsCollection.Where(x => x.Id == model.Id).FirstOrDefault();
+                    brand.Name = model.Name;
+
+                    var token = await webAPIToken.New();
+                    var response = await webAPI.UpdateAsync(brand, "https://localhost:44305/api/brands/", token);
+                }
+                else
+                {
+                    // Does brand already exist?
+                    if (model.BrandsCollection.Any(x => x.Name == model.Name))
                     {
-                        var brand = model.BrandsCollection.Where(x => x.Id == model.Id).FirstOrDefault();
-                        brand.Name = model.Name;
-
-                        var token = await webAPIToken.New();
-                        var response = await webAPI.UpdateAsync(brand, "https://localhost:44305/api/brands/", token);
+                        ModelState.AddModelError("Name", "Tillverkaren finns redan registrerad!");
+                        return View("index", model);
                     }
-                    else
-                    {
-                        // Does brand already exist?
-                        if (model.BrandsCollection.Any(x => x.Name == model.Name))
-                        {
-                            ModelState.AddModelError("Name", "Tillverkaren finns redan registrerad!");
-                            return View("index", model);
-                        }
 
-                        // Create new brand
-                        var brand = new Brand() { Name = model.Name };
+                    // Create new brand
+                    var brand = new Brand() { Name = model.Name };
 
-                        // Post to API
-                        var token = await webAPIToken.New();
-                        var response = await webAPI.PostAsync(brand, "https://localhost:44305/api/brands/", token);
+                    // Post to API
+                    var token = await webAPIToken.New();
+                    var response = await webAPI.PostAsync(brand, "https://localhost:44305/api/brands/", token);
 
-                        TempData["NewBrand"] = "Ny tillverkare har skapats!";
-                    }
+                    TempData["NewBrand"] = "Ny tillverkare har skapats!";
+                }
                 //}
                 //catch (ArgumentNullException)
                 //{
