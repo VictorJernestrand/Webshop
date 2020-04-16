@@ -19,15 +19,10 @@ namespace Webshop.Controllers
 {
     public class UserController : Controller
     {
-        public RegisterUserModel RegisterUserModel { get; set; }
-        public LoginModel LoginModel { get; set; }
-        public UpdateUserPasswordModel UpdateUserPassword { get; set; }
-        public EditUserInfoModel EditUserInfoModel { get; set; }
-
         private WebAPIHandler webAPI;
+        private WebAPIToken webAPIToken;
         private readonly IConfiguration config;
         private readonly IHttpContextAccessor accessor;
-        private WebAPIToken webAPIToken;
 
         public UserController(WebAPIToken webAPIToken, WebAPIHandler webAPIHandler, IConfiguration config, IHttpContextAccessor accessor)
         {
@@ -47,7 +42,10 @@ namespace Webshop.Controllers
         // Register new customer
         public ActionResult Register()
         {
-            return View(RegisterUserModel);
+            if (User.Identity.IsAuthenticated)
+                return RedirectToAction("index", "Home");
+
+            return View();
         }
 
         // Login view
@@ -56,7 +54,7 @@ namespace Webshop.Controllers
             if (User.Identity.IsAuthenticated)
                 return RedirectToAction("index", "Home");
 
-            return View(LoginModel);
+            return View();
         }
 
         // View Orders
@@ -71,7 +69,7 @@ namespace Webshop.Controllers
         [Authorize]
         public ActionResult UpdateLogin()
         {
-            return View(UpdateUserPassword);
+            return View();
         }
 
         [Authorize]
@@ -82,7 +80,7 @@ namespace Webshop.Controllers
 
             var token = await webAPIToken.New();
             var user = await webAPI.GetOneAsync<User>(ApiURL.USERS + email, token);
-            EditUserInfoModel = new EditUserInfoModel()
+            var editUserInfoModel = new EditUserInfoModel()
             {
                 Email = user.Email,
                 FirstName = user.FirstName,
@@ -93,7 +91,7 @@ namespace Webshop.Controllers
                 City = user.City
             };
 
-            return View(EditUserInfoModel);
+            return View(editUserInfoModel);
         }
 
         // POST: User/Create
@@ -170,6 +168,8 @@ namespace Webshop.Controllers
                     TempData["PasswordSuccess"] = "Lösenordet har uppdaterats!";
                     return RedirectToAction(nameof(UpdateLogin));
                 }
+                else
+                    ModelState.AddModelError("CurrentPassword", "Felaktigt lösenord");
             }
 
             return View(model);
