@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace Webshop.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int? id)
         {
-            BrandModel.BrandsCollection = await webAPI.GetAllAsync<Brand>("https://localhost:44305/api/brands");
+            BrandModel.BrandsCollection = await GetAllBrands();
 
             if (id != null)
             {
@@ -40,21 +41,17 @@ namespace Webshop.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit([Bind]Brand model)
         {
-            //model.BrandsCollection = context.Brands.ToList();
-            model.BrandsCollection = await webAPI.GetAllAsync<Brand>("https://localhost:44305/api/brands");
+            model.BrandsCollection = await GetAllBrands();
 
             if (ModelState.IsValid)
             {
-                //try
-                //{
-                // If Brand contains an Id, update it, else create new brand!
                 if (model.Id > 0)
                 {
                     var brand = model.BrandsCollection.Where(x => x.Id == model.Id).FirstOrDefault();
                     brand.Name = model.Name;
 
                     var token = await webAPIToken.New();
-                    var response = await webAPI.UpdateAsync(brand, "https://localhost:44305/api/brands/", token);
+                    var response = await webAPI.UpdateAsync(brand, ApiURL.BRANDS, token);
                 }
                 else
                 {
@@ -70,15 +67,10 @@ namespace Webshop.Controllers
 
                     // Post to API
                     var token = await webAPIToken.New();
-                    var response = await webAPI.PostAsync(brand, "https://localhost:44305/api/brands/", token);
+                    var response = await webAPI.PostAsync(brand, ApiURL.BRANDS, token);
 
                     TempData["NewBrand"] = "Ny tillverkare har skapats!";
                 }
-                //}
-                //catch (ArgumentNullException)
-                //{
-                //    TempData["TokenError"] = "Shit! Autensieringen misslyckades!";
-                //}
 
                 return RedirectToAction("index", "Brand");
             }
@@ -89,21 +81,20 @@ namespace Webshop.Controllers
 
         }
 
-
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var brand = await webAPI.GetOneAsync<Brand>("https://localhost:44305/api/brands/" + id);
+            var brand = await GetBrandById(id);
             return View(brand);
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var brand = await webAPI.GetOneAsync<Brand>("https://localhost:44305/api/brands/" + id);
+            var brand = await GetBrandById(id);
 
             var token = await webAPIToken.New();
-            var response = await webAPI.DeleteAsync("https://localhost:44305/api/brands/" + id, token);
+            var response = await webAPI.DeleteAsync(ApiURL.BRANDS + id, token);
 
             if (response)
                 TempData["DeletedBrand"] = "Tillverkaren " + brand.Name + " och alla produkter har readerats";
@@ -112,6 +103,14 @@ namespace Webshop.Controllers
 
             return RedirectToAction("index", "Brand");
         }
+
+        // Get Brand by Id
+        private async Task<Brand> GetBrandById(int id)
+            => await webAPI.GetOneAsync<Brand>(ApiURL.BRANDS + id);
+
+        // Get all brands
+        private async Task<List<Brand>> GetAllBrands()
+            => await webAPI.GetAllAsync<Brand>(ApiURL.BRANDS);
 
     }
 }

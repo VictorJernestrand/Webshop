@@ -62,6 +62,11 @@ namespace Webshop.Controllers
         {
             allProductsViewModel.Categories = await webAPI.GetAllAsync<Category>(ApiURL.CATEGORIES);
             allProductsViewModel.Brands = await webAPI.GetAllAsync<Brand>(ApiURL.BRANDS);
+
+            // Add dummy data for demonstration purposes
+            allProductsViewModel.FullDescription = DummyDescription();
+            allProductsViewModel.Specification = DummySpecifications();
+
             return View(allProductsViewModel);
         }
 
@@ -256,5 +261,25 @@ namespace Webshop.Controllers
             var category = await webAPI.GetOneAsync<Category>(ApiURL.CATEGORIES + id);
             return category.Name;
         }
+
+
+
+
+        /* 
+         * 
+         *      DUMMY DATA BELOW FOR DEMONSTRATION PURPOSE
+         * 
+         * 
+         * */
+
+        // Description dummy-data for demonstration purposes
+        private static string DummyDescription() 
+            => @"<h4>Lorem Ipsum Dolor Dit Amet</h4><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sed lectus ex. Quisque elementum est et leo consectetur, sit amet imperdiet eros pretium. Donec diam ligula, placerat et pharetra in, semper vel eros. Mauris lectus eros, iaculis sit amet turpis a, gravida euismod enim. Sed aliquam eros sed ipsum euismod posuere. Etiam lacinia nisi vel ornare interdum. Integer euismod suscipit faucibus. Phasellus porttitor fringilla mi vel maximus.</p><h4>Maximum Metal</h4><p>Aenean vitae maximus ipsum, eu laoreet ligula. Nulla non neque mattis, tincidunt turpis et, accumsan felis. Nam porttitor cursus sem eget mattis. Integer tristique non lectus nec hendrerit. Fusce vel ipsum et lacus ultricies porta in malesuada velit. Nulla ac feugiat diam, ut dictum lacus. Duis eget lacus suscipit, mollis eros eget, tincidunt ex. Praesent id tellus tincidunt, facilisis orci et, placerat nunc.</p><h4>Hokus Pokus Filiokus</h4><p>Aenean egestas quam purus, non molestie felis dignissim id. Donec porta hendrerit urna, non imperdiet odio commodo et. Ut molestie rutrum nunc, pretium posuere ex porttitor sit amet. Nulla vitae rhoncus est. Praesent et pellentesque justo. Aenean eu arcu a ipsum posuere rutrum a non nunc. Proin euismod nulla et leo semper luctus. Curabitur vitae scelerisque nunc.</p>";
+
+        // Description dummy-data for demonstration purposes
+        private static string DummySpecifications()
+            => @"<h4>Specifikationer</h4><ul><li><strong>Lorem:</strong> Ipsum</li><li><strong>Dolor:</strong> Sit Amet</li><li><strong>Etiam:</strong> 4-Sed Lectus</li><li><strong>Elementum:</strong> Consectur</li><li><strong>Eros:</strong> Pretium</li></ul><h4>Ännu Mer Specs</h4><ul><li><strong>Aenan:</strong> Vitae</li><li><strong>Maximus:</strong> Ipsum ''C''</li><li><strong>Tincidunt turpis:</strong> 34''</li><li><strong>Cursus:</strong> Sem</li><li><strong>Radius:</strong> 9.5''</li><li><strong>Electrus:</strong> 20 Medium Fjuttus</li><li><strong>Inlaysum:</strong> Blackis Dotsem</li><li><strong>Nut:</strong> Synthum Bonecus</li><li><strong>Widtaem:</strong> 1.625''</li></ul><h4>Exempel Specs</h4><ul><li><strong>Mid Pickem:</strong> Lite skitum textus härus</li><li><strong>Controlsec:</strong> Curabitur vitae scelerisque nunc</li><li><strong>Donev porta:</strong> Integer euismod suscipit</li><li><strong>Aenan:</strong> Etiam sed lectus</li><li><strong>Elementum:</strong> Etiam lacinia nisi vel ornare interdum</li><li><strong>Quisque:</strong> malesuada velit</li></ul>";
+    
+    
     }
 }

@@ -11,28 +11,28 @@
     </div>
 }
 
-<div class="card text-white bg-dark mb-3 mx-auto" style="margin-top: 60px; max-width: 400px; background-color: rgba(0,0,0, 0.5) !important">
-    <div class="card-header">Ändra Lösenord</div>
-    <div class="card-body">
-        <form asp-action="UpdateLogin">
-            <div class="form-group">
-                <label asp-for="CurrentPassword" class="control-label">Lösenord</label>
-                <input asp-for="CurrentPassword" type="password" class="form-control" placeholder="Ditt nuvarande lösenord" />
-                <span asp-validation-for="CurrentPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NewPassword" class="control-label">Lösenord</label>
-                <input asp-for="NewPassword" type="password" class="form-control" placeholder="Nytt lösenord" />
-                <span asp-validation-for="NewPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NewPasswordConfirm" class="control-label">Bekräfta lösenord</label>
-                <input asp-for="NewPasswordConfirm" type="password" class="form-control" placeholder="Bekräfta lösenordet" />
-                <span asp-validation-for="NewPasswordConfirm" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Byt som fan" class="btn btn-success" />
-            </div>
-        </form>
-    </div>
+<h3 class="mt-3 mb-3">Ändra Lösenord</h3>
+<hr />
+
+<div class="text-white mb-3 mx-auto" style="margin-top: 60px; max-width: 400px;">
+    <form asp-action="UpdateLogin">
+        <div class="form-group">
+            <label asp-for="CurrentPassword" class="control-label">Lösenord</label>
+            <input asp-for="CurrentPassword" type="password" class="form-control" placeholder="Ditt nuvarande lösenord" />
+            <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="NewPassword" class="control-label">Lösenord</label>
+            <input asp-for="NewPassword" type="password" class="form-control" placeholder="Nytt lösenord" />
+            <span asp-validation-for="NewPassword" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="NewPasswordConfirm" class="control-label">Bekräfta lösenord</label>
+            <input asp-for="NewPasswordConfirm" type="password" class="form-control" placeholder="Bekräfta lösenordet" />
+            <span asp-validation-for="NewPasswordConfirm" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Byt som fan" class="btn btn-success" />
+        </div>
+    </form>
 </div>

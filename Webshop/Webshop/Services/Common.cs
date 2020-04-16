@@ -24,9 +24,17 @@
         // API-paths to products-controllers
         public const string PRODUCTS = URL + "products/";
         public const string PRODUCTS_IN_CAT = URL + "products/category/";
+
+        // API-paths to categories-controllers
         public const string CATEGORIES = URL + "categories/";
+
+        // API-paths to brands-controllers
         public const string BRANDS = URL + "brands/";
+
+        // API-paths to payments-controllers
         public const string PAYMENTS = URL + "payments/";
+
+        // API-paths to search-controllers
         public const string SEARCH = URL + "products/search/";
         public const string SEARCH_ADMIN = URL + "products/adminsearch/";
 
