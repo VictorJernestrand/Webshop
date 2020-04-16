@@ -29,7 +29,7 @@
 
 <div class="row mt-3 mb-3">
     <div class="col-6">
-        <a onclick="history.back()" class="btn btn-dark">&laquo; Gå Tillbaka</a>
+        <a onclick="history.back()" class="btn btn-dark">&laquo; Tillbaka</a>
     </div>
     <div class="col-6 d-flex justify-content-end">
         <a asp-action="Editcategory" asp-controller="Category" class="btn btn-success mr-2">Kategorier</a>
@@ -122,41 +122,14 @@
             <div class="form-group">
                 <a>FullBeskrivning</a>
                 <textarea asp-for="FullDescription" id="editor" class="form-control"></textarea>
-
-                <span asp-validation-for="FullDescription" class="text-danger"></span>
-                <script>
-                    ClassicEditor
-                        .create(document.querySelector('#editor'))
-                        .then(editor => {
-                            console.log(editor);
-                        })
-                        .catch(error => {
-                            console.error(error);
-                        });
-                </script>
+                <span asp-validation-for="FullDescription" class="text-danger"></span>    
             </div>
-
-
 
             <div class="form-group">
                 <a>Specifikationer</a>
                 <textarea asp-for="Specification" id="editor2" class="form-control"></textarea>
-
-                <span asp-validation-for="Specification" class="text-danger"></span>
-                <script>
-                    ClassicEditor
-                        .create(document.querySelector('#editor2'))
-                        .then(editor => {
-                            console.log(editor);
-                        })
-                        .catch(error => {
-                            console.error(error);
-                        });
-                </script>
+                <span asp-validation-for="Specification" class="text-danger"></span>     
             </div>
-
-
-
 
             <div class="form-group">
                 <input type="submit" value="Skapa ny" class="btn btn-primary" />

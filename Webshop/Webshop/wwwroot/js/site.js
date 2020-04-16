@@ -3,35 +3,6 @@
 
 // Write your JavaScript code.
 
-
-/*
-function GetCategories() {
-
-    var categoryElement = document.getElementById("CategoryDropdown");
-
-    // Get all categories from our WebAPI in JSON format
-    fetch('https://localhost:44305/api/categories')
-        .then((response) => {
-            return response.json();
-        })
-        .then((data) => {
-            for (const [key, value] of Object.entries(data)) {
-                var optionElement = document.createElement("a");
-                optionElement.setAttribute('href', 'Product?catid=' + value.id);
-                optionElement.setAttribute('class', 'dropdown-item');
-                optionElement.text = value.name;
-
-                categoryElement.appendChild(optionElement);
-            }
-        });
-}
-
-$(document).ready(function () {
-    GetCategories();
-})
-*/
-
-
 // Add items to cart using AJAX and fetch framework
 function AddCrapToCart(productId, name) {
 
@@ -239,4 +210,44 @@ $(document).ready(function () {
 // Go back to previously page (Used in ProductDetail View)
 function goBack() {
     window.history.back();
+}
+
+// Editor for product FullDescription
+ClassicEditor
+    .create(document.querySelector('#editor'))
+    .then(editor => {
+        console.log(editor);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+
+// Editor for product specification
+ClassicEditor
+    .create(document.querySelector('#editor2'))
+    .then(editor => {
+        console.log(editor);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+
+
+
+// When the user scrolls the page, execute stickyFunction
+window.onscroll = function () { stickyFunction() };
+
+// Get the navbar
+var navbar = document.getElementById("stickyNavbar");
+
+// Get the offset position of the navbar
+var sticky = navbar.offsetTop;
+
+// Add the sticky class to the navbar when you reach its scroll position. Remove "sticky" when you leave the scroll position
+function stickyFunction() {
+    if (window.pageYOffset >= sticky) {
+        navbar.classList.add("sticky")
+    } else {
+        navbar.classList.remove("sticky");
+    }
 }

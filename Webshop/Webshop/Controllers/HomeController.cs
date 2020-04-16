@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Webshop.Context;
 using Webshop.Models;
 using Webshop.Services;
 
@@ -25,7 +18,15 @@ namespace Webshop.Controllers
         public async Task<IActionResult> Index()
         {
             var allproductslist = await webAPI.GetAllAsync<AllProductsViewModel>(ApiURL.PRODUCTS);
-            return View(allproductslist);
+            var news = await webAPI.GetAllAsync<News>(ApiURL.NEWS_TOP5);
+
+            HomeModel home = new HomeModel()
+            {
+                AllProducts = allproductslist,
+                News = news
+            };
+
+            return View(home);
         }
 
         public IActionResult Privacy()

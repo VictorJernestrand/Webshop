@@ -8,6 +8,8 @@ namespace WebAPI.Models
 {
     public class OrderItemsModel
     {
+        public int ShoppingCartId { get; set; }
+
         public int ProductId { get; set; }
 
         public string ProductName { get; set; }
@@ -22,7 +24,9 @@ namespace WebAPI.Models
 
         public decimal Price { get; set; }
 
-        public decimal Discount { get; set; }
+        public float Discount { get; set; }
+
+        public decimal DiscountPrice { get; set; }
 
         public decimal UnitPriceWithDiscount { get; set; }
 

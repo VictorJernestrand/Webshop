@@ -1,27 +1,24 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Webshop.Models;
 using Webshop.Services;
 
 namespace WebAPI.Controllers
 {
- 
+
     public class OrderController : Controller
     {
         private readonly WebAPIHandler webAPI;
         private readonly WebAPIToken webAPIToken;
-
         private readonly string _cartSessionCookie;
 
         public OrderViewModel orderviewmodel = new OrderViewModel();
         public OrderAndPaymentMethods OrderAndPaymentMethods = new OrderAndPaymentMethods();
-
-        public LoggedInUserName loggedInUserName = new LoggedInUserName();
 
         public OrderController(WebAPIHandler webAPI, WebAPIToken webAPIToken, IConfiguration config)
         {
@@ -42,7 +39,7 @@ namespace WebAPI.Controllers
             }
 
             // Are there any products in the cart??
-            var content = await webAPI.GetAllAsync<ShoppingCartModel>(ApiURL.CARTS_CONTENT + cartId);
+            var content = await webAPI.GetAllAsync<OrderItemsModel>(ApiURL.CARTS_CONTENT + cartId);
             if (content.Count == 0)
             {
                 return RedirectToAction("Index", "ShoppingCart");
@@ -83,7 +80,7 @@ namespace WebAPI.Controllers
             var orderItems = await webAPI.GetOneAsync<OrderViewModel>(ApiURL.ORDER_BY_ID + Id, token);
 
             orderItems.Statuses = await webAPI.GetAllAsync<Status>(ApiURL.STATUS);
-            return View(orderItems );
+            return View(orderItems);
 
         }
 
@@ -156,20 +153,12 @@ namespace WebAPI.Controllers
             }
         }
 
-        //public IActionResult CreditCardPayment()
-        //{
-
-        //    return View(creditCardModel);
-        //}
-
-
-
         public IActionResult ThankYou()
         {
             return View();
         }
 
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> OrderStatus(int? statusId)
         {

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Webshop.Models
 {
@@ -34,8 +31,8 @@ namespace Webshop.Models
             //Brand = product.Brand;
             FullDescription = product.FullDescription;
             Specification = product.Specification;
-        
-            
+
+
         }
 
         public int Id { get; set; }

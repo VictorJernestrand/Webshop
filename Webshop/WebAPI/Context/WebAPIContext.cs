@@ -34,6 +34,7 @@ namespace WebAPI.Context
         public DbSet<Status> Statuses { get; set; }
         public DbSet<ShoppingCart> ShoppingCart { get; set; }
         public DbSet<Rating> Ratings { get; set; }
+        public DbSet<News> News { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -93,6 +94,13 @@ namespace WebAPI.Context
                 entity.Property(x => x.Amount).IsRequired();
             });
 
+            builder.Entity<News>(entity =>
+            {
+                entity.Property(x => x.Title).IsRequired().HasMaxLength(100);
+                entity.Property(x => x.Text).IsRequired();
+                entity.Property(x => x.NewsDate).IsRequired();
+            });
+
             builder.Entity<Rating>(entity =>
             {
                 entity.Property(x => x.UserId).IsRequired();
@@ -101,6 +109,56 @@ namespace WebAPI.Context
                 entity.Property(x => x.Score).IsRequired();
                 entity.Property(x => x.Comment).IsRequired().HasMaxLength(200);
             });
+
+
+            builder.Entity<News>().HasData(
+                new News() {
+                    Id = 1,
+                    Title = "Butiken växer",
+                    Text = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis eu arcu at rhoncus. Cras ut felis dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean vitae aliquet dui. Suspendisse fermentum risus ut arcu condimentum, nec fringilla turpis mattis.",
+                    NewsDate = DateTime.Now.AddDays(-8)
+                }
+            );
+
+            builder.Entity<News>().HasData(
+                new News()
+                {
+                    Id = 2,
+                    Title = "Nya Produkter",
+                    Text = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis eu arcu at rhoncus. Cras ut felis dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean vitae aliquet dui. Suspendisse fermentum risus ut arcu condimentum, nec fringilla turpis mattis.",
+                    NewsDate = DateTime.Now.AddDays(-6)
+                }
+            );
+
+            builder.Entity<News>().HasData(
+                new News()
+                {
+                    Id = 3,
+                    Title = "Pressade Priser",
+                    Text = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis eu arcu at rhoncus. Cras ut felis dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean vitae aliquet dui. Suspendisse fermentum risus ut arcu condimentum, nec fringilla turpis mattis.",
+                    NewsDate = DateTime.Now.AddDays(-5)
+                }
+            );
+
+            builder.Entity<News>().HasData(
+                new News()
+                {
+                    Id = 4,
+                    Title = "Som en käftsmäll",
+                    Text = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis eu arcu at rhoncus. Cras ut felis dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean vitae aliquet dui. Suspendisse fermentum risus ut arcu condimentum, nec fringilla turpis mattis.",
+                    NewsDate = DateTime.Now.AddDays(-3)
+                }
+            );
+
+            builder.Entity<News>().HasData(
+                new News()
+                {
+                    Id = 5,
+                    Title = "Vi provar RG2750",
+                    Text = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis eu arcu at rhoncus. Cras ut felis dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean vitae aliquet dui. Suspendisse fermentum risus ut arcu condimentum, nec fringilla turpis mattis.",
+                    NewsDate = DateTime.Now.AddDays(-1)
+                }
+            );
 
             builder.Entity<Brand>().HasData(
                 new Brand() { Id = 1, Name = "Gibson" },

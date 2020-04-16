@@ -1,18 +1,17 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using WebAPI.Domain;
-using Webshop.Context;
 using Webshop.Models;
 using Webshop.Services;
 
@@ -85,13 +84,13 @@ namespace Webshop.Controllers
             var user = await webAPI.GetOneAsync<User>(ApiURL.USERS + email, token);
             EditUserInfoModel = new EditUserInfoModel()
             {
-                Email           = user.Email,
-                FirstName       = user.FirstName,
-                LastName        = user.LastName,
-                PhoneNumber     = user.PhoneNumber,
-                StreetAddress   = user.StreetAddress,
-                ZipCode         = user.ZipCode,
-                City            = user.City
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                StreetAddress = user.StreetAddress,
+                ZipCode = user.ZipCode,
+                City = user.City
             };
 
             return View(EditUserInfoModel);
@@ -204,7 +203,7 @@ namespace Webshop.Controllers
                     {
                         await SetAuthCookie(apiResult.APIPayload);
                     }
-                   // return Redirect(returnUrl);
+                    // return Redirect(returnUrl);
                     TempData["UpdateSuccess"] = "Din information har uppdaterats!";
 
                     if (accessor.HttpContext.Request.Query["order"] != "order")
@@ -297,7 +296,7 @@ namespace Webshop.Controllers
 
             // Bake authentication cookie!
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-            
+
         }
 
     }

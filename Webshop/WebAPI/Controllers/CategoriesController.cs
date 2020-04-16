@@ -36,31 +36,12 @@ namespace WebAPI.Controllers
         {
             var category = await _context.Categories.FindAsync(id);
 
-
-            // List<Product> categoryList = _context.Products.Include(x => x.Brand).Include(x => x.Category).ToList();
-
-            // List<AllProductsViewModel> categoryViewList = categoryList.Select(x => new AllProductsViewModel(x))
-            //                         .Where(x => x.CategoryId == id).OrderBy(c => c.Name).ToList();
-
-
-            //List<AllProductsViewModel> categoryViewList = await _context.Products.Include(x => x.Brand).Include(x => x.Category)
-            //                                             .Select(x => new AllProductsViewModel(x))
-            //                                               .Where(x => x.Category.Id == id)
-            //                                            .OrderBy(c => c.Name)
-            //                                           .ToListAsync();
-
-            /*var product = await _context.Products.Include(x=>x.Brand).Include(x => x.Category)
-                                .Where(x => x.Category.Id == id)
-                                .Select(x => new AllProductsViewModel(x))                                 
-                                .ToListAsync();*/
-
-
             if (category == null)
             {
                 return NotFound();
             }
 
-            return category;
+            return Ok(category);
         }
 
         // PUT: api/Categories/5

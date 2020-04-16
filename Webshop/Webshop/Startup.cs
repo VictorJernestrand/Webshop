@@ -25,24 +25,6 @@ namespace Webshop
             services.AddTransient<WebAPIToken>();
             services.AddTransient<WebAPIHandler>();
 
-            /* Old Identity Framwork settings.
-            // Set email to be unique for each user
-            services.AddIdentity<User, AppRole>(options =>
-            {
-                options.User.RequireUniqueEmail = true;
-            }).AddRoles<AppRole>()
-              .AddEntityFrameworkStores<WebshopContext>();
-
-            // Configure the application cookie and set expiration date
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromDays(365);
-                options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
-                options.SlidingExpiration = true;
-            });
-            */
-
             // Needed for IHttpClientFactory to work and accessing our WebAPI
             services.AddHttpClient();
 
@@ -66,7 +48,13 @@ namespace Webshop
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                // Catch unhandled exceptions
+                app.UseExceptionHandler("/Error");
+
+                // Catch 404 etc errors
+                app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
+                //app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }

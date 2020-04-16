@@ -1,12 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Webshop.Models
+﻿namespace Webshop.Models
 {
     public class User // : IdentityUser<int>
     {
@@ -21,9 +13,9 @@ namespace Webshop.Models
         public int ZipCode { get; set; }
         public string City { get; set; }
 
-        [NotMapped]
-        public string Password { get; set; }
-        public List<Order> Orders { get; set; }
+        //[NotMapped]
+        //public string Password { get; set; }
+        //public List<Order> Orders { get; set; }
 
     }
 }

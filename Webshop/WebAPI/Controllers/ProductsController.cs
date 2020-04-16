@@ -104,7 +104,6 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<AllProductsViewModel>> searchProduct(string searchTerm)
         {
-            // TODO: Fix so users can only search on active products!
             searchTerm = searchTerm.ToLower();
 
             var searchResult = await _context.Products.Include(x => x.Category)
@@ -130,7 +129,6 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<AllProductsViewModel>> adminSearchProduct(string searchTerm)
         {
-            // TODO: Fix so users can only search on active products!
             searchTerm = searchTerm.ToLower();
 
             var searchResult = await _context.Products.Include(x => x.Category)

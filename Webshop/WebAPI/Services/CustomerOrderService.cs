@@ -33,7 +33,7 @@ namespace WebAPI.Services
                         Photo = x.Product.Photo,
                         Price = x.Price,
                         Amount = x.Amount,
-                        Discount = x.Discount,
+                        Discount = (float)x.Discount,
                         QuantityInStock = x.Product.Quantity,
                         TotalProductCost = (x.Price * x.Amount),
                         TotalProductCostDiscount = CalculateDiscount.NewPrice((x.Price * x.Amount), x.Discount)

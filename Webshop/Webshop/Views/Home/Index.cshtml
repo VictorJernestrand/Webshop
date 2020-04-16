@@ -1,4 +1,4 @@
-﻿@model List<AllProductsViewModel>
+﻿@model HomeModel
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @functions{
     public string GetAntiXsrfRequestToken()
@@ -15,10 +15,10 @@
 
 <partial name="_AddToCartMessagePartial" />
 
-<div id="rockstart-carousel" class="carousel slide rounded d-flex align-items-md-center mt-5 mb-5 p-2" data-ride="carousel" data-interval="2000" >
+<div id="rockstart-carousel" class="carousel slide rounded d-flex align-items-md-center mt-5 mb-5 p-2" data-ride="carousel" data-interval="2000">
     <ol class="carousel-indicators">
 
-        @foreach (var x in Model)
+        @foreach (var x in Model.AllProducts)
         {
             @if (x.Discount > 0 && x.ActiveProduct == true)
             {
@@ -31,7 +31,7 @@
 
     <div class="carousel-inner">
 
-        @foreach (var product in Model)
+        @foreach (var product in Model.AllProducts)
         {
 
             if (product.Discount > 0 && product.ActiveProduct == true)
@@ -41,14 +41,14 @@
 
                 <div class="carousel-item @active">
                     <div class="row">
-                        <div class="col-sm-12 col-md-8 col-lg-7 d-flex justify-content-center justify-content-md-end align-items-center rounded overflow-hidden">
+                        <div class="col-sx-12 col-sm-12 col-md-8 col-lg-7 d-flex justify-content-center justify-content-md-end align-items-center rounded overflow-hidden">
                             <div class="shadow carousel_product rounded">
                                 <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@product.Id">
                                     <img src="@Url.Content("~/Image/" + product.Photo)" class="rounded" alt="@product.Name">
                                 </a>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-md-4 col-lg-5 d-flex justify-content-center justify-content-md-start">
+                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-5 d-flex justify-content-center justify-content-md-start">
                             <div class="carousel_info_container">
                                 <h3>@product.Name</h3>
                                 <p class="card-subtitle mb-2">@product.BrandName - @product.CategoryName</p>
@@ -67,9 +67,16 @@
                                     }
                                 }
 
-                                <span>@product.TotalRatingScore.ToString("0.0").Replace(',','.') / 5</span>
-                                <br />
-                                <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@product.Id" class="btn btn-info float-right float-md-left mt-md-2">Mer Info &raquo;</a>
+                                <span>@product.TotalRatingScore.ToString("0.0").Replace(',', '.') / 5</span>
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-12 col mt-md-3 pt-2 pt-md-0">
+                                        <h5 class="mb-0 pb-0 price_color">@product.DiscountPrice.ToString("C0")
+                                        <span class="font-weight-lighter small price_color">-@((int)(product.Discount * 100))%</span></h5>
+                                    </div>
+                                    <div class="col-sm-6 col-md-12 col d-flex justify-content-xs-end justify-content-end justify-content-md-start mt-md-3">
+                                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@product.Id" class="btn btn-info">Mer Info</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -92,20 +99,60 @@
 
 </div>
 
-<div class="container">
-    <div class="row">
-        @foreach (var item in Model)
-        {
-            @if (item.ActiveProduct != false && !User.IsInRole("Admin"))
-            {
-                <partial name="_Productpartial" model="item" />
-            }
+<div class="row">
+    <div class="col-sx-12 col-sm-12 col-md-4 d-flex justify-content-md-left">
+        <div class="col-12 p-3 pb-5 rounded mb-5 front-box">
+            <h3 class="text-center">Vi är RockStart</h3>
+            <p>Vare sig du är nybörjare eller musiker av hårdaste metall så har vi något för dig till oslagbara priser!</p>
+            <p class="text-center">Välkommen till RockStart</p>
 
-            @if (User.IsInRole("Admin"))
-            {
-                <partial name="_Productpartial" model="item" />
-            }
-        }
+            <div class="d-flex d-inline-block justify-content-center">
+                <a asp-action="AllProducts" asp-controller="Product" class="btn btn-info box-button text-white">Våra Produkter</a>
+            </div>
+        </div>
     </div>
-    <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
+    <div class="col-sx-12 col-sm-12 col-md-4 d-flex justify-content-md-center">
+        <div class="col-12 p-2 pb-5 rounded mb-5 front-box">
+            <h3 class="text-center pb-2">Support</h3>
+            <h4 class="text-center font-weight-light"><i class="fas fa-phone"></i> 08-12 34 52</h4>
+            <h4 class="text-center font-weight-light"><i class="fas fa-envelope"></i> info@rockstart.se</h4>
+            <div class="d-flex d-inline-block justify-content-center">
+                <a asp-action="Index" asp-controller="Contact" class="btn btn-info align-content-center box-button text-white">Kontakt Oss</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sx-12 col-sm-12 col-md-4 d-flex justify-content-md-end">
+        <div class="col-12 p-2 pb-5 rounded mb-5 front-box">
+            <h3 class="text-center">Senaste Nytt</h3>
+            <div class="d-flex d-inline-block justify-content-center pb-3">
+                <ul>
+                    @foreach (var article in Model.News)
+                    {
+                        <li class="small pb-1">@article.NewsDate.ToShortDateString() | <a href="news/#article_@article.Id">@article.Title</a></li>
+                    }
+                </ul>
+            </div>
+            <div class="d-flex d-inline-block justify-content-center">
+                <a asp-action="Index" asp-controller="News" class="btn btn-info box-button text-white">Alla Nyheter</a>
+            </div>
+        </div>
+    </div>
 </div>
+
+@*<div class="container">
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                @if (item.ActiveProduct != false && !User.IsInRole("Admin"))
+                {
+                    <partial name="_Productpartial" model="item" />
+                }
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <partial name="_Productpartial" model="item" />
+                }
+            }
+        </div>
+        <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
+    </div>*@
