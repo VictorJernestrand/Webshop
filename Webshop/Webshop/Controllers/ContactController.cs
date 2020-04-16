@@ -11,14 +11,16 @@ namespace Webshop.Controllers
     public class ContactController : Controller
     {
         private readonly IConfiguration _config;
-        public ContactModel ContactModel = new ContactModel();
+        //public ContactModel ContactModel = new ContactModel();
+
         public ContactController(IConfiguration config)
         {
             this._config = config;
         }
+
         public IActionResult Index()
         {
-            return View(ContactModel);
+            return View();
         }
 
         //[HttpPost, ActionName("Index")]
@@ -57,12 +59,12 @@ namespace Webshop.Controllers
         {
             if (ModelState.IsValid)
             {
-                var body = "<p>Email From: {0} ({1})</p><p>Message:</p><p>{2}</p>";
+                var body = "<p>Epost från: {0} ({1})</p><p>Meddelande:</p><p>{2}</p>";
                 var message = new MailMessage();
                 message.To.Add(new MailAddress(_config["Mail:Address"]));
                 message.From = new MailAddress(model.Email);
-                message.Subject = "Kund klagomål";
-                message.Body = string.Format(body, model.FirstName + "" + model.LastName, model.Email, model.Message);
+                message.Subject = "Kundkontakt";
+                message.Body = string.Format(body, model.FirstName + " " + model.LastName, model.Email, model.Message);
                 message.IsBodyHtml = true;
 
                 using (var smtp = new SmtpClient())
@@ -77,18 +79,16 @@ namespace Webshop.Controllers
                     smtp.Port = Convert.ToInt32(_config["Mail:Port"]);
                     smtp.EnableSsl = true;
                     await smtp.SendMailAsync(message);
-                    //TempData["MessageSuccess"] = "Our customer support will into the issue. Thanks for contacting us";
-                    //return RedirectToAction("Index");
                 }
 
+                TempData["MessageSuccess"] = "Tack för ditt meddelande! Vi återkommer så snart vi kan.";
+                return RedirectToAction("Index");
             }
             else
             {
-                return RedirectToAction("Index", model);
+                return View(model);
             }
-            TempData["MessageSuccess"] = "Our customer support will into the issue. Thanks for contacting us";
-            return RedirectToAction("Index");
-        }
 
+        }
     }
 }

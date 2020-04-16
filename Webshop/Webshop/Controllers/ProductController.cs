@@ -18,9 +18,6 @@ namespace Webshop.Controllers
 
         public AllProductsViewModel allProductsViewModel = new AllProductsViewModel();
 
-        // TODO: Safe to delete this file? 
-        //public EditProductModel EditProductModel { get; set; }
-
         public ProductController(WebAPIHandler webAPI, WebAPIToken webAPIToken, IWebHostEnvironment env)
         {
             //this.context = context;
@@ -32,7 +29,13 @@ namespace Webshop.Controllers
         // Get all products based on category Id
         public async Task<ActionResult<List<AllProductsViewModel>>> Index(int catid)
         {
+            // Get all products by category id
             List<AllProductsViewModel> categoryViewList = await webAPI.GetAllAsync<AllProductsViewModel>(ApiURL.PRODUCTS_IN_CAT + catid);
+
+            // Get categoryname
+            var category = await webAPI.GetOneAsync<Category>(ApiURL.CATEGORIES + catid);
+            ViewBag.CategoryName = category.Name;
+
             return View(categoryViewList);
         }
 

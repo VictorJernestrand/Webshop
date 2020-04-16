@@ -7,56 +7,73 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Context;
-using WebAPI.Models;
 using WebAPI.Models.Data;
 
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriesController : ControllerBase
+    public class NewsController : ControllerBase
     {
         private readonly WebAPIContext _context;
 
-        public CategoriesController(WebAPIContext context)
+        public NewsController(WebAPIContext context)
         {
             _context = context;
         }
 
-        // GET: api/Categories
+        // GET: api/News
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+        public async Task<ActionResult<IEnumerable<News>>> GetAllNews()
         {
-            return await _context.Categories.ToListAsync();
+            return await _context.News.OrderByDescending(x => x.NewsDate).ToListAsync();
         }
 
-        // GET: api/Categories/5
+        // GET: api/News/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategory(int id)
+        public async Task<ActionResult<News>> GetNewsById(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var news = await _context.News.FindAsync(id);
 
-            if (category == null)
+            if (news == null)
             {
                 return NotFound();
             }
 
-            return Ok(category);
+            return news;
         }
 
-        // PUT: api/Categories/5
+        [Route("recent")]
+        [HttpGet]
+        public async Task<ActionResult<News>> GetRecentNews()
+        {
+            return await _context.News.OrderByDescending(x => x.NewsDate).FirstOrDefaultAsync();
+        }
+
+        [Route("top")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<News>>> GetTopNews()
+        {
+            return await _context.News.OrderByDescending(x => x.NewsDate).Take(5).ToListAsync();
+        }
+
+        // PUT: api/News/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategory(int id, Category category)
+        public async Task<IActionResult> PutNews(int id, News news)
         {
-            if (id != category.Id)
+            if (id != news.Id)
             {
                 return BadRequest();
             }
+            var updateNews = _context.News.Find(id);
 
-            _context.Entry(category).State = EntityState.Modified;
+            updateNews.Text = news.Text;
+            updateNews.Title = news.Title;
+
+            _context.Entry(updateNews).State = EntityState.Modified;
 
             try
             {
@@ -64,7 +81,7 @@ namespace WebAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CategoryExists(id))
+                if (!NewsExists(id))
                 {
                     return NotFound();
                 }
@@ -77,39 +94,39 @@ namespace WebAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Categories
+        // POST: api/News
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<Category>> PostCategory(Category category)
+        public async Task<ActionResult<News>> PostNews(News news)
         {
-            _context.Categories.Add(category);
+            _context.News.Add(news);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCategory", new { id = category.Id }, category);
+            return CreatedAtAction("GetNews", new { id = news.Id }, news);
         }
 
-        // DELETE: api/Categories/5
+        // DELETE: api/News/5
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Category>> DeleteCategory(int id)
+        public async Task<ActionResult<News>> DeleteNews(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
+            var news = await _context.News.FindAsync(id);
+            if (news == null)
             {
                 return NotFound();
             }
 
-            _context.Categories.Remove(category);
+            _context.News.Remove(news);
             await _context.SaveChangesAsync();
 
-            return category;
+            return news;
         }
 
-        private bool CategoryExists(int id)
+        private bool NewsExists(int id)
         {
-            return _context.Categories.Any(e => e.Id == id);
+            return _context.News.Any(e => e.Id == id);
         }
     }
 }

@@ -8,23 +8,24 @@
 }
 @{
     ViewData["Title"] = "Rock★Start";
-    int a = 0;
+
+    // Count products
+    int productCount = Model.Count();
 
 }
 <partial name="_AddToCartMessagePartial" />
 
-@foreach (var category in Model)
-{
-    if (a == 0)
-    {
-        <h1>@category.CategoryName</h1>      
-        <p>	&nbsp;</p>
-    }
-    a++;
-}
+<h3 class="mt-3 mb-3">@ViewBag.CategoryName <span class="font-weight-light small">(@productCount produkt@((productCount != 1) ? "er" : ""))</span></h3>
+<hr />
 
 <div class="container">
-    <div class=" row justify-content-center">
+    @if (productCount == 0)
+    {
+        <span>Finns inga produkter i denna kategori.</span>
+    }
+    else
+    {
+    <div class="row justify-content-center">
         @foreach (var item in Model)
         {
             @if (item.ActiveProduct != false && !User.IsInRole("Admin"))
@@ -39,5 +40,6 @@
         }
     </div>
     <div style="display: none" id="AntiForgeryToken">@GetAntiXsrfRequestToken()</div>
+    }
 </div>
 

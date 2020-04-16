@@ -50,5 +50,9 @@
         public const string RATING_BY_ID = URL + "ratings/";
         public const string RATINGS_POST = URL + "ratings/";
 
+        // API-path to news-controllers
+        public const string NEWS = URL + "news/";
+        public const string NEWS_TOP5 = URL + "news/top";
+        public const string NEWS_RECENT = URL + "news/recent";
     }
 }

@@ -8,29 +8,18 @@
 }
 @{
     ViewData["Title"] = "Rock★Start - Alla Produkter";
+
+    // Count products
+    int productCount = Model.Count();
 }
-@*<div>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
 
-                <li class="breadcrumb-item active" aria-current="page">AllProducts</li>
-
-            </ol>
-        </nav>
-    </div>*@
 <partial name="_AddToCartMessagePartial" />
 
 @if (TempData["Deleted"] != null)
 {
-
-    <p>
-        <font size="6">
-            <span style="color: red;">
-                @TempData["Deleted"]
-            </span>
-        </font>
-    </p>
-
+    <div class="alert alert-success" role="alert">
+        @TempData["Deleted"]
+    </div>
 }
 
 @if (TempData["Succesmsg"] != null)
@@ -48,7 +37,6 @@
         @TempData["OrderCreated"]
     </div>
 }
- 
 
 @if (TempData["EditSuccesmsg"] != null)
 
@@ -58,20 +46,8 @@
     </div>
 }
 
-
-
-<h1>Alla Produkter</h1>
-<p>	&nbsp;</p>
-@*<div align="right">
-    @if (User.IsInRole("Admin"))
-    {
-
-        <a href='@Url.Action("CreateProduct", "Product")'>
-            <input type='button' class="btn btn-success" value='Lägg till Ny Produkt' />
-        </a>
-
-    }
-</div>*@
+<h3 class="mt-3 mb-3">Allt <span class="font-weight-light small text-muted">(@productCount produkt@((productCount != 1) ? "er" : ""))</span></h3>
+<hr />
 
 <div class="container">
     <div class="row">

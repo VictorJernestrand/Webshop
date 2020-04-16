@@ -49,30 +49,35 @@ table thead-dark {
     background-color: #262b2e;
 }
 
-table a:link {
+table a:link, .newsarticle a:link {
     color: #f78300;
 }
 
 /* visited link */
-table a:visited {
+table a:visited, .newsarticle a:visited {
     color: #f78300;
 }
 
 /* mouse over link */
-table a:hover {
+table a:hover, .newsarticle a:hover {
     color: #fff;
 }
 
 /* selected link */
-table a:active {
+table a:active, .newsarticle a:active {
     color: #fff;
 }
 
 
+/*-----------Font Awesome override -------------*/
+.dropdown-menu .far, .dropdown-menu .fas {
+    width: 30px;
+}
+
+
+
+
 /*----------------------------------------------*/
-/*html {
-  font-size: 14px;
-}*/
 @media (min-width: 768px) {
     html {
         font-size: 16px;
@@ -108,34 +113,6 @@ button.accept-policy {
 #wrapper > div {
     padding-bottom: 440px; /* space between wrapper and footer*/
 }
-
-/*#main {
-    padding-bottom: 440px;
-    border: 1px solid #f00;
-}*/
- /*Position text in the middle of the page/image 
-.bg-text {
-    background-color: rgb(0,0,0);  Fallback color 
-    background-color: rgba(0,0,0, 0.7);  Black w/opacity/see-through 
-    color: white;
-    font-weight: bold;
-    border: 3px solid #f1f1f1;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 2;
-    width: 80%;
-    padding: 20px;
-    text-align: center;
-}*/
-
-main {
-    /*padding-bottom: 300px;*/
-    /*padding-bottom: 440px;
-    border: 1px solid #f00;*/
-}
-
 
 .crossed-price {
     text-decoration: line-through;
@@ -215,206 +192,9 @@ main {
         vertical-align: middle;
     }
 
-        /********************* Products view **********************/
-        /*
-h3.h3 {
-    text-align: center;
-    margin: 1em;
-    text-transform: capitalize;
-    font-size: 1.7em;
-}
 
-.demo {
-    padding: 45px 0
-}
-
-.product-grid2 {
-    font-family: 'Open Sans',sans-serif;
-    position: relative
-}
-
-    .product-grid2 .product-image2 {
-        overflow: hidden;
-        position: relative
-    }
-
-        .product-grid2 .product-image2 a {
-            display: block
-        }
-
-        .product-grid2 .product-image2 img {
-            width: 100%;
-            height: auto
-        }
-
-.product-image2 .pic-1 {
-    opacity: 1;
-    transition: all .5s
-}
-
-.product-grid2:hover .product-image2 .pic-1 {
-    opacity: 0
-}
-
-.product-image2 .pic-2 {
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: all .5s
-}
-
-.product-grid2:hover .product-image2 .pic-2 {
-    opacity: 1
-}
-
-.product-grid2 .social {
-    padding: 0;
-    margin: 0;
-    position: absolute;
-    bottom: 50px;
-    right: 25px;
-    z-index: 1
-}
-
-    .product-grid2 .social li {
-        margin: 0 0 10px;
-        display: block;
-        transform: translateX(100px);
-        transition: all .5s
-    }
-
-.product-grid2:hover .social li {
-    transform: translateX(0)
-}
-
-    .product-grid2:hover .social li:nth-child(2) {
-        transition-delay: .15s
-    }
-
-    .product-grid2:hover .social li:nth-child(3) {
-        transition-delay: .25s
-    }
-
-.product-grid2 .social li a {
-    color: #505050;
-    background-color: #fff;
-    font-size: 17px;
-    line-height: 45px;
-    text-align: center;
-    height: 45px;
-    width: 45px;
-    border-radius: 50%;
-    display: block;
-    transition: all .3s ease 0s
-}
-
-    .product-grid2 .social li a:hover {
-        color: #fff;
-        background-color: #3498db;
-        box-shadow: 0 0 10px rgba(0,0,0,.5)
-    }
-
-    .product-grid2 .social li a:after, .product-grid2 .social li a:before {
-        content: attr(data-tip);
-        color: #fff;
-        background-color: #000;
-        font-size: 12px;
-        line-height: 22px;
-        border-radius: 3px;
-        padding: 0 5px;
-        white-space: nowrap;
-        opacity: 0;
-        transform: translateX(-50%);
-        position: absolute;
-        left: 50%;
-        top: -30px
-    }
-
-    .product-grid2 .social li a:after {
-        content: '';
-        height: 15px;
-        width: 15px;
-        border-radius: 0;
-        transform: translateX(-50%) rotate(45deg);
-        top: -22px;
-        z-index: -1
-    }
-
-    .product-grid2 .social li a:hover:after, .product-grid2 .social li a:hover:before {
-        opacity: 1
-    }
-
-.product-grid2 .add-to-cart {
-    color: #fff;
-    background-color: #404040;
-    font-size: 15px;
-    text-align: center;
-    width: 100%;
-    padding: 10px 0;
-    display: block;
-    position: absolute;
-    left: 0;
-    bottom: -100%;
-    transition: all .3s
-}
-
-    .product-grid2 .add-to-cart:hover {
-        background-color: #3498db;
-        text-decoration: none
-    }
-
-.product-grid2:hover .add-to-cart {
-    bottom: 0
-}
-
-.product-grid2 .product-new-label {
-    background-color: #3498db;
-    color: #fff;
-    font-size: 17px;
-    padding: 5px 10px;
-    position: absolute;
-    right: 0;
-    top: 0;
-    transition: all .3s
-}
-
-.product-grid2:hover .product-new-label {
-    opacity: 0
-}
-
-.product-grid2 .product-content {
-    padding: 20px 10px;
-    text-align: center
-}
-
-.product-grid2 .title {
-    font-size: 17px;
-    margin: 0 0 7px
-}
-
-    .product-grid2 .title a {
-        color: #303030
-    }
-
-        .product-grid2 .title a:hover {
-            color: #3498db
-        }
-
-.product-grid2 .price {
-    color: #303030;
-    font-size: 15px
-}
-
-@media screen and (max-width:990px) {
-    .product-grid2 {
-        margin-bottom: 30px
-    }
-}
-*/
-        .product {
+/********************* Products view **********************/
+.product {
     position: relative;
     overflow: hidden;
     background-color: #262b2e !important;
@@ -442,8 +222,6 @@ h3.h3 {
         object-fit: contain;
         height: 250px;
         width: auto;
-        /*max-width: 100%;
-        height: auto;*/
     }
 
 .product-detail {
@@ -455,10 +233,8 @@ h3.h3 {
 }
 
 .product-image .actions li a {
-    /*color: #505050;*/
-    background-color: rgba(255, 255, 255, 0.8); /* Black w/opacity/see-through */
+    background-color: rgba(255, 255, 255, 0.8);
     font-size: 20px;
-    /*line-height: 45px;*/
     padding-top: 6px;
     text-align: center;
     height: 45px;
@@ -502,11 +278,6 @@ h3.h3 {
     text-shadow: 1px 1px #262b2e;
     background-color: #1c1c1c;
     background-image: radial-gradient(#373737, #1c1c1c);
-    /*font-size: 15px;
-    text-align: center;
-    width: 100%;
-    padding: 10px 0;
-    display: block;*/
     width: 100%;
     position: absolute;
     left: 0;

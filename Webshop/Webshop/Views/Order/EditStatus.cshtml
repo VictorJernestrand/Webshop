@@ -90,7 +90,7 @@
                         {
                             case 1:
                             case 2:
-                                @if (product.QuantityInStock + product.Amount < 0)
+                                @if (product.QuantityInStock == 0)
                                 {
                                     <span><i class="fas fa-exclamation-triangle" style="color: orange"></i></span>
                                     <span class="small">I lager: @product.QuantityInStock</span>

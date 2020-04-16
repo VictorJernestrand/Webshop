@@ -1,0 +1,17 @@
+﻿@model News
+@{
+    ViewData["Title"] = "Radera Artikel";
+}
+
+<h3 class="mt-3 mb-3">Radera Artikel</h3>
+<hr />
+
+<p>Är du säker på att du vill radera denna artikel:</p>
+<p>Titel: @Model.Title</p>
+
+<hr />
+<form asp-action="Delete">
+    <input type="hidden" asp-for="@Model.Id" />
+    <a asp-action="Index" class="btn btn-warning pr-2">Avbryt</a>
+    <button type="submit" class="btn btn-danger">Radera</button>
+</form>
