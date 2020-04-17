@@ -33,6 +33,8 @@ namespace WebAPI.Context
         public DbSet<ProductOrder> ProductOrders { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<ShoppingCart> ShoppingCart { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
+        public DbSet<News> News { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -92,8 +94,71 @@ namespace WebAPI.Context
                 entity.Property(x => x.Amount).IsRequired();
             });
 
+            builder.Entity<News>(entity =>
+            {
+                entity.Property(x => x.Title).IsRequired().HasMaxLength(100);
+                entity.Property(x => x.Text).IsRequired();
+                entity.Property(x => x.NewsDate).IsRequired();
+            });
+
+            builder.Entity<Rating>(entity =>
+            {
+                entity.Property(x => x.UserId).IsRequired();
+                entity.Property(x => x.ProductId).IsRequired();
+                entity.Property(x => x.RateDate).IsRequired();
+                entity.Property(x => x.Score).IsRequired();
+                entity.Property(x => x.Comment).IsRequired().HasMaxLength(200);
+            });
 
 
+            builder.Entity<News>().HasData(
+                new News() {
+                    Id = 1,
+                    Title = "Butiken växer",
+                    Text = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis eu arcu at rhoncus. Cras ut felis dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean vitae aliquet dui. Suspendisse fermentum risus ut arcu condimentum, nec fringilla turpis mattis.",
+                    NewsDate = DateTime.Now.AddDays(-8)
+                }
+            );
+
+            builder.Entity<News>().HasData(
+                new News()
+                {
+                    Id = 2,
+                    Title = "Nya Produkter",
+                    Text = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis eu arcu at rhoncus. Cras ut felis dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean vitae aliquet dui. Suspendisse fermentum risus ut arcu condimentum, nec fringilla turpis mattis.",
+                    NewsDate = DateTime.Now.AddDays(-6)
+                }
+            );
+
+            builder.Entity<News>().HasData(
+                new News()
+                {
+                    Id = 3,
+                    Title = "Pressade Priser",
+                    Text = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis eu arcu at rhoncus. Cras ut felis dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean vitae aliquet dui. Suspendisse fermentum risus ut arcu condimentum, nec fringilla turpis mattis.",
+                    NewsDate = DateTime.Now.AddDays(-5)
+                }
+            );
+
+            builder.Entity<News>().HasData(
+                new News()
+                {
+                    Id = 4,
+                    Title = "Som en käftsmäll",
+                    Text = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis eu arcu at rhoncus. Cras ut felis dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean vitae aliquet dui. Suspendisse fermentum risus ut arcu condimentum, nec fringilla turpis mattis.",
+                    NewsDate = DateTime.Now.AddDays(-3)
+                }
+            );
+
+            builder.Entity<News>().HasData(
+                new News()
+                {
+                    Id = 5,
+                    Title = "Vi provar RG2750",
+                    Text = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis eu arcu at rhoncus. Cras ut felis dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean vitae aliquet dui. Suspendisse fermentum risus ut arcu condimentum, nec fringilla turpis mattis.",
+                    NewsDate = DateTime.Now.AddDays(-1)
+                }
+            );
 
             builder.Entity<Brand>().HasData(
                 new Brand() { Id = 1, Name = "Gibson" },
@@ -104,37 +169,40 @@ namespace WebAPI.Context
             );
 
             builder.Entity<Category>().HasData(
-                new Category() { Id = 1, Name = "Drum set" },
+                new Category() { Id = 1, Name = "Trummor" },
                 new Category() { Id = 2, Name = "Bas" },
                 new Category() { Id = 3, Name = "Piano" },
                 new Category() { Id = 4, Name = "Keyboard" },
-                new Category() { Id = 5, Name = "Guitar" }
+                new Category() { Id = 5, Name = "Gitarr" }
             );
 
             builder.Entity<Product>().HasData(
-                new Product() { Id = 1, Name = "Stratocaster", Price = 4000, Quantity = 4, CategoryId = 5, Description = "Black and white", BrandId = 2, Photo = @"Guitar\guitar1_original.jpg" },
-                new Product() { Id = 2, Name = "Precision", Price = 3000, Quantity = 5, CategoryId = 3, Description = "Smooth", BrandId = 2, Photo = @"Piano\piano1_original.jpg" },
-                new Product() { Id = 3, Name = "Vintera", Price = 4000, Quantity = 2, CategoryId = 3, Description = "Blue bas", BrandId = 2, Photo = @"Piano\piano2_original.jpg" },
-                new Product() { Id = 4, Name = "Epiphone", Price = 4000, Quantity = 2, CategoryId = 3, Description = "Advanced", BrandId = 1, Photo = @"Piano\piano3_original.jpg" },
-                new Product() { Id = 5, Name = "Youngster", Price = 1100, Quantity = 8, CategoryId = 2, Description = "For kids", BrandId = 5, Photo = @"Bas\bas1_original.jpg" },
-                new Product() { Id = 6, Name = "MPS-150X", Price = 3200, Quantity = 4, CategoryId = 2, Description = "For good players", BrandId = 5, Photo = @"Bas\bas2_original.jpg" },
-                new Product() { Id = 7, Name = "DTX­432K", Price = 5600, Quantity = 2, CategoryId = 1, Description = "Nice set of drums", BrandId = 3, Photo = @"Drum set\drum1_original.jpg" },
-                new Product() { Id = 8, Name = "P116M", Price = 8000, Quantity = 1, CategoryId = 4, Description = "Black and black", BrandId = 3, Photo = @"Keyboard\keyboard1_original.jpg" },
-                new Product() { Id = 9, Name = "Calvinova", Price = 8900, Quantity = 1, CategoryId = 4, Description = "Old model", BrandId = 3, Photo = @"Keyboard\keyboard2_original.jpg" },
-                new Product() { Id = 10, Name = "B2SP", Price = 2300, Quantity = 6, CategoryId = 3, Description = "Digitalpiano", BrandId = 4, Photo = @"Piano\piano4_original.jpg" },
-                new Product() { Id = 11, Name = "SP-280", Price = 5300, Quantity = 3, CategoryId = 5, Description = "Traveling model", BrandId = 4, Photo = @"Guitar\guitar2_original.jpg" },
-                new Product() { Id = 12, Name = "P-45", Price = 4900, Quantity = 3, CategoryId = 4, Description = "Our best keyboard", BrandId = 3, Photo = @"Keyboard\keyboard3_original.jpg" }
+                new Product() { Id = 1, Name = "Stratocaster", Price = 4000, Quantity = 4, CategoryId = 5, Description = "Black and white", BrandId = 2, Photo = @"Guitar/guitar1_original.jpg" },
+                new Product() { Id = 2, Name = "Precision", Price = 3000, Quantity = 5, CategoryId = 3, Description = "Smooth", BrandId = 2, Photo = @"Piano/piano1_original.jpg" },
+                new Product() { Id = 3, Name = "Vintera", Price = 4000, Quantity = 2, CategoryId = 3, Description = "Blue bas", BrandId = 2, Photo = @"Piano/piano2_original.jpg" },
+                new Product() { Id = 4, Name = "Epiphone", Price = 4000, Quantity = 2, CategoryId = 3, Description = "Advanced", BrandId = 1, Photo = @"Piano/piano3_original.jpg" },
+                new Product() { Id = 5, Name = "Youngster", Price = 1100, Quantity = 8, CategoryId = 2, Description = "For kids", BrandId = 5, Photo = @"Bas/bas1_original.jpg" },
+                new Product() { Id = 6, Name = "MPS-150X", Price = 3200, Quantity = 4, CategoryId = 2, Description = "For good players", BrandId = 5, Photo = @"Bas/bas2_original.jpg" },
+                new Product() { Id = 7, Name = "DTX­432K", Price = 5600, Quantity = 2, CategoryId = 1, Description = "Nice set of drums", BrandId = 3, Photo = @"Drum set/drum1_original.jpg" },
+                new Product() { Id = 8, Name = "P116M", Price = 8000, Quantity = 1, CategoryId = 4, Description = "Black and black", BrandId = 3, Photo = @"Keyboard/keyboard1_original.jpg" },
+                new Product() { Id = 9, Name = "Calvinova", Price = 8900, Quantity = 1, CategoryId = 4, Description = "Old model", BrandId = 3, Photo = @"Keyboard/keyboard2_original.jpg" },
+                new Product() { Id = 10, Name = "B2SP", Price = 2300, Quantity = 6, CategoryId = 3, Description = "Digitalpiano", BrandId = 4, Photo = @"Piano/piano4_original.jpg" },
+                new Product() { Id = 11, Name = "SP-280", Price = 5300, Quantity = 3, CategoryId = 5, Description = "Traveling model", BrandId = 4, Photo = @"Guitar/guitar2_original.jpg" },
+                new Product() { Id = 12, Name = "P-45", Price = 4900, Quantity = 3, CategoryId = 4, Description = "Our best keyboard", BrandId = 3, Photo = @"Keyboard/keyboard3_original.jpg" }
 
 
                 );
             builder.Entity<PaymentMethod>().HasData(
-                new PaymentMethod() { Id = 1, Name = "Swish" },
-                new PaymentMethod() { Id = 2, Name = "Konto" }
+                new PaymentMethod() { Id = 1, Name = "Kort" },
+                new PaymentMethod() { Id = 2, Name = "Swish" },
+                new PaymentMethod() { Id = 3, Name = "Faktura" },
+                new PaymentMethod() { Id = 4, Name = "Toapapper" }
+
                 );
             builder.Entity<Status>().HasData(
                 new Status() { Id = 1, Name = "Under behandling" },
-                new Status() { Id = 2, Name = "Förpackning" },
-                new Status() { Id = 3, Name = "Skickad" },
+                new Status() { Id = 2, Name = "Packas" },
+                new Status() { Id = 3, Name = "Skickade" },
                 new Status() { Id = 4, Name = "Levereras" }
                 );
 

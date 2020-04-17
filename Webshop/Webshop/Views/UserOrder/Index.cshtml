@@ -5,50 +5,56 @@
 @{
 }
 
+@if (TempData["OrderEmpty"] != null)
+{
+    <div class="alert alert-warning" role="alert">
+        @TempData["OrderEmpty"]
+    </div>
+}
+
 <h3>Mina feta aktiva ordrar!</h3>
 
-
-<table class="table">
-    <thead class="thead-dark">
+<table class="table table-borderless" style="border-collapse: separate; border-spacing: 0px 1px; background-color: rgba(255, 255, 255, 0.08); border-radius: 4px">
+    <thead class="thead-dark rounded-top">
         <tr>
             <th scope="col">Datum</th>
             <th scope="col">Betalmetod</th>
             <th scope="col">Status</th>
         </tr>
     </thead>
-    <tbody>
-        @foreach(var order in Model)
+    <tbody style="color:white">
+        @foreach (var order in Model)
         {
             if (order.StatusId < 4)
             {
-        <tr>
-            <td><a asp-action="OrderDetails" asp-route-id="@order.OrderId" >@order.OrderDate</a> </td>
-            <td>@order.OrderPayment</td>
-            <td>@order.OrderStatus</td>
-        </tr>
+                <tr>
+                    <td><a asp-action="OrderDetails" asp-route-id="@order.OrderId">@order.OrderDate</a> </td>
+                    <td>@order.OrderPayment</td>
+                    <td>@order.OrderStatus</td>
+                </tr>
             }
         }
 </table>
 
 <h3>Mina feta levererade ordrar!</h3>
-<table class="table">
-    <thead class="thead-dark">
+<table class="table table-borderless" style="border-collapse: separate; border-spacing: 0px 1px; background-color: rgba(255, 255, 255, 0.08); border-radius: 4px">
+    <thead class="thead-dark rounded-top">
         <tr>
             <th scope="col">Datum</th>
             <th scope="col">Betalmetod</th>
             <th scope="col">Status</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody style="color:white">
         @foreach (var order in Model)
         {
             if (order.StatusId == 4)
             {
-            <tr>
-                <td><a asp-action="OrderDetails" asp-route-id="@order.OrderId">@order.OrderDate</a> </td>
-                <td>@order.OrderPayment</td>
-                <td>@order.OrderStatus</td>
-            </tr>
+                <tr>
+                    <td><a asp-action="OrderDetails" asp-route-id="@order.OrderId">@order.OrderDate</a> </td>
+                    <td>@order.OrderPayment</td>
+                    <td>@order.OrderStatus</td>
+                </tr>
 
             }
         }

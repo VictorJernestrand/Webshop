@@ -1,0 +1,37 @@
+﻿.nav-pills > li a.active {
+    background-color: #262b2e !important;
+    background-image: radial-gradient(#808080, 262b2e) !important;
+    color: white !important;
+}
+
+.nav-pills li a {
+    color: white !important;
+}
+
+.product_price {
+    color: #7fe095;
+}
+
+.old_price {
+    font-size: small;
+    text-decoration: line-through;
+}
+
+.dicount {
+    font-size: small;
+}
+
+#detail_image {
+    object-fit: contain;
+    height: 250px;
+    width: 375px;
+    background-color: #fff;
+}
+
+#rating_form {
+    max-width: 500px;
+}
+
+.rating_comment {
+    background-color: rgba(255, 255, 255, 0.1);
+}

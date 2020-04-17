@@ -1,0 +1,30 @@
+﻿@model News
+@{
+    ViewData["Title"] = "Redigera Nyhet";
+}
+
+<h3 class="mt-3 mb-3">Redigera</h3>
+<hr />
+
+<div class="row d-flex justify-content-center">
+
+    <div class="col-xs-12 col-sm-12 col-md-10">
+
+        <form asp-action="Update">
+        <div class="rounded p-3" style="background-color: rgba(255, 255, 255, 0.1)">
+            <div class="form-group">
+                <input type="hidden" asp-for="@Model.Id" />
+
+                <label asp-for="@Model.Title">Titel:</label>
+                <input type="text" asp-for="@Model.Title" class="form-control" />
+
+                <label asp-for="@Model.Text" class="mt-3">Text:</label>
+                <textarea asp-for="@Model.Text" id="editor"></textarea>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success mt-3 float-right">Spara Ändringar</button>
+        </form>
+    </div>
+
+</div>

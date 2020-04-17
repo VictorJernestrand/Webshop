@@ -1,16 +1,16 @@
-﻿@model EditBrandModel
+﻿@model Brand
 
 @{
     ViewData["Title"] = "Tillverkare";
 }
 
-<nav aria-label="breadcrumb">
+@*<nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href='@Url.Action("AllProducts", "Product")'>AllProducts</a></li>
+        <li class="breadcrumb-item"><a href='@Url.Action("AllProducts", "Product")'>Alla Produkter</a></li>
         <li class="breadcrumb-item"><a href='@Url.Action("CreateProduct", "Product")'>Lägg till Ny Produkt</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Skapa NyMärke</li>
+        <li class="breadcrumb-item active" aria-current="page">Ny Tillverkare</li>
     </ol>
-</nav>
+</nav>*@
 
 @if (TempData["NewBrand"] != null)
 {
@@ -41,27 +41,37 @@
 }
 
 <span asp-validation-for="Name" class="text-danger" style="margin-left: 30px"></span>
-<form asp-action="Edit" method="post" class="form-inline">
+<form asp-action="Edit" method="post">
 
-    @if (Model.Id > 0)
-    {
-        <div class="form-group mx-sm-3 mb-2" style="width: 300px">
-            <input type="hidden" asp-for="Id" />
-            <input type="text" asp-for="Name" class="form-control" id="newBrand" value="@Model.Name" style="width: 300px" />
-        </div>
-        <button type="submit" class="btn btn-warning mb-2 mr-2">Uppdatera</button> <span><a asp-action="Index" asp-route-id="">(Skapa ny tillverkare)</a></span>
-    }
-    else
-    {
-        <div class="form-group mx-sm-3 mb-2" style="width: 300px">
-            <input type="text" asp-for="Name" class="form-control" id="newBrand" placeholder="Ny tillverkare..." style=" width: 300px" />
-        </div>
-        <button type="submit" class="btn btn-success mb-2">Skapa Ny</button>
-    }
+    <div class="row" style="max-width: 700px">
+        @if (Model.Id > 0)
+        {
+            <div class="col col-xs-4 form-group">
+                <input type="hidden" asp-for="Id" />
+                <input type="text" asp-for="Name" class="form-control" id="newBrand" value="@Model.Name" />
+            </div>
+            <div class="col col-xs-8 form-group">
+                <button type="submit" class="btn btn-warning">Uppdatera</button>
+            </div>
+            <div class="col-12">
+                <span><a asp-action="Index" asp-route-id="">(Skapa ny tillverkare)</a></span>
+            </div>
+        }
+        else
+        {
+            <div class="col col-xs-4 form-group">
+                <input type="text" asp-for="Name" class="form-control" id="newBrand" placeholder="Ny tillverkare..." />
+            </div>
+            <div class="col col-xs-8 form-group">
+                <button type="submit" class="btn btn-success">Skapa Ny</button>
+            </div>
+        }
+    </div>
+
 </form>
 
 
-<table class="table">
+<table class="table table-borderless text-white" style="max-width: 700px; border-collapse: separate; border-spacing: 0px 1px">
     <thead>
         <tr>
             <th scope="col">Tillverkare</th>
@@ -71,11 +81,11 @@
     <tbody>
         @foreach (var brand in Model.BrandsCollection)
         {
-            <tr>
+            <tr style="background-color: rgba(255, 255, 255, 0.1);">
                 <td>@brand.Name</td>
-                <td>
-                    <a asp-action="Index" asp-route-id="@brand.Id">Uppdatera</a> |
-                    <a asp-action="Delete" asp-route-id="@brand.Id">Radera</a>
+                <td style="text-align: right">
+                    <a asp-action="Index" asp-route-id="@brand.Id" class="btn btn-secondary btn-sm"><i class="far fa-edit"></i></a>
+                    <a asp-action="Delete" asp-route-id="@brand.Id" class="btn btn-secondary btn-sm"><i class="fas fa-trash-alt"></i></a>
                 </td>
             </tr>
         }
@@ -84,7 +94,7 @@
 
 <div>
 
-    <a href="#" onClick="history.go(-1); return false;">Tillbaka</a>
+    <a class="btn btn-dark" onclick="history.back(); return false;">&laquo; Tillbaka</a>
 
 
 </div>

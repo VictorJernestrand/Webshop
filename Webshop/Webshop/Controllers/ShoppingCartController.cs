@@ -1,35 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Webshop.Context;
-using Webshop.Models;
-using Webshop.Services;
-using Webshop.Models.Data;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Threading.Tasks;
+using Webshop.Models;
+using Webshop.Models.Data;
+using Webshop.Services;
 
 namespace Webshop.Controllers
 {
     public class ShoppingCartController : Controller
     {
         // SQL connection
-        private readonly WebshopContext _context;
         private readonly WebAPIHandler webAPI;
+        private string _cartSessionCookie;
 
-        public ShoppingCartController(WebshopContext context, WebAPIHandler webAPI)
+        public ShoppingCartController(WebAPIHandler webAPI, IConfiguration config)
         {
-            this._context = context;
             this.webAPI = webAPI;
+            this._cartSessionCookie = config["CartSessionCookie:Name"];
         }
 
         public async Task<IActionResult> Index()
         {
-            if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) != null)
+            if (HttpContext.Session.GetString(_cartSessionCookie) != null)
             {
-                var cartId = HttpContext.Session.GetString(Common.CART_COOKIE_NAME);
-                var result = await webAPI.GetAllAsync<ShoppingCartModel>("https://localhost:44305/api/cart/content/" + cartId);
+                var cartId = HttpContext.Session.GetString(_cartSessionCookie);
+                var result = await webAPI.GetAllAsync<OrderItemsModel>("https://localhost:44305/api/carts/content/" + cartId);
                 return View(result);
             }
 
@@ -38,46 +35,50 @@ namespace Webshop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task AddToCart(int id)
+        public async Task<IActionResult> AddToCart(int id)
         {
             // Generate a unique id
             Guid guid = Guid.NewGuid();
 
             // Does session cookie exist? If not, bake one!
-            if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) == null)
-                HttpContext.Session.SetString(Common.CART_COOKIE_NAME, guid.ToString());
+            if (HttpContext.Session.GetString(_cartSessionCookie) == null)
+                HttpContext.Session.SetString(_cartSessionCookie, guid.ToString());
 
             ShoppingCart shoppingCart = new ShoppingCart()
             {
-                CartId = Guid.Parse(HttpContext.Session.GetString(Common.CART_COOKIE_NAME)),
+                CartId = Guid.Parse(HttpContext.Session.GetString(_cartSessionCookie)),
                 ProductId = id,
                 Amount = 1
             };
 
-            await webAPI.PostAsync<ShoppingCart>(shoppingCart, "https://localhost:44305/api/cart");
+            await webAPI.PostAsync<ShoppingCart>(shoppingCart, "https://localhost:44305/api/carts");
+            return Ok();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task RemoveFromCart(int id)
+        public async Task<IActionResult> RemoveFromCart(int id)
         {
             // Remove product from cart!!
-            if (HttpContext.Session.GetString(Common.CART_COOKIE_NAME) != null)
-                await webAPI.PostAsync<int>(id, "https://localhost:44305/api/cart/remove/product");
+            if (HttpContext.Session.GetString(_cartSessionCookie) != null)
+                await webAPI.PostAsync<int>(id, "https://localhost:44305/api/carts/remove/product");
+
+            return Ok();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task DeleteItemFromCart(int id)
+        public async Task<IActionResult> DeleteItemFromCart(int id)
         {
-            await webAPI.DeleteAsync("https://localhost:44305/api/cart/delete/" + id);
+            await webAPI.DeleteAsync("https://localhost:44305/api/carts/delete/" + id);
+            return Ok();
         }
 
         [HttpGet]
         [Produces("application/json")]
         public async Task<CartButtonInfoModel> GetCartContent()
         {
-            var result = await webAPI.GetOneAsync<CartButtonInfoModel>("https://localhost:44305/api/cart/" + HttpContext.Session.GetString(Common.CART_COOKIE_NAME));
+            var result = await webAPI.GetOneAsync<CartButtonInfoModel>("https://localhost:44305/api/carts/" + HttpContext.Session.GetString(_cartSessionCookie));
             return (result != null) ? result : new CartButtonInfoModel();
         }
     }

@@ -1,42 +1,49 @@
-﻿@*@using Microsoft.AspNetCore.Identity
-@inject SignInManager<User> SignInManager
-@inject UserManager<User> UserManager*@
-
-
+﻿
 <ul class="navbar-nav">
-    @if (User.Identity.IsAuthenticated)
-    {
-
+@if (User.Identity.IsAuthenticated)
+{
+    <li class="nav-item">
+        <div class="dropdown">
         @if (!User.IsInRole("Admin"))
         {
-            <li class="nav-item">
-                <div class="dropdown">
-                    <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="far fa-user"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" asp-controller="UserOrder" asp-action="Index"><i class="fas fa-list-ul" style="width: 30px"></i> Mina ordrar</a>
-                        <a class="dropdown-item" asp-controller="User" asp-action="EditUser"><i class="fas fa-user-edit" style="width: 30px"></i> Kontoinformation</a>
-                        <a class="dropdown-item" asp-controller="User" asp-action="UpdateLogin"><i class="fas fa-unlock-alt" style="width: 30px"></i> Ändra Lösenord</a>
-                        <a class="dropdown-item" asp-controller="User" asp-action="LogOut"><i class="fas fa-sign-out-alt" style="width: 30px"></i> Logga ut</a>
-                    </div>
-                </div>
-            </li>
+            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="far fa-user"></i> @User.Claims.Where(x => x.Type == "UserName").Select(x => x.Value).FirstOrDefault()
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" asp-controller="UserOrder" asp-action="Index"><i class="fas fa-list-ul"></i> Mina ordrar</a>
+                <a class="dropdown-item" asp-controller="User" asp-action="EditUser"><i class="fas fa-user-edit"></i> Kontoinformation</a>
+                <a class="dropdown-item" asp-controller="User" asp-action="UpdateLogin"><i class="fas fa-unlock-alt"></i> Ändra Lösenord</a>
+                <a class="dropdown-item" asp-controller="User" asp-action="LogOut"><i class="fas fa-sign-out-alt"></i> Logga ut</a>
+            </div>
         }
         else
         {
-            <li class="nav-item">
-                <a class="dropdown-item" asp-controller="User" asp-action="LogOut"><i class="fas fa-sign-out-alt"></i> (Admin) Logga ut</a>
-            </li>
+            <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                ADMIN <i class="far fa-user"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" asp-controller="Order" asp-action="OrderStatus"><i class="fas fa-list"></i> Orderhantering</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" asp-controller="Product" asp-action="CreateProduct"><i class="fas fa-edit"></i> Skapa Produkter</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" asp-controller="Category" asp-action="EditCategory"><i class="fas fa-random"></i> Hantera Kategorier</a>
+                <a class="dropdown-item" asp-controller="Brand" asp-action="Index"><i class="fas fa-random"></i> Hantera Tillverkare</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" asp-controller="News" asp-action="Index"><i class="far fa-file-alt"></i> Nyheter</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" asp-controller="User" asp-action="LogOut"><i class="fas fa-sign-out-alt"></i> Logga ut</a>
+            </div>
         }
-    }
-    else
-    {
-        <li class="nav-item">
-            <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="Register"><i class="far fa-plus-square"></i> Ny Kund</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="Login"><i class="far fa-user"></i> Logga In</a>
-        </li>
-    }
+        </div>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="Register"><i class="far fa-plus-square"></i> Ny Kund</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="Login"><i class="far fa-user"></i> Logga In</a>
+    </li>
+}
 </ul>

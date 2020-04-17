@@ -1,13 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Webshop.Context;
-using Webshop.Models;
-using Webshop.Interfaces;
 
 namespace Webshop.Services
 {
@@ -61,7 +53,7 @@ namespace Webshop.Services
             {
 
                 // Set name of file using productId.!
-                var fileName = idproductId + "_" + _file.FileName;
+                var fileName = idproductId + "_" + _file.FileName.Replace(" ", "");
 
                 // Set full path to new image
                 var fullFilePath = Path.Combine(_categoryFolderPath, fileName);
@@ -73,9 +65,9 @@ namespace Webshop.Services
                 }
 
                 // Was the file stored successfully? Return path to image
-                return ImageExist(fullFilePath) ? Path.Combine(_folderName, fileName) : null;
+                return ImageExist(fullFilePath) ? Path.Combine(_folderName, fileName).Replace('\\', '/') : null;
             }
-            
+
             return null;
         }
 
@@ -93,7 +85,7 @@ namespace Webshop.Services
                 {
                     // Move file and return the new location as string if successful!
                     File.Move(currentImageLocation, newImageLocation);
-                    return ImageExist(newImageLocation) ? Path.Combine(_folderName, _currentImage) : null;
+                    return ImageExist(newImageLocation) ? Path.Combine(_folderName, _currentImage).Replace('\\', '/') : null;
                 }
 
                 return null;
@@ -103,13 +95,17 @@ namespace Webshop.Services
         }
 
         public bool ImageExist(string pathTofile)
-            => File.Exists(Path.Combine(pathTofile));
+            => File.Exists(pathTofile);
 
-        public bool DeleteImage(string pathToImage)
+        public void DeleteImage(string pathToImage)
         {
-            var fullPath = Path.Combine(_categoryFolderPath, pathToImage);
-            File.Delete(fullPath);
-            return ImageExist(fullPath);
+            pathToImage = pathToImage.Replace('/', '\\');
+            var wwwPathToImage = Path.Combine(_categoryFolderPath, pathToImage);
+
+            if (string.IsNullOrEmpty(pathToImage) || !ImageExist(wwwPathToImage))
+                return;
+
+            File.Delete(wwwPathToImage);
         }
     }
 }

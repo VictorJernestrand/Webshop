@@ -1,108 +1,77 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Webshop.Context;
 using Webshop.Models;
+using Webshop.Services;
 
 namespace Webshop.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CategoryController : Controller
     {
-        private IWebHostEnvironment environment;
+        private readonly WebAPIHandler webAPI;
+        private readonly WebAPIToken webAPIToken;
 
-        private DatabaseCRUD databaseCRUD;
-        private readonly WebshopContext context;
-
-
-        public CategoryController(WebshopContext context, IWebHostEnvironment env)
+        public CategoryController(WebAPIHandler webAPI, WebAPIToken webAPIToken)
         {
-            this.context = context;
-            databaseCRUD = new DatabaseCRUD(context);
-            this.environment = env;
+            this.webAPI = webAPI;
+            this.webAPIToken = webAPIToken;
         }
 
-        public IActionResult Index()
-        {
-            var catlist = (from category in context.Categories
-                           select category).ToList();
-
-
-            return View(catlist);
-        }
-        //[HttpPost]
-        //public IActionResult Index(IFormCollection form)
-        //{
-        //    var selectedvalue = form["ddcategory"];
-
-        //    return RedirectToAction("Index", "Product", new { catid = selectedvalue });
-            
-        //}
-
-
-        [Authorize(Roles = "Admin")]
         [HttpGet]
-        public IActionResult EditCategory(int? id)
+        public async Task<IActionResult> EditCategory(int? id)
         {
-            EditCategoryModel editCategoryModel = new EditCategoryModel();
-            if (id != null)
-            {
-                var category = context.Categories.Where(x => x.Id == (int)id).FirstOrDefault();
-                editCategoryModel.Id = category.Id;
-                editCategoryModel.Name = category.Name;
-            }
+            Category editCategoryModel = new Category();
 
-            editCategoryModel.categoryCollection = context.Categories.ToList();
+            if (id != null)
+                editCategoryModel = await GetCategoryById((int)id);
+
+            editCategoryModel.categoryCollection = await GetAllCategories();
 
             return View(editCategoryModel);
         }
 
-
         [HttpPost]
-        public IActionResult EditCategory([Bind]EditCategoryModel model)
+        public async Task<IActionResult> EditCategory([Bind]Category model)
         {
-            model.categoryCollection = context.Categories.ToList();
+            model.categoryCollection = await GetAllCategories();
 
             if (ModelState.IsValid)
             {
                 // If category contains an Id, update it, else create new category!
                 if (model.Id > 0)
                 {
-                    var result = context.Categories.Find(model.Id);
+                    var result = model.categoryCollection.Where(x => x.Id == model.Id).FirstOrDefault();
                     result.Name = model.Name;
 
-                    context.Update<Category>(result);   // Update category
-                    model.Id = 0;
-                    
+                    var token = await webAPIToken.New();
+                    var response = await webAPI.UpdateAsync(result, ApiURL.CATEGORIES + result.Id, token);
+
+                    TempData["CategoryUpdate"] = "Kategorin har uppdaterats!";
                 }
                 else
                 {
                     // Does category already exist?
-                    if (context.Categories.Any(x => x.Name == model.Name))
+                    if (model.categoryCollection.Any(x => x.Name == model.Name))
                     {
-                        ModelState.AddModelError("Name", "Kategori finns redan registrerad!");
+                        ModelState.AddModelError("Name", "Kategorin finns redan registrerad!");
                         return View("EditCategory", model);
                     }
 
                     // Create new category
-                    var category = new Category()
-                    {
-                        Id = model.Id,
-                        Name = model.Name
-                    };
+                    var category = new Category() { Name = model.Name };
 
-                    // Add new brand
-                    context.Add<Category>(category);
+                    // Post to API
+                    var token = await webAPIToken.New();
+                    var response = await webAPI.PostAsync<Category>(category, ApiURL.CATEGORIES, token);
+
+                    TempData["NewCategory"] = "Ny kategori har skapats!";
                 }
 
-                // Save changes
-                context.SaveChanges();
                 return RedirectToAction("EditCategory", "Category", new { id = "" });
-               // return RedirectToAction("EditCategory", "Category");
+
             }
             else
             {
@@ -110,57 +79,41 @@ namespace Webshop.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpGet]
-        public IActionResult DeleteCategory(int id)
+        public async Task<IActionResult> DeleteCategory(int id)
         {
-            var category = context.Categories.Find(id);
+            var category = await GetCategoryById(id);
             return View(category);
         }
 
         [HttpPost]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = context.Categories.Find(id);
+            // Get category data to display for Admin
+            var category = await GetCategoryById(id);
 
-            context.Remove<Category>(category);
-            context.SaveChanges();
+            // Delete
+            var token = await webAPIToken.New();
+            var response = await webAPI.DeleteAsync(ApiURL.CATEGORIES + id, token);
 
-            return RedirectToAction("EditCategory", "Category");
+            // Display information
+            if (response)
+                TempData["DeletedCategory"] = "Kategori " + category.Name + " och alla produkter har readerats";
+            else
+                TempData["DeletedCategoryFail"] = "Kunde inte radera " + category.Name + ". Kontakta support om problemet kvarstår!";
+
+            return RedirectToAction("EditCategory", "Category", new { id = "" });
         }
-             // Create New Category
-        [Authorize(Roles = "Admin")]
-        public IActionResult GetCategoryAddPage()
-        {
-
-            return View();
-
-        }
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-
-        public async Task<ActionResult> GetCategoryAddPage([Bind]CreateCategoryViewModel createCategoryViewModel)
-        //public IActionResult GetCategoryAddPage([Bind]CreateCategoryViewModel createCategoryViewModel)
-        {
-            try
-            {
-                Category TheNewCataegory = new Category()
-                {
-                    Name = createCategoryViewModel.name
-                };
 
 
-                await databaseCRUD.InsertAsync<Category>(TheNewCataegory);
-                TempData["Succesmsgcategory"] = $"Great!! {TheNewCataegory.Name} skapad i databasen";
-                return RedirectToAction("AllProducts", "Product");
-            }
-            catch
-            {
-                TempData["Database error"] = "Sorry!! Något gick fel när du lägger Data till databasen";
-                return RedirectToAction("GetCategoryAddPage", "Category");
-            }
-        }
-                                            
 
+
+        // Get Brand by Id
+        private async Task<Category> GetCategoryById(int id)
+            => await webAPI.GetOneAsync<Category>(ApiURL.CATEGORIES + id);
+
+        // Get all brands
+        private async Task<List<Category>> GetAllCategories()
+            => await webAPI.GetAllAsync<Category>(ApiURL.CATEGORIES);
     }
 }

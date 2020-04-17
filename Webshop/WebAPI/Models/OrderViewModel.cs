@@ -9,9 +9,10 @@ namespace WebAPI.Models
 {
     public class OrderViewModel
     {
-      
+
         public int Id { get; set; }
-        //public int StatusId { get; set; }
+        
+        public int OrderStatusId { get; set; }
 
         [Required(ErrorMessage = "Välj Payment Method")]
         public int PaymentMethodId { get; set; }
@@ -19,6 +20,7 @@ namespace WebAPI.Models
         //public int UserId { get; set; }
         public User User { get; set; }
 
+        public string UserEmail { get; set; }
         public bool AddressComplete { get; set; }
 
         public DateTime OrderDate { get; set; } = DateTime.Now;

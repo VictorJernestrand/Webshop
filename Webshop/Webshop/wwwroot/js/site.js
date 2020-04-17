@@ -3,38 +3,11 @@
 
 // Write your JavaScript code.
 
-
-/*
-function GetCategories() {
-
-    var categoryElement = document.getElementById("CategoryDropdown");
-
-    // Get all categories from our WebAPI in JSON format
-    fetch('https://localhost:44305/api/categories')
-        .then((response) => {
-            return response.json();
-        })
-        .then((data) => {
-            for (const [key, value] of Object.entries(data)) {
-                var optionElement = document.createElement("a");
-                optionElement.setAttribute('href', 'Product?catid=' + value.id);
-                optionElement.setAttribute('class', 'dropdown-item');
-                optionElement.text = value.name;
-
-                categoryElement.appendChild(optionElement);
-            }
-        });
-}
-
-$(document).ready(function () {
-    GetCategories();
-})
-*/
-
-
 // Add items to cart using AJAX and fetch framework
 function AddCrapToCart(productId, name) {
-    console.log("Add to cart");
+
+    //console.log(productId + ", " + name);
+
     // Declare new FormData object
     let formData = new FormData();
 
@@ -48,18 +21,18 @@ function AddCrapToCart(productId, name) {
         body: formData
     })
 
-        // Handle response
-        .then((response) => {
+    // Handle response
+    .then((response) => {
 
-            // If response was ok, update cart and display a message with the product name telling it was added to cart.
-            if (response.ok) {
-                UpdateCartButton();
-                DisplayResponseMessage(name);
-                IncreaseSingleProductInCart(productId);
-            } else {
-                alert("Skit också, något gick fel. Försök igen eller kontakta vår sketna support!");
-            }
-        });
+        // If response was ok, update cart and display a message with the product name telling it was added to cart.
+        if (response.ok) {
+            UpdateCartButton();
+            DisplayResponseMessage(name);
+            IncreaseSingleProductInCart(productId);
+        } else {
+            alert("Skit också, något gick fel. Försök igen eller kontakta vår sketna support!");
+        }
+    });
 }
 
 
@@ -170,6 +143,12 @@ function UpdateBuyButton() {
 
 // Update amount for each product in the view (index.cshtml) for ShoppingCart
 function IncreaseSingleProductInCart(productId) {
+
+    var cartProduct = document.getElementById('cartProductId_' + productId);
+
+    if (cartProduct == null)
+        return;
+
     let total = parseInt(document.getElementById('cartProductId_' + productId).innerHTML) + 1;
 
     if (total > 0) {
@@ -227,3 +206,48 @@ function DisableBuyButton() {
 $(document).ready(function () {
     UpdateCartButton();
 })
+
+// Go back to previously page (Used in ProductDetail View)
+function goBack() {
+    window.history.back();
+}
+
+// Editor for product FullDescription
+ClassicEditor
+    .create(document.querySelector('#editor'))
+    .then(editor => {
+        console.log(editor);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+
+// Editor for product specification
+ClassicEditor
+    .create(document.querySelector('#editor2'))
+    .then(editor => {
+        console.log(editor);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+
+
+
+// When the user scrolls the page, execute stickyFunction
+window.onscroll = function () { stickyFunction() };
+
+// Get the navbar
+var navbar = document.getElementById("stickyNavbar");
+
+// Get the offset position of the navbar
+var sticky = navbar.offsetTop;
+
+// Add the sticky class to the navbar when you reach its scroll position. Remove "sticky" when you leave the scroll position
+function stickyFunction() {
+    if (window.pageYOffset >= sticky) {
+        navbar.classList.add("sticky")
+    } else {
+        navbar.classList.remove("sticky");
+    }
+}

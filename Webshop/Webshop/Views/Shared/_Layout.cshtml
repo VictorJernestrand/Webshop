@@ -8,105 +8,169 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/menu.css" />
+    <link rel="stylesheet" href="~/css/darkmode.css" />
+    <link rel="stylesheet" href="~/css/productdetails.css" />
+    <link rel="stylesheet" href="~/css/carousel.css" />
+    <link rel="stylesheet" href="~/css/footer.css" />
 
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/17.0.0/classic/ckeditor.js"></script>
 
 </head>
 <body>
-    <header>
+    <div id="wrapper">
+        <header>
 
-        <div class="container">
-            <div class="row" id="headertop">
+            <div class="container">
+                <div class="row" id="headertop">
 
-                <div class="col-md-4 d-flex justify-content-center align-items-center text-white">
-                    <a asp-area="" asp-controller="Home" asp-action="Index">
-                        <img src="~/Image/logo.png" id="logo" alt="RockStart logo" />
-                    </a>
-                </div>
-
-                <form method="get" asp-controller="Search" asp-action="Index" class="col d-flex justify-content-center align-items-center">
-                    <div class="input-group">
-                        <input type="text" autofocus name="searchtext" class="form-control" placeholder="fan letar du efter?" aria-label="fan letar du efter?" aria-describedby="button-addon2" id="searcher" />
-                        <div class="input-group-append">
-                            <button class="btn btn-secondary" type="submit" id="button-addon2"><i class="fas fa-search"></i></button>
-                        </div>
+                    <div class="col-md-4 d-flex justify-content-center align-items-center text-white">
+                        <a asp-area="" asp-controller="Home" asp-action="Index">
+                            <img src="~/Image/logo.png" id="logo" alt="RockStart logo" />
+                        </a>
                     </div>
-                </form>
 
-                <div class="col d-flex justify-content-center align-items-center text-white" id="cartcontent">
-                    <div id="shoppingcart">
-
-                        <div class="d-inline" id="cartitems">
-                            <div>Varor: <span id="cartTotalItems"></span></div>
-                            <div id="cartTotalCost"></div>
-                        </div>
-
-                        <div class="d-inline; d-flex align-items-center">
-                            <div>
-                                <a asp-action="Index" asp-controller="ShoppingCart" class="btn btn-success">Vagnen <i class="fas fa-cart-arrow-down"></i></a>
+                    <form method="get" asp-controller="Search" asp-action="Index" class="col d-flex justify-content-center align-items-center">
+                        <div class="input-group">
+                            <input type="text" autofocus name="searchtext" class="form-control" placeholder="sök här" aria-label="fan letar du efter?" aria-describedby="button-addon2" id="searcher" />
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary" type="submit" id="button-addon2"><i class="fas fa-search"></i></button>
                             </div>
                         </div>
+                    </form>
 
+                    <div class="col d-flex justify-content-center align-items-center text-white" id="cartcontent">
+                        <div id="shoppingcart">
+
+                            <div class="d-inline" id="cartitems">
+                                <div>Varor: <span id="cartTotalItems"></span></div>
+                                <div id="cartTotalCost"></div>
+                            </div>
+
+                            <div>
+                                <a asp-action="Index" asp-controller="ShoppingCart" class="btn btn-success" id="cartbutton">
+                                    <div class="row">
+                                        <div class="col d-none d-md-block p-0 pl-4">Vagnen</div>
+                                        <div class="col p-0 pl-4 pr-4 pl-md-1"><i class="fas fa-cart-arrow-down"></i></div>
+                                    </div>
+                                </a>
+                            </div>
+
+                        </div>
                     </div>
-                </div>
 
+                </div>
             </div>
+            <div id="stickyNavbar" style="z-index: 9999">
+                <nav class="navbar navbar-expand-md navbar-toggleable-sm navbar-light border-bottom border-top border-dark box-shadow mb-3">
+                    <div class="container">
+
+                        <span></span>
+
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <i class="fas fa-hamburger"></i>
+                        </button>
+
+                        <div class="navbar-collapse collapse" id="navbarSupportedContent">
+
+                            <ul class="navbar-nav flex-grow-1">
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-warehouse"></i> Hem</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    @await Component.InvokeAsync("CategoryMenuList")
+                                </li>
+                                <li>
+                                    <a class="nav-link text-white" asp-area="" asp-controller="QandA" asp-action="Index"><i class="far fa-question-circle"></i> Fråga Oss</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Contact" asp-action="Index"><i class="far fa-comments"></i> Kontakt</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="About" asp-action="Index"><i class="far fa-question-circle"></i> Om oss</a>
+                                </li>
+                            </ul>
+                            <partial name="_LoginPartial" />
+
+                        </div>
+                    </div>
+                </nav>
+            </div>
+
+        </header>
+
+        <div class="container">
+
+            <main>
+                @RenderBody()
+            </main>
+
         </div>
-
-        <nav class="navbar navbar-expand-md navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
-            <div class="container">
-
-                <span></span>
-
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="fas fa-hamburger"></i>
-                </button>
-
-                <div class="navbar-collapse collapse">
-
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-warehouse"></i> Hem</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            @await Component.InvokeAsync("CategoryMenuList")
-                        </li>
-                        <li>
-                            <a class="nav-link text-white" asp-area="" asp-controller="QandA" asp-action="Index"><i class="far fa-question-circle"></i> Fråga Oss</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Contact" asp-action="Index"><i class="far fa-comments"></i> Kontakt</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="About" asp-action="Index"><i class="far fa-question-circle"></i> Om oss</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
-
-                </div>
-            </div>
-        </nav>
-
-    </header>
-    <div class="container">
-
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
     </div>
 
+        <footer class="border-top border-dark col-lg-12 col-md-auto col-sm-auto">
 
+            <div class="container">
 
-    <footer class="container border-top footer text-dark col-lg-12 col-md-auto col-sm-auto">
+                <div class="row">
+                    <div class="col-sm-12 col-md-3">
+                        <h6>RockStart.se</h6>
+                        <p>
+                            Liljeholmens största återförsäljare av instrument.
+                        </p>
 
-        &copy;rockstart.se @DateTime.Now.Year | <a asp-area="" asp-controller="Contact" asp-action="Index">Kontakta Oss </a>
-        <a>| Adress: Liljeholmskajen 2 | 123 21 Stockholm | Tel: 08-12 34 52 | Email: info@rockstart.se</a>
+                        <h6>Adress</h6>
+                        <ul>
+                            <li>Liljeholmskajen 2</li>
+                            <li>123 21 Stockholm</li>
+                        </ul>
 
-    </footer>
+                        <h6>Kontakt</h6>
+                        <ul>
+                            <li><i class="fas fa-phone" style="padding-right: 6px"></i> 08-12 34 52</li>
+                            <li><i class="fas fa-envelope" style="padding-right: 6px"></i> info@rockstart.se</li>
+                        </ul>
+
+                    </div>
+
+                    <div class="col-xs-12 col-md-3">
+                        <h6>Snabblänkar</h6>
+                        <ul>
+                            <li><a asp-action="Index" asp-controller="About">Om oss</a></li>
+                            <li><a asp-action="Index" asp-controller="About">Karriär</a></li>
+                            <li><a asp-action="Index" asp-controller="QandA">Frågor &amp; Svar</a></li>
+                            <li><a asp-action="Index" asp-controller="Contact">Kontakt</a></li>
+                            <li><a asp-action="Index" asp-controller="News">Nyheter</a></li>
+                            <li><a asp-action="Index" asp-controller="CookiePolicy">Cookies</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-xs-12 col-md-3">
+                        <h6>Kund</h6>
+                        <ul>
+                            <li><a asp-action="Login" asp-controller="User">Logga In</a></li>
+                            <li><a asp-action="Register" asp-controller="User">Registrera</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-xs-12 col-md-3 mb-3">
+                        <h6>Följ Oss</h6>
+                        <ul class="social-icons">
+                            <li><a class="facebook" href="#"><i class="fa fa-facebook"></i></a></li>
+                            <li><a class="twitter" href="#"><i class="fa fa-twitter"></i></a></li>
+                            <li><a class="linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col">
+                        <hr />
+                        &copy; rockstart @DateTime.Now.Year
+                    </div>
+
+                </div>
+            </div>
+
+        </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -116,8 +180,5 @@
 
     @RenderSection("Scripts", required: false)
 </body>
-
-
-
 </html>
 

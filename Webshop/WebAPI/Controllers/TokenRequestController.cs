@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -39,27 +37,24 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         [Route("new")]
         [HttpPost]
-        [Produces("text/plain")]
-        public async Task<IActionResult> RenewToken(APIPayload jwtToken)
+        //[Produces("text/plain")]
+        public async Task<IActionResult> RenewToken(APIPayload payload)
         {
             try
             {
+                if (string.IsNullOrEmpty(payload.Token))
+                    return BadRequest();
+
                 // Validate token...
-                var validToken = ValidateToken(jwtToken.Token);
+                var validToken = ValidateToken(payload.Token);
                 if (validToken.Identity.IsAuthenticated)
                 {
-                    var refreshToken = Guid.Parse(validToken.FindFirst("RefreshToken")?.Value);
+                    //var refreshToken = Guid.Parse(validToken.FindFirst("RefreshToken")?.Value);
                     var email = validToken.FindFirst("UserEmail")?.Value;
 
                     // Get user from database based on email and refresh token
-                    var user = await _context.Users.Where(x => x.Email == email && x.RefreshToken == refreshToken).FirstOrDefaultAsync();
-
-                    // User has a role?
-                    bool isAdmin = await userManager.IsInRoleAsync(user, "Admin");
-
-                    // Create token and store new refreshtoken in database
-                    TokenCreatorService tokenService = new TokenCreatorService(_context, _config);
-                    var token = tokenService.CreateToken(user, isAdmin);
+                    var user = await _context.Users.Where(x => x.Email == email && x.RefreshToken == Guid.Parse(payload.RefreshToken)).FirstOrDefaultAsync();
+                    var token = await BakeNewToken(user);
 
                     return Ok(token);
                 }
@@ -67,25 +62,30 @@ namespace WebAPI.Controllers
                 throw new SecurityTokenInvalidSignatureException();
 
             }
-            catch (SecurityTokenExpiredException ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex);
             }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex);
-            }
-            catch (SecurityTokenInvalidSignatureException ex)
-            {
-                return BadRequest(ex);
-            }
-            catch (SecurityTokenEncryptionKeyNotFoundException ex)
-            {
-                return BadRequest(ex);
-            }
-
         }
 
+
+        [AllowAnonymous]
+        [Route("refresh")]
+        [HttpPost]
+        public async Task<IActionResult> RefreshToken(APIPayload payload)
+        {
+            // User exist?
+            var user = _context.Users.Where(x => x.Email == payload.UserEmail && x.RefreshToken == Guid.Parse(payload.RefreshToken)).FirstOrDefault();
+
+            if (user != null)
+            {
+                // Create token and store new refreshtoken in database
+                var newTokenAndRefreshToken = await BakeNewToken(user);
+                return Ok(newTokenAndRefreshToken);
+            }
+            else
+                return Unauthorized();
+        }
 
         private ClaimsPrincipal ValidateToken(string token)
         {
@@ -105,5 +105,17 @@ namespace WebAPI.Controllers
             return result;
         }
 
+        private async Task<APIPayload> BakeNewToken(User user)
+        {
+            bool isAdmin = await IsUserAdminAsync(user);
+
+            TokenCreatorService tokenService = new TokenCreatorService(_context, _config);
+            var newPayload = tokenService.CreateToken(user, isAdmin);
+
+            return newPayload;
+        }
+
+        private async Task<bool> IsUserAdminAsync(User user)
+            => await userManager.IsInRoleAsync(user, "Admin");
     }
 }

@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Webshop.Context;
+using WebAPI.Domain;
 using Webshop.Models;
 using Webshop.Services;
 
@@ -19,20 +19,17 @@ namespace Webshop.Controllers
 {
     public class UserController : Controller
     {
-        public RegisterUserModel RegisterUserModel { get; set; }
-        public LoginModel LoginModel { get; set; }
-        public UpdateUserPasswordModel UpdateUserPassword { get; set; }
-        public EditUserInfoModel EditUserInfoModel { get; set; }
-
         private WebAPIHandler webAPI;
-        private readonly IConfiguration config;
         private WebAPIToken webAPIToken;
+        private readonly IConfiguration config;
+        private readonly IHttpContextAccessor accessor;
 
-        public UserController(WebAPIToken webAPIToken, WebAPIHandler webAPIHandler, IConfiguration config)
+        public UserController(WebAPIToken webAPIToken, WebAPIHandler webAPIHandler, IConfiguration config, IHttpContextAccessor accessor)
         {
             // Instantiate a new WebAPIHandler object
             this.webAPI = webAPIHandler;
             this.config = config;
+            this.accessor = accessor;
             this.webAPIToken = webAPIToken;
         }
 
@@ -45,7 +42,10 @@ namespace Webshop.Controllers
         // Register new customer
         public ActionResult Register()
         {
-            return View(RegisterUserModel);
+            if (User.Identity.IsAuthenticated)
+                return RedirectToAction("index", "Home");
+
+            return View();
         }
 
         // Login view
@@ -54,7 +54,7 @@ namespace Webshop.Controllers
             if (User.Identity.IsAuthenticated)
                 return RedirectToAction("index", "Home");
 
-            return View(LoginModel);
+            return View();
         }
 
         // View Orders
@@ -69,7 +69,7 @@ namespace Webshop.Controllers
         [Authorize]
         public ActionResult UpdateLogin()
         {
-            return View(UpdateUserPassword);
+            return View();
         }
 
         [Authorize]
@@ -78,19 +78,20 @@ namespace Webshop.Controllers
         {
             var email = User.Identity.Name;
 
-            var user = await webAPI.GetOneAsync<User>("https://localhost:44305/api/User/" + email);
-            EditUserInfoModel = new EditUserInfoModel()
+            var token = await webAPIToken.New();
+            var user = await webAPI.GetOneAsync<User>(ApiURL.USERS + email, token);
+            var editUserInfoModel = new EditUserInfoModel()
             {
-                Email           = user.Email,
-                FirstName       = user.FirstName,
-                LastName        = user.LastName,
-                PhoneNumber     = user.PhoneNumber,
-                StreetAddress   = user.StreetAddress,
-                ZipCode         = user.ZipCode,
-                City            = user.City
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                StreetAddress = user.StreetAddress,
+                ZipCode = user.ZipCode,
+                City = user.City
             };
 
-            return View(EditUserInfoModel);
+            return View(editUserInfoModel);
         }
 
         // POST: User/Create
@@ -102,11 +103,11 @@ namespace Webshop.Controllers
 
             if (ModelState.IsValid)
             {
-                var apiResult = await webAPI.PostAsync<LoginModel>(model, "https://localhost:44305/api/user/login");
+                var apiResult = await webAPI.PostAsync(model, ApiURL.USERS_LOGIN);
 
                 if (apiResult.Status.IsSuccessStatusCode)
                 {
-                    await SetAuthCookie(apiResult.ResponseContent, model.RememberUser);
+                    await SetAuthCookie(apiResult.APIPayload, model.RememberUser);
                     return RedirectToAction("Index", "Home");
                 }
             }
@@ -126,7 +127,7 @@ namespace Webshop.Controllers
                 // Was the registration form filled out correctly?
                 if (ModelState.IsValid)
                 {
-                    var apiResult = await webAPI.PostAsync<RegisterUserModel>(model, "https://localhost:44305/api/user/register");
+                    var apiResult = await webAPI.PostAsync<RegisterUserModel>(model, ApiURL.USERS_REGISTER);
 
                     if (!apiResult.Status.IsSuccessStatusCode && apiResult.ResponseContent.Length > 0)
                     {
@@ -159,14 +160,16 @@ namespace Webshop.Controllers
         {
             if (ModelState.IsValid)
             {
-                var apiResult = await webAPI.UpdateAsync<UpdateUserPasswordModel>(model, "https://localhost:44305/api/user/loginupdate/" + User.Identity.Name);
+                var apiResult = await webAPI.UpdateAsync<UpdateUserPasswordModel>(model, ApiURL.USERS_LOGIN_UPDATE + User.Identity.Name);
 
                 if (apiResult.Status.IsSuccessStatusCode)
                 {
-                    await SetAuthCookie(apiResult.ResponseContent);
+                    await SetAuthCookie(apiResult.APIPayload);
                     TempData["PasswordSuccess"] = "Lösenordet har uppdaterats!";
                     return RedirectToAction(nameof(UpdateLogin));
                 }
+                else
+                    ModelState.AddModelError("CurrentPassword", "Felaktigt lösenord");
             }
 
             return View(model);
@@ -191,18 +194,22 @@ namespace Webshop.Controllers
                     City = model.City
                 };
 
-                var apiResult = await webAPI.UpdateAsync<User>(user, "https://localhost:44305/api/user/infoupdate/" + User.Identity.Name);
+                var apiResult = await webAPI.UpdateAsync<User>(user, ApiURL.USERS_INFO_UPDATE + User.Identity.Name);
 
                 if (apiResult.Status.IsSuccessStatusCode)
                 {
                     // If email was updated, update token cookie and authcookie with new criterias!
                     if (!User.Identity.Name.Equals(model.Email))
                     {
-                        await SetAuthCookie(apiResult.ResponseContent);
+                        await SetAuthCookie(apiResult.APIPayload);
                     }
-
+                    // return Redirect(returnUrl);
                     TempData["UpdateSuccess"] = "Din information har uppdaterats!";
-                    return RedirectToAction(nameof(EditUser));
+
+                    if (accessor.HttpContext.Request.Query["order"] != "order")
+                        return RedirectToAction(nameof(EditUser));
+                    else
+                        return RedirectToAction("Index", "Order");
                 }
                 else
                 {
@@ -220,7 +227,10 @@ namespace Webshop.Controllers
         public async Task<IActionResult> LogOut()
         {
             // Remove shoppingcart session cookie!
-            HttpContext.Session.Remove(Common.CART_COOKIE_NAME);
+            HttpContext.Session.Remove(config["CartSessionCookie:Name"]);
+
+            // Remove shoppingcart session cookie!
+            HttpContext.Session.Remove(config["JwtSessionToken:Name"]);
 
             // Remove TokenCookie
             Response.Cookies.Delete(config["RefreshToken:Name"]);
@@ -231,21 +241,32 @@ namespace Webshop.Controllers
         }
 
 
-        public async Task SetAuthCookie(string tokenString, bool persistent = true)
+        // TODO: Add User object to PayLoad class
+
+        public async Task SetAuthCookie(APIPayload payload, bool persistent = true)
         {
-            // Create local token cookie
-            webAPIToken.TokenRefreshCookie = tokenString;
+            // Bake Token Refresh cookie
+            webAPIToken.TokenRefreshCookie = payload.RefreshToken;
+
+            // Bake Token-Cookie
+            webAPIToken.SessionTokenRefresh = payload.Token;
 
             // Extract payload from token cookie
             var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(tokenString);
+            var token = handler.ReadJwtToken(payload.Token);
 
             var userEmail = token.Claims.Where(x => x.Type == "UserEmail")
                 .Select(x => x.Value)
                 .FirstOrDefault()
                 .ToString();
 
-            var userName = token.Claims.Where(x => x.Type == "Name")
+            var userId = token.Claims.Where(x => x.Type == "UserId")
+                .Select(x => x.Value)
+                .FirstOrDefault()
+                .ToString();
+
+
+            var userName = token.Claims.Where(x => x.Type == "UserName")
                 .Select(x => x.Value)
                 .FirstOrDefault()
                 .ToString();
@@ -259,20 +280,23 @@ namespace Webshop.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, userEmail),
+                new Claim("UserId", userId),
                 new Claim(ClaimTypes.Name, userEmail),
-                new Claim("FullName", userName),
+                new Claim("UserName", userName),
                 new Claim(ClaimTypes.Role, userRole)
             };
 
-            // Does user want to be remembered?
+            // Do user want to be remembered?
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var authProperties = new AuthenticationProperties
             {
-                IsPersistent = persistent
+                IsPersistent = persistent,
+                ExpiresUtc = DateTime.UtcNow.AddMonths(int.Parse(config["AuthCookie:Expire"]))
             };
 
-            // Bake cookie!
+            // Bake authentication cookie!
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
         }
 
     }

@@ -1,48 +1,45 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Webshop.Context;
 using Webshop.Models;
+using Webshop.Services;
 
 namespace Webshop.Controllers
 {
     public class SearchController : Controller
     {
-        private readonly WebshopContext context;
+        private readonly WebAPIHandler webAPI;
+        private readonly WebAPIToken webAPIToken;
         public List<AllProductsViewModel> allproducts;
 
-        public SearchController(WebshopContext context)
+        public SearchController(WebAPIHandler webAPI, WebAPIToken webAPIToken)
         {
-            this.context = context;
-         
+            this.webAPI = webAPI;
+            this.webAPIToken = webAPIToken;
         }
-        public IActionResult Index(string searchtext)
+
+        public async Task<ActionResult<IEnumerable<AllProductsViewModel>>> Index(string searchtext)
         {
+            List<AllProductsViewModel> products = new List<AllProductsViewModel>();
+
+            // Anything to search for
             if (searchtext != null)
             {
-                searchtext = searchtext.ToLower();
+                // Admin search
+                if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    var token = await webAPIToken.New();
+                    products = await webAPI.GetAllAsync<AllProductsViewModel>(ApiURL.SEARCH_ADMIN + searchtext.ToLower(), token);
+                }
+                else
+                {
+                    products = await webAPI.GetAllAsync<AllProductsViewModel>(ApiURL.SEARCH + searchtext.ToLower());
+                }
 
-                var searchResult = context.Products.Include(x => x.Category)
-                    .Include(x => x.Brand)
-                    .Where(x => x.Name.ToLower().Contains(searchtext) ||
-                        x.Brand.Name.ToLower().Contains(searchtext) ||
-                        x.Category.Name.ToLower().Contains(searchtext) ||
-                        x.Description.ToLower().Contains(searchtext) ||
-                        x.FullDescription.ToLower().Contains(searchtext) ||
-                        x.Specification.ToLower().Contains(searchtext)
-                        )
-                    .Select(x => new AllProductsViewModel(x))
-                    .ToList();
-
-                allproducts = searchResult;
-                return View(allproducts);
-
+                return View(products);
             }
-            return RedirectToAction("AllProducts", "Product");
 
+            return RedirectToAction("AllProducts", "Product");
         }
     }
 }

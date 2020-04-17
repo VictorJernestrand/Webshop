@@ -20,6 +20,7 @@ using Microsoft.IdentityModel.Tokens;
 using WebAPI.Context;
 using WebAPI.Models;
 using WebAPI.Models.Data;
+using WebAPI.Services;
 
 namespace WebAPI
 {
@@ -49,6 +50,10 @@ namespace WebAPI
                 options.User.RequireUniqueEmail = true;
             }).AddRoles<AppRole>()
               .AddEntityFrameworkStores<WebAPIContext>();
+
+            // Add to independancy injection
+            services.AddTransient<CustomerOrderService>();
+            services.AddTransient<MailService>();
 
             services.AddCors(options =>
             {

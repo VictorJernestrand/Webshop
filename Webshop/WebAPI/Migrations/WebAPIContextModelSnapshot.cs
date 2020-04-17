@@ -213,7 +213,7 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Drum set"
+                            Name = "Trummor"
                         },
                         new
                         {
@@ -233,7 +233,68 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 5,
-                            Name = "Guitar"
+                            Name = "Gitarr"
+                        });
+                });
+
+            modelBuilder.Entity("WebAPI.Models.Data.News", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("NewsDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("News");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            NewsDate = new DateTime(2020, 4, 8, 3, 52, 3, 240, DateTimeKind.Local).AddTicks(4938),
+                            Text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis eu arcu at rhoncus. Cras ut felis dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean vitae aliquet dui. Suspendisse fermentum risus ut arcu condimentum, nec fringilla turpis mattis.",
+                            Title = "Butiken växer"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            NewsDate = new DateTime(2020, 4, 10, 3, 52, 3, 243, DateTimeKind.Local).AddTicks(1751),
+                            Text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis eu arcu at rhoncus. Cras ut felis dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean vitae aliquet dui. Suspendisse fermentum risus ut arcu condimentum, nec fringilla turpis mattis.",
+                            Title = "Nya Produkter"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            NewsDate = new DateTime(2020, 4, 11, 3, 52, 3, 243, DateTimeKind.Local).AddTicks(1873),
+                            Text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis eu arcu at rhoncus. Cras ut felis dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean vitae aliquet dui. Suspendisse fermentum risus ut arcu condimentum, nec fringilla turpis mattis.",
+                            Title = "Pressade Priser"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            NewsDate = new DateTime(2020, 4, 13, 3, 52, 3, 243, DateTimeKind.Local).AddTicks(1899),
+                            Text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis eu arcu at rhoncus. Cras ut felis dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean vitae aliquet dui. Suspendisse fermentum risus ut arcu condimentum, nec fringilla turpis mattis.",
+                            Title = "Som en käftsmäll"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            NewsDate = new DateTime(2020, 4, 15, 3, 52, 3, 243, DateTimeKind.Local).AddTicks(1916),
+                            Text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis eu arcu at rhoncus. Cras ut felis dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean vitae aliquet dui. Suspendisse fermentum risus ut arcu condimentum, nec fringilla turpis mattis.",
+                            Title = "Vi provar RG2750"
                         });
                 });
 
@@ -287,12 +348,22 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Swish"
+                            Name = "Kort"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Konto"
+                            Name = "Swish"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Faktura"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Toapapper"
                         });
                 });
 
@@ -302,6 +373,9 @@ namespace WebAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("ActiveProduct")
+                        .HasColumnType("bit");
 
                     b.Property<int>("BrandId")
                         .HasColumnType("int");
@@ -348,144 +422,156 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 1,
+                            ActiveProduct = false,
                             BrandId = 2,
                             CategoryId = 5,
                             Description = "Black and white",
                             Discount = 0f,
                             Name = "Stratocaster",
-                            Photo = "Guitar\\guitar1_original.jpg",
+                            Photo = "Guitar/guitar1_original.jpg",
                             Price = 4000m,
                             Quantity = 4
                         },
                         new
                         {
                             Id = 2,
+                            ActiveProduct = false,
                             BrandId = 2,
                             CategoryId = 3,
                             Description = "Smooth",
                             Discount = 0f,
                             Name = "Precision",
-                            Photo = "Piano\\piano1_original.jpg",
+                            Photo = "Piano/piano1_original.jpg",
                             Price = 3000m,
                             Quantity = 5
                         },
                         new
                         {
                             Id = 3,
+                            ActiveProduct = false,
                             BrandId = 2,
                             CategoryId = 3,
                             Description = "Blue bas",
                             Discount = 0f,
                             Name = "Vintera",
-                            Photo = "Piano\\piano2_original.jpg",
+                            Photo = "Piano/piano2_original.jpg",
                             Price = 4000m,
                             Quantity = 2
                         },
                         new
                         {
                             Id = 4,
+                            ActiveProduct = false,
                             BrandId = 1,
                             CategoryId = 3,
                             Description = "Advanced",
                             Discount = 0f,
                             Name = "Epiphone",
-                            Photo = "Piano\\piano3_original.jpg",
+                            Photo = "Piano/piano3_original.jpg",
                             Price = 4000m,
                             Quantity = 2
                         },
                         new
                         {
                             Id = 5,
+                            ActiveProduct = false,
                             BrandId = 5,
                             CategoryId = 2,
                             Description = "For kids",
                             Discount = 0f,
                             Name = "Youngster",
-                            Photo = "Bas\\bas1_original.jpg",
+                            Photo = "Bas/bas1_original.jpg",
                             Price = 1100m,
                             Quantity = 8
                         },
                         new
                         {
                             Id = 6,
+                            ActiveProduct = false,
                             BrandId = 5,
                             CategoryId = 2,
                             Description = "For good players",
                             Discount = 0f,
                             Name = "MPS-150X",
-                            Photo = "Bas\\bas2_original.jpg",
+                            Photo = "Bas/bas2_original.jpg",
                             Price = 3200m,
                             Quantity = 4
                         },
                         new
                         {
                             Id = 7,
+                            ActiveProduct = false,
                             BrandId = 3,
                             CategoryId = 1,
                             Description = "Nice set of drums",
                             Discount = 0f,
                             Name = "DTX­432K",
-                            Photo = "Drum set\\drum1_original.jpg",
+                            Photo = "Drum set/drum1_original.jpg",
                             Price = 5600m,
                             Quantity = 2
                         },
                         new
                         {
                             Id = 8,
+                            ActiveProduct = false,
                             BrandId = 3,
                             CategoryId = 4,
                             Description = "Black and black",
                             Discount = 0f,
                             Name = "P116M",
-                            Photo = "Keyboard\\keyboard1_original.jpg",
+                            Photo = "Keyboard/keyboard1_original.jpg",
                             Price = 8000m,
                             Quantity = 1
                         },
                         new
                         {
                             Id = 9,
+                            ActiveProduct = false,
                             BrandId = 3,
                             CategoryId = 4,
                             Description = "Old model",
                             Discount = 0f,
                             Name = "Calvinova",
-                            Photo = "Keyboard\\keyboard2_original.jpg",
+                            Photo = "Keyboard/keyboard2_original.jpg",
                             Price = 8900m,
                             Quantity = 1
                         },
                         new
                         {
                             Id = 10,
+                            ActiveProduct = false,
                             BrandId = 4,
                             CategoryId = 3,
                             Description = "Digitalpiano",
                             Discount = 0f,
                             Name = "B2SP",
-                            Photo = "Piano\\piano4_original.jpg",
+                            Photo = "Piano/piano4_original.jpg",
                             Price = 2300m,
                             Quantity = 6
                         },
                         new
                         {
                             Id = 11,
+                            ActiveProduct = false,
                             BrandId = 4,
                             CategoryId = 5,
                             Description = "Traveling model",
                             Discount = 0f,
                             Name = "SP-280",
-                            Photo = "Guitar\\guitar2_original.jpg",
+                            Photo = "Guitar/guitar2_original.jpg",
                             Price = 5300m,
                             Quantity = 3
                         },
                         new
                         {
                             Id = 12,
+                            ActiveProduct = false,
                             BrandId = 3,
                             CategoryId = 4,
                             Description = "Our best keyboard",
                             Discount = 0f,
                             Name = "P-45",
-                            Photo = "Keyboard\\keyboard3_original.jpg",
+                            Photo = "Keyboard/keyboard3_original.jpg",
                             Price = 4900m,
                             Quantity = 3
                         });
@@ -522,6 +608,39 @@ namespace WebAPI.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductOrders");
+                });
+
+            modelBuilder.Entity("WebAPI.Models.Data.Rating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Ratings");
                 });
 
             modelBuilder.Entity("WebAPI.Models.Data.ShoppingCart", b =>
@@ -575,12 +694,12 @@ namespace WebAPI.Migrations
                         new
                         {
                             Id = 2,
-                            Name = "Förpackning"
+                            Name = "Packas"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Skickad"
+                            Name = "Skickade"
                         },
                         new
                         {
@@ -780,6 +899,21 @@ namespace WebAPI.Migrations
                     b.HasOne("WebAPI.Models.Data.Product", "Product")
                         .WithMany("ProductOrders")
                         .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WebAPI.Models.Data.Rating", b =>
+                {
+                    b.HasOne("WebAPI.Models.Data.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebAPI.Models.Data.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

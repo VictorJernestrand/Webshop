@@ -1,4 +1,4 @@
-﻿@model Webshop.Models.OrderViewModel
+﻿@model OrderAndPaymentMethods
 
 @{
     ViewData["Title"] = "Index";
@@ -35,100 +35,164 @@
     </div>
 }
 
-<h1>Kassan</h1>
+@if (TempData["UpdateSuccess"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["UpdateSuccess"]
+    </div>
+}
 
-<table class="table">
-    <thead class="thead-dark">
+<h3 class="mt-3 mb-3">Kassan</h3>
+<hr />
+
+<table class="table table-responsive-sm table-borderless text-white" id="checkout">
+    <thead>
         <tr>
             <th scope="col">Produkt</th>
             <th scope="col"></th>
             <th scope="col"></th>
-            <th scope="col">Att Betala</th>
+            <th scope="col">Pris</th>
             <th scope="col">Status</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var product in Model.Products)
+        @foreach (var product in Model.OrderViewModel.Products)
         {
             <tr>
-                <td><img src="@Url.Content("~/Image/" + @product.Photo)" style="height: 60px; width: auto" /></td>
+                <td><img src="@Url.Content("~/Image/" + @product.Photo)" class="product-thumbnail img_fluid rounded" /></td>
                 <td><a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">@product.ProductName</a></td>
                 <td>
                     @product.Amount x @product.Price.ToString("C0")
                     @if (product.Discount > 0)
                     {
-                        <p style="font-size: small; color: green">-@((int)(product.Discount * 100))% Rabatt!</p>
+                        <br /><span class="price_color small">-@((int)(product.Discount * 100))% Rabatt!</span>
                     }
                 </td>
                 <td>
                     @if (product.Discount == 0)
                     {
-                        <p style="font-weight: bold">@product.TotalProductCost.ToString("C0")</p>
+                        <span class="price_color font-weight-bold">@product.TotalProductCost.ToString("C0")</span>
                     }
                     else
                     {
-                        <p style="font-weight: bold">@product.TotalProductCostDiscount.ToString("C0")</p>
+                        <span class="price_color font-weight-bold">@product.TotalProductCostDiscount.ToString("C0")</span>
                     }
                 </td>
                 <td>
                     @if (product.QuantityInStock - product.Amount < 0)
                     {
                         <span><i class="fas fa-exclamation-triangle" style="color: orange"></i></span>
-                        <span style="font-size: small">I lager: @product.QuantityInStock</span>
+                        <span class="small">I lager: @product.QuantityInStock</span>
                     }
                     else
                     {
-                        <span><i class="fas fa-check" style="color: green"></i></span>
+                        <span><i class="fas fa-check price_color"></i></span>
                     }
                 </td>
             </tr>
         }
 </table>
-<div class="row">
+
+<div class="mt-3 mb-3">
+    <a class="btn btn-dark" asp-action="Index" asp-controller="ShoppingCart">&laquo; Tillbaka till kundkorgen</a>
+</div>
+
+<div class="row" style="display: inline">
     <div class="col ">
-        <div class="text-success float-right" style="margin: 4px, 20px, 4px, 20px; font-size: 2em">@Model.OrderTotal.ToString("C0")</div>
+        <div class="float-right price_color" style="font-size: 1.5em">@Model.OrderViewModel.OrderTotal.ToString("C0")</div>
     </div>
 </div>
 
+<h3 class="mt-3 mb-3">Adress och Betalning &raquo;</h3>
+<hr />
 
-@if (Model.AddressComplete)
+@if (Model.OrderViewModel.AddressComplete)
 {
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="Index" method="post" asp-controller="Order">
+    <div class="row text-dark">
+
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <div class="card">
+                <div class="card-body" style="color:black">
+                    <h5 class="card-title">Din Fraktadress</h5>
+                    <p>@Model.User.FirstName @Model.User.LastName</p>
+                    <p>@Model.User.StreetAddress</p>
+                    <p>@Model.User.ZipCode, @Model.User.City</p>
+                    Stämmer inte adressen? <a asp-action="EditUser" asp-controller="User" asp-route-order="order">ändra här</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-6 col-lg-4 mt-2 mt-md-0 mt-lg-0 mt-xl-0 pt-0">
+            <form asp-action="Index" method="post" asp-controller="Order" id="PayUsNow" style="margin: 0px; padding: 0px">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <div class="form-group">
-                    <label asp-for="PaymentMethodId" class="control-label">Betalning Method</label>
+                    <label asp-for="OrderViewModel.PaymentMethodId" class="control-label text-white">Betalsätt</label>
 
-                    <select asp-for="PaymentMethodId" class="form-control">
+                    <select asp-for="OrderViewModel.PaymentMethodId" class="form-control" id="paymentMethodDropdown">
+
                         <option>Välj</option>
-                        @foreach (var item in Model.paymentMethodlist)
+                        @foreach (var item in Model.OrderViewModel.paymentMethodlist)
                         {
                             <option value="@item.Id">@item.Name</option>
                         }
                     </select>
-                    <span asp-validation-for="PaymentMethodId" class="text-danger"></span>
+                    <span asp-validation-for="OrderViewModel.PaymentMethodId" class="text-danger"></span>
                 </div>
 
 
-
-
-
-
-
-                <div class="form-group">
-                    <button href="#" class="btn btn-warning" asp-action="Index" asp-controller="ShoppingCart">Gå tillbaka till kundkorgen</button>
-                    <input type="submit" value="Pay us now! Dammit!" class="btn btn-primary" />
+                <div id="paymentForms">
+                    <div data-id="1" style="display:none;"><partial name="_KortPaymentPartial" model="@Model.CreditCardModel" /></div>
+                    <div data-id="2" style="display:none;"><partial name="_SwishPaymentPartial" /></div>
                 </div>
-
-
             </form>
+
         </div>
     </div>
 }
 
 
-@section Scripts {
+@*@section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    <script>
+        $('#paymentMethodDropdown').change(function () {
+
+            //var selectedPaymentMethodId = $(this).val();
+
+            $.get('/Order/CreditCardPayment/', /*+ selectedPaymentMethodId,*/ function (data) {
+                $('#creditCardPayment').html(data);
+                $('#creditCardPayment').fadeIn('fast');
+            });
+        });
+    </script>*@
+<script>
+    document.getElementById("paymentMethodDropdown").addEventListener("change", function () {
+
+        // Store selected payment Id from option element
+        var selectedPaymentMethod = this.value;
+
+        // Get parent div-element
+        var parent = document.getElementById("paymentForms");
+
+        // Get collectoin of child-elements
+        var children = parent.children;
+
+        console.log(children);
+
+        // Iteratet through children
+        for (var i = 0; i < children.length; i++) {
+
+            // If selected payment matches a child, display it!
+            if (children[i].dataset.id == selectedPaymentMethod)
+                children[i].style.display = "block";
+            else
+                children[i].style.display = "none";
+        }
+
+        //document.getElementById("creditCardPayment").style.display = "block";
+    });
+
+    function SubmitPayment() {
+        document.getElementById("PayUsNow").submit();
+    }
+</script>

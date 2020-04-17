@@ -1,0 +1,67 @@
+﻿@model ProductOrderViewModel
+@{
+    ViewData["Title"] = "OrderStatus";
+}
+
+<h3 class="mt-3 mb-3">Orderhantering</h3>
+<hr />
+
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-3">
+        <ul class="list-group">
+        @if (Model.Statuses != null)
+        {
+            @foreach (var status in Model.Statuses)
+            {
+                <li class="list-group-item">
+                    <a asp-action="OrderStatus" asp-route-statusid="@status.Id">@Html.Raw(@status.Name)</a>
+                </li>
+            }
+        }
+        </ul>
+    </div>
+
+    <div class="col-xs-12 col-sm-12 col-md-9">
+        @{ 
+            int.TryParse(Context.Request.Query["statusid"], out int statusId);
+            var statusName = Model.Statuses[(statusId - 1 < 0) ? 0 : statusId - 1].Name;
+        }
+        <h3>@statusName</h3>
+
+        <table class="table table-borderless table-responsive-sm">
+            <thead class="text-white">
+                <tr>
+                    <th scope="col">Datum</th>
+                    <th scope="col">Antal</th>
+                    <th scope="col">Kund</th>
+                    <th scope="col">Kr</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+
+            <tbody style="color:white">
+                @if (Model.Orders != null && Model.Orders.Count > 0)
+                {
+                    @foreach (var order in Model.Orders)
+                    {
+                        <tr>
+                            <td class="align-middle">@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                            <td class="align-middle">@order.Quantity</td>
+                            <td class="align-middle small"><a href="">@order.CustomerEmail</a></td>
+                            <td class="align-middle">@order.TotalCost.ToString("C0")</td>
+                            <td class="align-middle"><a asp-action="EditStatus" asp-route-id="@order.OrderId" class="btn btn-dark">Ändra</a></td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5">Inga ordrar</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<hr />
