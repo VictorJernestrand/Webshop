@@ -1,0 +1,101 @@
+﻿@model Category
+
+@{
+    ViewData["Title"] = "Kategori";
+}
+
+@*<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href='@Url.Action("AllProducts", "Product")'>AllProducts</a></li>
+        <li class="breadcrumb-item"><a href='@Url.Action("CreateProduct", "Product")'>Lägg till Ny Produkt</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Skapa NyKategori</li>
+    </ol>
+</nav>*@
+
+@if (TempData["NewCategory"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["NewCategory"]
+    </div>
+}
+
+@if (TempData["CategoryUpdate"] != null)
+{
+    <div class="alert alert-info" role="alert">
+        @TempData["CategoryUpdate"]
+    </div>
+}
+
+@if (TempData["DeletedCategory"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["DeletedCategory"]
+    </div>
+}
+
+@if (TempData["DeletedCategoryFail"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["DeletedCategoryFail"]
+    </div>
+}
+
+<h3 class="mt-3 mb-3">Kategorier</h3>
+<hr />
+
+<span asp-validation-for="Name" class="text-danger" style="margin-left: 30px"></span>
+<form asp-action="EditCategory" method="post">
+
+    <div class="row" style="max-width: 700px">
+
+        @if (Model.Id > 0)
+        {
+            <div class="col col-xs-4 form-group">
+                <input type="hidden" asp-for="Id" />
+                <input type="text" asp-for="Name" class="form-control" id="newBrand" value="@Model.Name" />
+            </div>
+            <div class="col col-xs-8 form-group">
+                <button type="submit" class="btn btn-warning">Uppdatera</button>
+            </div>
+            <div class="col-12">
+                <span><a asp-action="EditCategory" asp-route-id="">(Skapa ny Kategori)</a></span>
+            </div>
+        }
+        else
+        {
+            <div class="col col-xs-4 form-group">
+                <input type="text" asp-for="Name" class="form-control" id="newBrand" placeholder="Ny Kategori..." />
+            </div>
+            <div class="col col-xs-8 form-group">
+                <button type="submit" class="btn btn-success">Skapa Ny</button>
+            </div>
+        }
+
+    </div>
+</form>
+
+
+<table class="table table-borderless text-white" style="max-width: 700px; border-collapse: separate; border-spacing: 0px 1px">
+    <thead>
+        <tr>
+            <th scope="col">Kategori</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model.categoryCollection)
+        {
+            <tr style="background-color: rgba(255, 255, 255, 0.1);">
+                <td>@category.Name</td>
+                <td style="text-align: right">
+                    <a asp-action="EditCategory" asp-route-id="@category.Id" class="btn btn-secondary btn-sm"><i class="far fa-edit"></i></a>
+                    <a asp-action="DeleteCategory" asp-route-id="@category.Id" class="btn btn-secondary btn-sm"><i class="far fa-trash-alt"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+
+    <a class="btn btn-dark" onClick="history.go(-1); return false;">&laquo; Tillbaka</a>
+</div>

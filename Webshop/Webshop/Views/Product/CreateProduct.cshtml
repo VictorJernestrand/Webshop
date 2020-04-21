@@ -1,60 +1,146 @@
-﻿@model Webshop.Models.CreateProductModel
+﻿@model AllProductsViewModel
 
 @{
-    ViewData["Title"] = "CreateProduct";
+    ViewData["Title"] = "Rock★Start - Skapa Produkt";
 }
 
-@*<h1>Skapa Produkt</h1>*@
+@*<nav aria-label="breadcrumb">
+    <ol class="breadcrumb bg-dark">
+        <li class="breadcrumb-item text-light"><a href='@Url.Action("AllProducts", "Product")'>AllProducts</a></li>
+        <li class="breadcrumb-item text-light active" aria-current="page">Lägg till Ny Produkt</li>
+    </ol>
+</nav>*@
 
-<h4>Skapa Produkt</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="CreateProduct" method="post">
+@if (TempData["Database error"] != null)
+{
+
+    <p>
+        <font size="6">
+            <span style="color: red;">
+                @TempData["Database error"]
+            </span>
+        </font>
+    </p>
+
+}
+
+<h3 class="mt-3 mb-3">Skapa Produkt</h3>
+<hr/>
+
+<div class="row mt-3 mb-3">
+    <div class="col-6">
+        <a onclick="history.back()" class="btn btn-dark">&laquo; Tillbaka</a>
+    </div>
+    <div class="col-6 d-flex justify-content-end">
+        <a asp-action="Editcategory" asp-controller="Category" class="btn btn-success mr-2">Kategorier</a>
+        <a asp-action="Index" asp-controller="Brand" class="btn btn-success">Tillverkare</a>
+    </div>
+</div>
+
+<form asp-action="CreateProduct" method="post" enctype="multipart/form-data">
+
+    <div class="row">
+
+        <div class="col-xs-12 col-sm-12 col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
+                <label asp-for="Name" class="control-label">Namn</label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
+                <label asp-for="Price" class="control-label">Pris</label>
+                <input asp-for="Price" class="form-control" value="@Model.Price.ToString("0")" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="Quantity" class="control-label"></label>
+                <label class="control-label">Rabatt <span id="discountValue">@(Model.Discount * 100)</span>%</label>
+                <input asp-for="Discount" type="hidden" value="0" />
+                <input type="range" min="0.0" max="1.0" step="0.01" value="@Model.Discount.ToString().Replace(',', '.')" class="form-control-range" oninput="document.getElementById('Discount').setAttribute('value', this.value.replace('.', ',')); document.getElementById('discountValue').innerHTML = parseInt(this.value * 100);" />
+
+            </div>
+            <div class="form-group">
+                <label asp-for="Quantity" class="control-label">Antal</label>
                 <input asp-for="Quantity" class="form-control" />
                 <span asp-validation-for="Quantity" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <input asp-for="CategoryId" class="form-control" />
+                <label asp-for="CategoryId" class="control-label">Kategori</label>
+                <br />
+                <select asp-for="CategoryId" class="form-control">
+                    <option value="0">Välj</option>
+                    @foreach (var item in Model.Categories)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                </select>
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="BrandId" class="control-label"></label>
-                <input asp-for="BrandId" class="form-control" />
+                <label asp-for="BrandId" class="control-label">Märke</label>
+                <br />
+                <select asp-for="BrandId" class="form-control">
+                    <option value="0">Välj</option>
+                    @foreach (var item in Model.Brands)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                </select>
                 <span asp-validation-for="BrandId" class="text-danger"></span>
             </div>
+
+
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
+                <label asp-for="ActiveProduct" class="control-label">Aktivitetsnivå</label>
+                <br />
+                <select asp-for="ActiveProduct" class="form-control">
+                    <option value="True">Aktiv Produkt</option>
+
+                    <option value="False">Inaktiv Produkt</option>
+
+                </select>
+                <span asp-validation-for="ActiveProduct" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="Description" class="control-label">Beskrivning</label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Photo" class="control-label"></label>
-                <input asp-for="Photo" class="form-control" />
+                <label asp-for="Photo" class="control-label">Bild</label>
+                <br />
+                <input asp-for="Photo" name="file" type="file" />
                 <span asp-validation-for="Photo" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+        </div>
+
+        <div class="col-12">
+            <div class="form-group">
+                <a>FullBeskrivning</a>
+                <textarea asp-for="FullDescription" id="editor" class="form-control"></textarea>
+                <span asp-validation-for="FullDescription" class="text-danger"></span>    
+            </div>
+
+            <div class="form-group">
+                <a>Specifikationer</a>
+                <textarea asp-for="Specification" id="editor2" class="form-control"></textarea>
+                <span asp-validation-for="Specification" class="text-danger"></span>     
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Skapa ny" class="btn btn-primary" />
+            </div>
+
+        </div>
+
+    </div>
+
+</form>
+
+
+
 

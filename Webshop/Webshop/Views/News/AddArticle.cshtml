@@ -1,0 +1,39 @@
+﻿@model News
+@{
+
+}
+
+<h3 class="mt-3 mb-3">Ny Artikel</h3>
+<hr />
+
+<div class="row">
+    <div class="col">
+        <a asp-action="Index" class="btn btn-dark">&laquo; Tillbaka till Artiklar</a>
+    </div>
+</div>
+
+<hr />
+
+<div class="row d-flex justify-content-center">
+
+    <div class="col-xs-12 col-sm-12 col-md-10">
+
+        <form asp-action="AddArticle">
+            <div class="rounded p-3" style="background-color: rgba(255, 255, 255, 0.08)">
+                <div class="form-group">
+
+                    <label asp-for="@Model.Title">Titel: </label>
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                    <input type="text" asp-for="@Model.Title" class="form-control" />
+
+                    <label asp-for="@Model.Text" class="mt-3">Text:</label>
+                    <span asp-validation-for="Text" class="text-danger"></span>
+                    <textarea asp-for="@Model.Text" id="editor"></textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success mt-3 float-right">Spara Artikel</button>
+        </form>
+    </div>
+
+</div>

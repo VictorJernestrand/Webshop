@@ -1,0 +1,20 @@
+﻿@model Brand
+@{
+    ViewData["Title"] = "Radera Tillverkare";
+}
+
+<h3>Radera Tillverkare: @Model.Name</h3>
+
+<div class="alert alert-danger" role="alert">
+    <h4 class="alert-heading">Varning!</h4>
+    <p>När en tillverkare raderas kommer även <strong>alla</strong> tillhörande produkter att raderas!</p>
+    <hr>
+    <p class="mb-0">Är du säker på att du vill radera denna tillverkare? <strong>Denna åtgärd går ej att ångra!</strong></p>
+</div>
+
+
+<form asp-action="DeleteConfirmed" method="post" class="form-inline">
+    <input type="hidden" asp-for="Id" />
+    <input type="submit" class="btn btn-danger mr-2" value="Ja, radera skiten!" />
+    <a asp-action="Index" class="btn btn-warning mr-2">Avbryt</a>
+</form>

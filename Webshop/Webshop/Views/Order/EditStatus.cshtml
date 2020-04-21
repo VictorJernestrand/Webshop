@@ -1,0 +1,120 @@
+﻿@model OrderViewModel
+
+@{
+    ViewData["Title"] = "OrderStatus";
+
+    int.TryParse(Context.Request.Query["statusid"], out int statusId);
+}
+
+@if (TempData["StatusUpdate"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        Ordern har uppdaterats!
+    </div>
+}
+
+<h3 class="mt-3 mb-3">Uppdatera Status</h3>
+<hr />
+
+<div class="container">
+    <form asp-action="EditStatus" method="post">
+
+        <div class="row">
+            <div class="form-group col-xs-12 col-sm-4">
+                <input type="hidden" asp-for="Id" value="@Model.Id" />
+                <select name="statusId" class="form-control">
+                    @if (Model.Statuses != null)
+                    {
+                        @foreach (var status in Model.Statuses)
+                        {
+                            @if (status.Id == Model.OrderStatusId)
+                            {
+                                <option value="@status.Id" selected>@status.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@status.Id">@status.Name</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-8">
+                <button type="submit" class="btn btn-warning">Uppdatera</button>
+            </div>
+        </div>
+</form>
+</div>
+
+<hr />
+
+<table class="table table-borderless table-responsive-sm">
+    <thead class="text-white">
+        <tr>
+            <th scope="col">Produkt</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col">Kostnad</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody style="color:white">
+        @if (Model.Products != null)
+        {
+            @foreach (var product in Model.Products)
+            {
+                <tr>
+                    <td class="align-middle"><img src="@Url.Content("~/Image/" + @product.Photo)" class="product-thumbnail img-fluid rounded" /></td>
+                    <td class="align-middle"><a asp-action="ProductDetail" asp-controller="Product" asp-route-id="@product.ProductId">@product.ProductName</a></td>
+                    <td class="align-middle">
+                        @product.Amount x @product.Price.ToString("C0")
+                        @if (product.Discount > 0)
+                        {
+                            <br /><span class="price_color small">-@((int)(product.Discount * 100))% Rabatt!</span>
+                        }
+                    </td>
+                    <td class="align-middle">
+                        @if (product.Discount == 0)
+                        {
+                            <span class="font-weight-bold">@product.TotalProductCost.ToString("C0")</span>
+                        }
+                        else
+                        {
+                            <span class="font-weight-bold">@product.TotalProductCostDiscount.ToString("C0")</span>
+                        }
+                    </td>
+                    <td class="align-middle">
+
+                        @switch (Model.OrderStatusId)
+                        {
+                            case 1:
+                            case 2:
+                                @if (product.QuantityInStock == 0)
+                                {
+                                    <span><i class="fas fa-exclamation-triangle" style="color: orange"></i></span>
+                                    <span class="small">I lager: @product.QuantityInStock</span>
+                                }
+                                else
+                                {
+                                    <span><i class="fas fa-check price_color"></i></span>
+                                }
+                                break;
+                            case 3:
+                                <span>Skickad</span>
+                                break;
+                            default:
+                                <span>Avslutad</span>
+                                break;
+                         }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">Inga ordrar.</td>
+            </tr>
+        }
+</table>

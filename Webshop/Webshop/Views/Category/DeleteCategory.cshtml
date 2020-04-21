@@ -1,0 +1,21 @@
+﻿@model Category
+
+@{
+    ViewData["Title"] = "Ta bort kategori";
+}
+
+<h3 class="mt-3 mb-3">Radera Kategori: @Model.Name</h3>
+<hr />
+
+<div class="alert alert-danger" role="alert">
+    <h4 class="alert-heading">Varning!</h4>
+    <p>När en Kategori raderas kommer även <strong>alla</strong> tillhörande produkter att raderas!</p>
+    <hr>
+    <p class="mb-0">Är du säker på att du vill radera denna Kategori? <strong>Denna åtgärd går ej att ångra!</strong></p>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post" class="form-inline">
+    <input type="hidden" asp-for="Id" />
+    <input type="submit" class="btn btn-danger mr-2" value="Ja, radera skiten!" />
+    <a asp-action="EditCategory" class="btn btn-warning mr-2">Avbryt</a>
+</form>

@@ -1,51 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Webshop.Context;
 using Webshop.Models;
+using Webshop.Services;
 
 namespace Webshop.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly WebAPIHandler webAPI;
 
-        private readonly DatabaseCRUD db;
-        private readonly WebshopContext context;
-
-        public new User User { get; set; }
-
-        private UserManager<User> UserMgr { get; }
-
-        public HomeController(WebshopContext context, UserManager<User> userManager, ILogger<HomeController> logger)
+        public HomeController(WebAPIHandler webAPI)
         {
-            this.context = context;
-            db = new DatabaseCRUD(context);
-            UserMgr = userManager;
-            _logger = logger;
+            this.webAPI = webAPI;
         }
 
-        private void GetLoggedInUserAsync()
+        public async Task<IActionResult> Index()
         {
-            
-            //User = db.GetByIdAsync<User>(UserMgr.GetUserId(HttpContext.User));
-        }
+            var allproductslist = await webAPI.GetAllAsync<AllProductsViewModel>(ApiURL.PRODUCTS);
+            var news = await webAPI.GetAllAsync<News>(ApiURL.NEWS_TOP5);
 
-        /*public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }*/
+            HomeModel home = new HomeModel()
+            {
+                AllProducts = allproductslist,
+                News = news
+            };
 
-        public IActionResult Index()
-        {
-            //User = await UserMgr.GetUserAsync(HttpContext.User);
-            //ViewData["UserName"] = User.FirstName;// HttpContext.Session.GetString(SessionCookies.USER_NAME);
-            return View(User);
+            return View(home);
         }
 
         public IActionResult Privacy()
@@ -58,6 +39,6 @@ namespace Webshop.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-       
+
     }
 }
