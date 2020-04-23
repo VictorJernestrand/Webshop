@@ -34,8 +34,6 @@ namespace Webshop
 
             services.AddSession(); // Enable session cookies
 
-            services.AddControllersWithViews();
-
             services.AddSingleton(_ => Configuration);
         }
 
