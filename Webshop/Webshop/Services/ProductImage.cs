@@ -107,5 +107,6 @@ namespace Webshop.Services
 
             File.Delete(wwwPathToImage);
         }
+
     }
 }
