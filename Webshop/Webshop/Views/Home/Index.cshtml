@@ -17,73 +17,95 @@
 
 <div id="rockstart-carousel" class="carousel slide rounded d-flex align-items-md-center mt-5 mb-5 p-2" data-ride="carousel" data-interval="2000">
     <ol class="carousel-indicators">
-
-        @foreach (var x in Model.AllProducts)
+        @if (Model.AllProducts != null && Model.AllProducts.Count > 0)
         {
-            @if (x.Discount > 0 && x.ActiveProduct == true)
+            @foreach (var x in Model.AllProducts)
             {
-                var active = (i == 0) ? "class=\"active\"" : "";
-                <li data-target="#rockstart-carousel" data-slide-to="@i" @Html.Raw(active)></li>
-                i++;
+                @if (x.Discount > 0 && x.ActiveProduct == true)
+                {
+                    var active = (i == 0) ? "class=\"active\"" : "";
+                    <li data-target="#rockstart-carousel" data-slide-to="@i" @Html.Raw(active)></li>
+                    i++;
+                }
             }
+        }
+        else
+        {
+            <li data-target="#rockstart-carousel" data-slide-to="0" class="active"></li>
         }
     </ol>
 
     <div class="carousel-inner">
 
-        @foreach (var product in Model.AllProducts)
+        @if (Model.AllProducts != null && Model.AllProducts.Count > 0)
         {
-
-            if (product.Discount > 0 && product.ActiveProduct == true)
+            @foreach (var product in Model.AllProducts)
             {
-                var active = (a == 0) ? "active" : "";
-                a++;
 
-                <div class="carousel-item @active">
-                    <div class="row">
-                        <div class="col-sx-12 col-sm-12 col-md-8 col-lg-7 d-flex justify-content-center justify-content-md-end align-items-center rounded overflow-hidden">
-                            <div class="shadow carousel_product rounded">
-                                <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@product.Id">
-                                    <img src="@Url.Content("~/Image/" + product.Photo)" class="rounded" alt="@product.Name">
-                                </a>
+                if (product.Discount > 0 && product.ActiveProduct == true)
+                {
+                    var active = (a == 0) ? "active" : "";
+                    a++;
+
+                    <div class="carousel-item @active">
+                        <div class="row">
+                            <div class="col-sx-12 col-sm-12 col-md-8 col-lg-7 d-flex justify-content-center justify-content-md-end align-items-center rounded overflow-hidden">
+                                <div class="shadow carousel_product rounded">
+                                    <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@product.Id">
+                                        <img src="@Url.Content("~/Image/" + product.Photo)" class="rounded" alt="@product.Name">
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-5 d-flex justify-content-center justify-content-md-start">
-                            <div class="carousel_info_container">
-                                <h3>@product.Name</h3>
-                                <p class="card-subtitle mb-2">@product.BrandName - @product.CategoryName</p>
+                            <div class="col-sx-12 col-sm-12 col-md-4 col-lg-5 d-flex justify-content-center justify-content-md-start">
+                                <div class="carousel_info_container">
+                                    <h3>@product.Name</h3>
+                                    <p class="card-subtitle mb-2">@product.BrandName - @product.CategoryName</p>
 
-                                @{
-                                    var ratedScoreRounded = Math.Round(product.TotalRatingScore);
-                                    var emptyStars = 5 - ratedScoreRounded;
-                                    for (var j = 0; j < ratedScoreRounded; j++)
-                                    {
-                                        <i class="fas fa-star" style="color: gold"></i>
+                                    @{
+                                        var ratedScoreRounded = Math.Round(product.TotalRatingScore);
+                                        var emptyStars = 5 - ratedScoreRounded;
+                                        for (var j = 0; j < ratedScoreRounded; j++)
+                                        {
+                                            <i class="fas fa-star" style="color: gold"></i>
+                                        }
+
+                                        for (var j = 0; j < emptyStars; j++)
+                                        {
+                                            <i class="far fa-star" style="color: gold"></i>
+                                        }
                                     }
 
-                                    for (var j = 0; j < emptyStars; j++)
-                                    {
-                                        <i class="far fa-star" style="color: gold"></i>
-                                    }
-                                }
-
-                                <span>@product.TotalRatingScore.ToString("0.0").Replace(',', '.') / 5</span>
-                                <div class="row">
-                                    <div class="col-sm-6 col-md-12 col mt-md-3 pt-2 pt-md-0">
-                                        <h5 class="mb-0 pb-0 price_color">@product.DiscountPrice.ToString("C0")
-                                        <span class="font-weight-lighter small price_color">-@((int)(product.Discount * 100))%</span></h5>
-                                    </div>
-                                    <div class="col-sm-6 col-md-12 col d-flex justify-content-xs-end justify-content-end justify-content-md-start mt-md-3">
-                                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@product.Id" class="btn btn-info">Mer Info</a>
+                                    <span>@product.TotalRatingScore.ToString("0.0").Replace(',', '.') / 5</span>
+                                    <div class="row">
+                                        <div class="col-sm-6 col-md-12 col mt-md-3 pt-2 pt-md-0">
+                                            <h5 class="mb-0 pb-0 price_color">
+                                                @product.DiscountPrice.ToString("C0")
+                                                <span class="font-weight-lighter small price_color">-@((int)(product.Discount * 100))%</span>
+                                            </h5>
+                                        </div>
+                                        <div class="col-sm-6 col-md-12 col d-flex justify-content-xs-end justify-content-end justify-content-md-start mt-md-3">
+                                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@product.Id" class="btn btn-info">Mer Info</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                a++;
+                    a++;
+                }
             }
         }
+        else
+        {
+            <div class="carousel-item active d-flex justify-content-center">
+                <div style="text-align: center">
+                    <h2>Välkommnen Till RockStart</h2>
+                    <hr />
+                    <a asp-action="AllProducts" asp-controller="Product" class="btn btn-info">Handla nu!</a>
+                </div>
+            </div>
+        }
+
     </div>
 
     <div class="d-none d-lg-block">

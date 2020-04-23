@@ -17,7 +17,7 @@ namespace Webshop.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var allproductslist = await webAPI.GetAllAsync<AllProductsViewModel>(ApiURL.PRODUCTS);
+            var allproductslist = await webAPI.GetAllAsync<AllProductsViewModel>(ApiURL.PRODUCTS_DISCOUNT);
             var news = await webAPI.GetAllAsync<News>(ApiURL.NEWS_TOP5);
 
             HomeModel home = new HomeModel()

@@ -27,7 +27,7 @@ namespace WebAPI.Controllers
         public async Task<ActionResult<IEnumerable<AllProductsViewModel>>> GetAllProducts()
         {
 
-            var test = await _context.Products.Include(x => x.Brand)
+            var products = await _context.Products.Include(x => x.Brand)
                 .Include(x => x.Category)
                 .Select(x => new AllProductsViewModel
                 {
@@ -50,27 +50,44 @@ namespace WebAPI.Controllers
                 })
                 .ToListAsync();
 
-            //List<AllProductsViewModel> blalba = test.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).ToList();
+            return products;
+        }
 
-            //var products = await _context.Products.Include(x => x.Brand)
-            //    .Include(x => x.Category)
-            //    .ToListAsync();
+        [Route("discount")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<AllProductsViewModel>>> GetProductsWithDiscount()
+        {
+            var products = await _context.Products.Include(x => x.Brand)
+                .Include(x => x.Category)
+                .Where(x => x.Discount > 0)
+                .Select(x => new AllProductsViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Price = x.Price,
+                    Discount = x.Discount,
+                    DiscountPrice = x.Price - (x.Price * (decimal)x.Discount), //product.DiscountPrice;
+                    Quantity = x.Quantity,
+                    CategoryId = x.CategoryId,
+                    BrandId = x.BrandId,
+                    Description = x.Description,
+                    Photo = x.Photo != null ? x.Photo : "",
+                    BrandName = x.Brand.Name,
+                    CategoryName = x.Category.Name,
+                    FullDescription = x.FullDescription,
+                    Specification = x.Specification,
+                    ActiveProduct = x.ActiveProduct,
+                    TotalRatingScore = (float)_context.Ratings.Where(r => r.ProductId == x.Id).Sum(r => r.Score) / _context.Ratings.Count(c => c.ProductId == x.Id)
+                })
+                .ToListAsync();
 
-            //List<AllProductsViewModel> allProducts = products.Select(x => new AllProductsViewModel(x)).OrderBy(p => p.Name).ToList();
-
-            return test;// allProducts;
+            return products;
         }
 
         // GET: api/Products/5
         [HttpGet("{id}")]
         public async Task<ActionResult<AllProductsViewModel>> GetProduct(int id)
         {
-            //var query = await _context.Products.Include(x => x.Brand)
-            //    .Include(x => x.Category)
-            //    .Where(x => x.Id == id)
-            //    .Select(x => new AllProductsViewModel(x)).FirstOrDefaultAsync();
-
-
             var query = await _context.Products.Include(x => x.Brand)
                 .Include(x => x.Category)
                 .Where(x => x.Id == id)
