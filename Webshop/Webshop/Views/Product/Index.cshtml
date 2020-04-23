@@ -10,7 +10,15 @@
     ViewData["Title"] = "Rock★Start";
 
     // Count products
-    int productCount = Model.Count();
+    int productCount = 0;
+    if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        productCount = Model.Count();
+    }
+    else
+    {
+        productCount = Model.Where(x => x.ActiveProduct == true).Count();
+    }
 
 }
 <partial name="_AddToCartMessagePartial" />

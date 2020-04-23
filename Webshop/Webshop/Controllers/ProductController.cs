@@ -79,6 +79,15 @@ namespace Webshop.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    if (!IsUploadedFileImage(file))
+                    {
+                        ModelState.AddModelError("Photo", "Filen är ogiltig!");
+                        TempData["Errors"] = "Filen är ogiltig!";
+                        model.Categories = await webAPI.GetAllAsync<Category>(ApiURL.CATEGORIES);
+                        model.Brands = await webAPI.GetAllAsync<Brand>(ApiURL.BRANDS);
+                        return View(model);
+                    }
+
                     // Instantiate new product
                     Product newProduct = new Product()
                     {
@@ -195,6 +204,15 @@ namespace Webshop.Controllers
 
                 if (ModelState.IsValid)
                 {
+                    if (!IsUploadedFileImage(file))
+                    {
+                        ModelState.AddModelError("Photo", "Filen är ogiltig!");
+                        TempData["Errors"] = "Filen är ogiltig!";
+                        model.Categories = await webAPI.GetAllAsync<Category>(ApiURL.CATEGORIES);
+                        model.Brands = await webAPI.GetAllAsync<Brand>(ApiURL.BRANDS);
+                        return View(model);
+                    }
+
                     Product editproduct = new Product()
                     {
                         Id = model.Id,
@@ -260,6 +278,18 @@ namespace Webshop.Controllers
         {
             var category = await webAPI.GetOneAsync<Category>(ApiURL.CATEGORIES + id);
             return category.Name;
+        }
+
+        public bool IsUploadedFileImage(IFormFile file)
+        {
+            switch (file.ContentType)
+            {
+                case "image/jpeg":
+                case "image/png":
+                    return true;
+                default:
+                    return false;
+            }
         }
 
 

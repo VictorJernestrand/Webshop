@@ -4,13 +4,6 @@
     ViewData["Title"] = "Rock★Start - Skapa Produkt";
 }
 
-@*<nav aria-label="breadcrumb">
-    <ol class="breadcrumb bg-dark">
-        <li class="breadcrumb-item text-light"><a href='@Url.Action("AllProducts", "Product")'>AllProducts</a></li>
-        <li class="breadcrumb-item text-light active" aria-current="page">Lägg till Ny Produkt</li>
-    </ol>
-</nav>*@
-
 @if (TempData["Database error"] != null)
 {
 
@@ -111,9 +104,10 @@
             </div>
             <div class="form-group">
                 <label asp-for="Photo" class="control-label">Bild</label>
+                <span asp-validation-for="Photo" class="text-danger"></span>
                 <br />
                 <input asp-for="Photo" name="file" type="file" />
-                <span asp-validation-for="Photo" class="text-danger"></span>
+                
             </div>
 
         </div>
