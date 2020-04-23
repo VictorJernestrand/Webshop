@@ -140,10 +140,12 @@
                     <span asp-validation-for="OrderViewModel.PaymentMethodId" class="text-danger"></span>
                 </div>
 
-
                 <div id="paymentForms">
                     <div data-id="1" style="display:none;"><partial name="_KortPaymentPartial" model="@Model.CreditCardModel" /></div>
                     <div data-id="2" style="display:none;"><partial name="_SwishPaymentPartial" /></div>
+                </div>
+                <div class="form-group" style="text-align: center; margin-top: 15px; display: none" id="alternativePayment">
+                    <input type="button" onclick="SubmitPayment()" value="Betala" class="btn btn-success" />
                 </div>
             </form>
 
@@ -151,20 +153,6 @@
     </div>
 }
 
-
-@*@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>
-        $('#paymentMethodDropdown').change(function () {
-
-            //var selectedPaymentMethodId = $(this).val();
-
-            $.get('/Order/CreditCardPayment/', /*+ selectedPaymentMethodId,*/ function (data) {
-                $('#creditCardPayment').html(data);
-                $('#creditCardPayment').fadeIn('fast');
-            });
-        });
-    </script>*@
 <script>
     document.getElementById("paymentMethodDropdown").addEventListener("change", function () {
 
@@ -177,19 +165,23 @@
         // Get collectoin of child-elements
         var children = parent.children;
 
-        console.log(children);
-
         // Iteratet through children
         for (var i = 0; i < children.length; i++) {
 
             // If selected payment matches a child, display it!
-            if (children[i].dataset.id == selectedPaymentMethod)
+            if (children[i].dataset.id == selectedPaymentMethod) {
                 children[i].style.display = "block";
+                if (children[i].dataset.id > 1) {
+                    document.getElementById("alternativePayment").style.display = "block";
+                }
+                else {
+                    document.getElementById("alternativePayment").style.display = "none";
+                }
+            }
             else
                 children[i].style.display = "none";
         }
 
-        //document.getElementById("creditCardPayment").style.display = "block";
     });
 
     function SubmitPayment() {

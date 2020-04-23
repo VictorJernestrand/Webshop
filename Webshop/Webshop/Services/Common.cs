@@ -23,6 +23,7 @@
 
         // API-paths to products-controllers
         public const string PRODUCTS = URL + "products/";
+        public const string PRODUCTS_DISCOUNT = URL + "products/discount/";
         public const string PRODUCTS_IN_CAT = URL + "products/category/";
 
         // API-paths to categories-controllers
